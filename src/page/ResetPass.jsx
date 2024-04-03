@@ -3,9 +3,10 @@ import {
 } from 'react-bootstrap';
 
 import imageBg from "../assets/images/bg.png";
+import Login from './Login';
 
 
-export default function Login() {
+export default function ResetPass() {
   const backgroundStyle = {
     background: 'linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.5) 50%, #EFAB68 50%, #EFAB68 100%)',
     minHeight: '100vh',
@@ -26,35 +27,26 @@ export default function Login() {
           <Col sm style={{  backgroundColor: "#FFFFFF" }}>
             <div className='pt-5 px-5' style={{  color: "black" }}>
               <h1 style={{  fontWeight: "bold", fontSize: "2em"  }} >
-                <span>Selamat</span> 
-                <span style={{  color: "#F48E28" }}> Datang</span> 
-                <span> Kembali</span>
+                <span style={{  color: "#F48E28" }}>Lupa</span> 
+                <span> Kata Sandi</span>
               </h1>
-              <p className='py-2' style={{ fontSize: "1em" }}>Masuk ke akun untuk melanjutkan</p>
+              <p className='py-2' style={{ fontSize: "1em" }}>Mohon masukkan alamat email yang terhubung dengan akun Anda. Kami akan mengirimkan instruksi uba kata sandi ke emailm tersebut.</p>
             </div>
             
-            <Form className='px-5 py-2'>
+            <Form className='px-5 py-4'>
               <Form.Group>
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>Email</Form.Label>
                 <Form.Control style={{ border:"1px #E5E5E5", backgroundColor:"#F2F2F2" }} type="email" placeholder="Masukkan alamat email" />
               </Form.Group>
-              <Form.Group className="mt-4">
-                <Form.Label style={{ fontWeight: "bold" }}>Password</Form.Label>
-                <Form.Control type="password" style={{ border:"1px #E5E5E5", backgroundColor:"#F2F2F2" }}  placeholder="Masukkan kata sandi" />
-              </Form.Group>
-              <Container className='my-3 d-flex justify-content-end'>
-                <a href='./ResetPass' style={{  textDecoration: "none" }}>Lupa Kata Sandi?</a>
-              </Container>
-
               <Container className='text-center'>
-                <Button className='w-75 mx-5 my-3 h-25' style={linearButton} type='submit'>Masuk</Button>
+                <Button className='w-75 mx-5 my-5 h-25' style={linearButton} type='submit'>Kirim Email</Button>
               </Container>
             </Form>
             <Container className='text-center'>
-            <div className='px-5' style={{  color: "black" }}>
+            <div className='px-4'>
               <p style={{  fontWeight: "bold", fontSize: "0.85em" }} >
-                <span>Belum memiliki akun?</span> 
-                <span> <a href='./Register' style={{  textDecoration: "none" }}>Daftar Sekarang</a></span>
+                <span>Batalkan permintaan lupa kata sandi?</span> 
+                <span><a href='./Login' style={{  textDecoration: "none" }}> Masuk Sekarang</a></span>
               </p>
             </div>
             </Container>

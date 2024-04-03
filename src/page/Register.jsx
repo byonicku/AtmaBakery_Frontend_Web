@@ -19,7 +19,7 @@ export default function Register() {
   return (
     <div style={backgroundStyle}>
       <Container>
-        <Row className='m-5 no-gutters shadow-lg rounded'>
+        <Row className='m-5 no-gutters shadow-lg rounded h-auto'>
           <Col sm className='p-0 m-0' style={{  backgroundColor: "#FFEDDB" }}>
             <img src={imageBg} className='p-0 m-0 rounded' style={{ width:"100%", height: "100%"}}/>
           </Col>
@@ -64,9 +64,9 @@ export default function Register() {
                   label={
                     <p>
                       <span>Dengan mencentang kotak centang ini, Anda telah menyetujui </span> 
-                      <span> <a href='' style={{  textDecoration: "none" }}>Persyaratan Layanan</a></span> 
+                      <span> <a href='#' style={{  textDecoration: "none" }}>Persyaratan Layanan</a></span> 
                       <span> dan </span>
-                      <span> <a href='' style={{  textDecoration: "none" }}>Kebijakan Privasi</a></span> 
+                      <span> <a href='#' style={{  textDecoration: "none" }}>Kebijakan Privasi</a></span> 
                       
                     </p>
                   } 
@@ -80,7 +80,7 @@ export default function Register() {
             <div className='px-5' style={{  color: "black" }}>
               <p style={{  fontWeight: "bold", fontSize: "0.85em" }} >
                 <span>Sudah memiliki akun?</span> 
-                <span> <a href='#' style={{  textDecoration: "none" }}>Masuk Sekarang</a></span>
+                <span> <a href='./Login' style={{  textDecoration: "none" }}>Masuk Sekarang</a></span>
               </p>
             </div>
             </Container>
