@@ -3,6 +3,7 @@ import {
 } from 'react-bootstrap';
 
 import imageBg from "../assets/images/bg.png";
+import Register from './Register';
 
 
 export default function Login() {
@@ -54,7 +55,7 @@ export default function Login() {
             <div className='px-5' style={{  color: "black" }}>
               <p style={{  fontWeight: "bold", fontSize: "0.85em" }} >
                 <span>Belum memiliki akun?</span> 
-                <span> <a href='#' style={{  textDecoration: "none" }}>Daftar Sekarang</a></span>
+                <span> <a href={Register} style={{  textDecoration: "none" }}>Daftar Sekarang</a></span>
               </p>
             </div>
             </Container>
