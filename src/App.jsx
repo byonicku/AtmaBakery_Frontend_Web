@@ -7,7 +7,7 @@ import Register from '@/page/Auth/Register';
 import ResetPass from '@/page/Auth/ResetPass';
 import Produk from '@/page/Admin/ProdukPage';
 import AddEditProdukPage from '@/page/Admin/AddEditProdukPage';
-import Dashboard from './page/Admin/Dashboard';
+import Dashboard from '@/page/Admin/Dashboard';
 
 export default function App() {
   return (
