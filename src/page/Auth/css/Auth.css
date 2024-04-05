@@ -1,0 +1,18 @@
+.bg-half {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.5) 50%, #EFAB68 50%, #EFAB68 100%);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.button-custom {
+    background: linear-gradient(to bottom, #EFAB68, #F48E28 75%);
+    font-size: 1em;
+    border: none;
+}
+
+.left-img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain;
+}
+

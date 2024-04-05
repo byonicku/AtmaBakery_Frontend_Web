@@ -1,13 +1,9 @@
 import { Container, Card, Button, Col, Row, Form,Table } from "react-bootstrap"
+import { Link } from "react-router-dom"
 
 export default function ProdukPage() {
-  const backgroundStyle = {
-    backgroundColor :'#F9F9F9',
-    minHeight: '100vh',
-    overflow: 'hidden',
-  };
     return (
-      <Container style={backgroundStyle} >
+      <Container className="bg-style" >
         <Container>
           <h1>Produk</h1>
         </Container>
@@ -20,7 +16,11 @@ export default function ProdukPage() {
               <Col sm>
                 <Row>
                   <Col sm="3" className="text-end">
-                    <Button variant="success" href="./TambahProduk">Tambah Produk</Button>
+                    <Button variant="success">
+                      <Link to='./tambah' style={{ textDecoration: 'none', color: 'white' }}>
+                        Tambah Produk
+                      </Link>
+                    </Button>
                   </Col>
                   <Col sm="8">
                     <Form.Control style={{ border:"1px #E5E5E5", backgroundColor:"#F2F2F2" }} type="text" placeholder="Cari Produk disini"/>
