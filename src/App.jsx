@@ -5,6 +5,9 @@ import Home from './page/Home';
 import Login from './page/Login';
 import Register from './page/Register';
 import ResetPass from './page/ResetPass';
+import Produk from './page/ProdukPage';
+import TambahProduk from './page/addEditProdukPage';
+
 
 export default function App() {
   return (
@@ -16,6 +19,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/ResetPass" element={<ResetPass />} />
+          <Route path="/Produk" element={<Produk/>} />
+          <Route path="/TambahProduk" element={<TambahProduk/>} />
         </Routes>
       </main>
     </>
