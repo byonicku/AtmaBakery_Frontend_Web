@@ -1,4 +1,4 @@
-import { Container, Card, Button, Col, Row, Form,Table, Modal } from "react-bootstrap"
+import { Container, Card, Button, Col, Row, Form,Table, Modal, Badge } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import "./css/ProdukPage.css";
 import { useState } from 'react';
@@ -52,11 +52,11 @@ export default function ProdukPage() {
                 <tr>
                   <th style={{ width:"14%" }} className="th-style">Nama Produk</th>
                   <th style={{ width:"24%" }} className="th-style">Deskripsi</th>
-                  <th style={{ width:"7%" }} className="th-style">Kategori</th>
-                  <th style={{ width:"7%" }} className="th-style">Ukuran</th>
+                  <th style={{ width:"6.5%" }} className="th-style">Kategori</th>
+                  <th style={{ width:"5%" }} className="th-style">Ukuran</th>
                   <th style={{ width:"7%" }} className="th-style">Harga</th>
                   <th style={{ width:"5%" }} className="th-style">Limit</th>
-                  <th style={{ width:"7%" }} className="th-style">Status</th>
+                  <th style={{ width:"8.5%" }} className="th-style">Status</th>
                   <th style={{ width:"5%" }} className="th-style">Stok</th>
                   <th style={{ width:"30%" }} className="th-style">Aksi</th>
                 </tr>
@@ -72,10 +72,10 @@ export default function ProdukPage() {
                   <td>1</td>
                   <td>350000</td>
                   <td>10</td>
-                  <td>Pre Order</td>
+                  <td><Badge bg="primary">Pre Order</Badge></td>
                   <td>0</td>
                   <td className="text-start">
-                    <Button variant="primary" className="me-1"><BsJournalText className="mb-1"/> Lihat </Button>
+                    <Button variant="primary" className="me-1"><BsJournalText className="mb-1"/> Resep </Button>
                     <Button variant="secondary" className="mx-1"><BsPencilSquare className="mb-1"/> Ubah</Button>
                     <Button variant="danger" style={{ backgroundColor:"#FF5B19" }} className="mx-1" onClick={handleShow}><BsFillTrash3Fill className="mb-1" /> Hapus</Button>
                   </td>
@@ -85,14 +85,14 @@ export default function ProdukPage() {
                   <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
                     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
                   </td>
-                  <td>Cake</td>
+                  <td>Titipan</td>
                   <td>1/2</td>
                   <td>200000</td>
                   <td>10</td>
-                  <td>Pre Order</td>
+                  <td><Badge bg="success">Ready Stock</Badge></td>
                   <td>0</td>
                   <td className="text-start">
-                    <Button variant="primary" className="me-1"><BsJournalText className="mb-1"/> Lihat </Button>
+                    <Button variant="primary" className="me-1"><BsJournalText className="mb-1"/> Resep </Button>
                     <Button variant="secondary" className="mx-1"><BsPencilSquare className="mb-1"/> Ubah</Button>
                     <Button variant="danger" style={{ backgroundColor:"#FF5B19" }} className="mx-1" onClick={handleShow}><BsFillTrash3Fill className="mb-1" /> Hapus</Button>
                   </td>
