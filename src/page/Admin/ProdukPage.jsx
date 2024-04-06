@@ -50,11 +50,14 @@ export default function ProdukPage() {
             <Table className="table-striped">
               <thead>
                 <tr>
-                  <th style={{ width:"25%" }} className="th-style">Nama Produk</th>
-                  <th style={{ width:"14%" }} className="th-style">Kategori</th>
-                  <th style={{ width:"14%" }} className="th-style">Ukuran</th>
-                  <th style={{ width:"14%" }} className="th-style">Harga</th>
-                  <th style={{ width:"33%" }} className="th-style"></th>
+                  <th style={{ width:"18%" }} className="th-style">Nama Produk</th>
+                  <th style={{ width:"9%" }} className="th-style">Kategori</th>
+                  <th style={{ width:"9%" }} className="th-style">Ukuran</th>
+                  <th style={{ width:"9%" }} className="th-style">Harga</th>
+                  <th style={{ width:"9%" }} className="th-style">Limit</th>
+                  <th style={{ width:"9%" }} className="th-style">Status</th>
+                  <th style={{ width:"9%" }} className="th-style">Stok</th>
+                  <th style={{ width:"30%" }} className="th-style">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -63,21 +66,27 @@ export default function ProdukPage() {
                   <td>Cake</td>
                   <td>1</td>
                   <td>350000</td>
-                  <td className="text-end">
-                    <Button variant="primary" className="mx-2"><BsJournalText className="mb-1"/> Lihat </Button>
-                    <Button variant="secondary" className="mx-2"><BsPencilSquare className="mb-1"/> Ubah</Button>
-                    <Button variant="danger" style={{ backgroundColor:"#FF5B19" }} className="mx-2" onClick={handleShow}><BsFillTrash3Fill className="mb-1" /> Hapus</Button>
+                  <td>10</td>
+                  <td>Pre Order</td>
+                  <td>0</td>
+                  <td className="text-start">
+                    <Button variant="primary" className="me-1"><BsJournalText className="mb-1"/> Lihat </Button>
+                    <Button variant="secondary" className="mx-1"><BsPencilSquare className="mb-1"/> Ubah</Button>
+                    <Button variant="danger" style={{ backgroundColor:"#FF5B19" }} className="mx-1" onClick={handleShow}><BsFillTrash3Fill className="mb-1" /> Hapus</Button>
                   </td>
                 </tr>
-                <tr>
+                <tr >
                   <td>Lapis Legit</td>
                   <td>Cake</td>
                   <td>1/2</td>
                   <td>200000</td>
-                  <td className="text-end">
-                    <Button variant="primary" className="mx-2"><BsJournalText className="mb-1"/> Lihat </Button>
-                    <Button variant="secondary" className="mx-2"><BsPencilSquare className="mb-1"/> Ubah</Button>
-                    <Button variant="danger" style={{ backgroundColor:"#FF5B19" }} className="mx-2"  onClick={handleShow}><BsFillTrash3Fill className="mb-1" /> Hapus</Button>
+                  <td>10</td>
+                  <td>Pre Order</td>
+                  <td>0</td>
+                  <td className="text-start">
+                    <Button variant="primary" className="me-1"><BsJournalText className="mb-1"/> Lihat </Button>
+                    <Button variant="secondary" className="mx-1"><BsPencilSquare className="mb-1"/> Ubah</Button>
+                    <Button variant="danger" style={{ backgroundColor:"#FF5B19" }} className="mx-1" onClick={handleShow}><BsFillTrash3Fill className="mb-1" /> Hapus</Button>
                   </td>
                 </tr>
                 {/* nanti abis ini perulangan -- */}
