@@ -50,19 +50,24 @@ export default function ProdukPage() {
             <Table className="table-striped">
               <thead>
                 <tr>
-                  <th style={{ width:"18%" }} className="th-style">Nama Produk</th>
-                  <th style={{ width:"9%" }} className="th-style">Kategori</th>
-                  <th style={{ width:"9%" }} className="th-style">Ukuran</th>
-                  <th style={{ width:"9%" }} className="th-style">Harga</th>
-                  <th style={{ width:"9%" }} className="th-style">Limit</th>
-                  <th style={{ width:"9%" }} className="th-style">Status</th>
-                  <th style={{ width:"9%" }} className="th-style">Stok</th>
+                  <th style={{ width:"14%" }} className="th-style">Nama Produk</th>
+                  <th style={{ width:"24%" }} className="th-style">Deskripsi</th>
+                  <th style={{ width:"7%" }} className="th-style">Kategori</th>
+                  <th style={{ width:"7%" }} className="th-style">Ukuran</th>
+                  <th style={{ width:"7%" }} className="th-style">Harga</th>
+                  <th style={{ width:"5%" }} className="th-style">Limit</th>
+                  <th style={{ width:"7%" }} className="th-style">Status</th>
+                  <th style={{ width:"5%" }} className="th-style">Stok</th>
                   <th style={{ width:"30%" }} className="th-style">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>Lapis Legit</td>
+                  <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
+                  </td>
                   <td>Cake</td>
                   <td>1</td>
                   <td>350000</td>
@@ -77,6 +82,9 @@ export default function ProdukPage() {
                 </tr>
                 <tr >
                   <td>Lapis Legit</td>
+                  <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+                  </td>
                   <td>Cake</td>
                   <td>1/2</td>
                   <td>200000</td>
