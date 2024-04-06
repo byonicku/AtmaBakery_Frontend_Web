@@ -32,11 +32,15 @@ export default function ProdukPage() {
                       </Link>
                     </Button>
                   </Col>
-                  <Col sm="7" className="m-0">
-                    <Form.Control style={{ border:"1px #E5E5E5", backgroundColor:"#F2F2F2" }} type="text" placeholder="Cari Produk disini"/>
-                  </Col>
-                  <Col sm="1" className="text-start p-0">
-                    <Button variant="secondary"><BsSearch/></Button>
+                  <Col sm="8" className="m-0">
+                    <Row>
+                        <Col sm={10}>
+                            <Form.Control style={{ border:"1px #E5E5E5", backgroundColor:"#F2F2F2" }} type="text" placeholder="Cari Produk disini"/>
+                        </Col>
+                        <Col sm={2}>
+                            <Button variant="secondary"><BsSearch/></Button>
+                        </Col>
+                    </Row>
                   </Col>
                 </Row>
               </Col>
