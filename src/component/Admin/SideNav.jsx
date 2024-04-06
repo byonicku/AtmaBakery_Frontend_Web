@@ -1,19 +1,40 @@
 import { Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-import { BsGrid, BsGift, BsBox2Heart, BsJournalText,   } from 'react-icons/bs';
-import { FaShoppingBasket, FaUserTie, FaUserFriends  } from "react-icons/fa";
-
+import RouteData from "@/assets/AdminConstant";
 import AdminLTELogo from  "/dist/img/AdminLTELogo.png";
 import DefaultUser from "/dist/img/user2-160x160.jpg";
 
 import "./css/SideNav.css";
+import { useEffect } from "react";
+import NavItem from "./component/NavItem";
 
 export default function SideNav() {
+    const location = useLocation();
+    
+    useEffect(() => {
+        const currentPath = location.pathname;
+        const menuItems = document.querySelectorAll('.nav-link');
+
+        menuItems.forEach(item => {
+          item.classList.remove('active');
+          const itemPath = item.getAttribute('href');
+          if (currentPath.startsWith(itemPath) && itemPath !== '/admin') {
+            item.classList.add('active');
+          }
+
+          if (currentPath === '/admin' && itemPath === '/admin') {
+            item.classList.add('active');
+          }
+        });
+
+      }, [location]);
+
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       {/* Brand Logo */}
-      <Link to="/admin" className="brand-link">
+      <Link to="/" className="brand-link">
         <Image
           src={AdminLTELogo}
           alt="Atma Bakery"
@@ -51,59 +72,16 @@ export default function SideNav() {
             role="menu"
             data-accordion="false"
           >
-            {/* Add icons to the links using the .nav-icon class
-         with font-awesome or any other icon font library */}
-            <li className="nav-item">
-              <Link to="/admin" className="nav-link active">
-                <BsGrid className="nav-icon" />
-                <p>Beranda</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="./produk" className="nav-link">
-                <BsGift className="nav-icon" />
-                <p>Produk</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="#" className="nav-link">
-                <BsBox2Heart className="nav-icon" />
-                <p>Hampers</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="#" className="nav-link">
-                <FaShoppingBasket className="nav-icon" />
-                <p>Resep</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="#" className="nav-link">
-                <BsJournalText className="nav-icon" />
-                <p>Bahan Baku</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="#" className="nav-link">
-                <FaUserTie className="nav-icon" />
-                <p>Karyawan</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="#" className="nav-link">
-                <FaUserFriends className="nav-icon" />
-                <p>Penitip</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="#" className="nav-link">
-                <BsJournalText className="nav-icon" />
-                <p>Template</p>
-              </Link>
-            </li>
-          </ul>
+            {RouteData['MO'].map((item, index) => (
+              <NavItem key={index} to={item.to} icon={item.icon} label={item.label} isActive={false} />
+            ))}
+            {
+                /* 
+                    Nanti bakal ada beberapa route disini tambahin aja ke AdminConstant
+                */
+            }
+            </ul>
         </nav>
-        {/* /.sidebar-menu */}
       </div>
       {/* /.sidebar */}
     </aside>
