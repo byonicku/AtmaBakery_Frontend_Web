@@ -1,12 +1,18 @@
-import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import { useState } from "react";
+import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
+import { useMutation } from '@tanstack/react-query';
+
+import { useNavigate, Link } from "react-router-dom";
+import { toast } from "sonner";
+
 import InputHelper from "../InputHelper";
-import imageBg from "@/assets/images/bg.png";
+import APIAuth from "@/api/APIAuth";
+
 import "./css/Auth.css";
+import imageBg from "@/assets/images/bg.png";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     nama: "",
@@ -36,23 +42,38 @@ export default function Register() {
     tanggal_lahir: { required: true, alias: "Tanggal Lahir" },
   };
 
-  const onSubmit = (formData) => {
+  const result = useMutation({
+
+    mutationFn: (data) => APIAuth.register(data),
+    onSuccess: () => {
+      toast.success("Registrasi berhasil!");
+      setTimeout(() => {
+        navigate("/login");
+      }, 250);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onMutate: () => {
+      setIsLoading(true);
+    },
+  });
+
+  const onSubmit = async (formData) => {
     if (isLoading) return;
-    
-    setIsLoading(true);
+
+    if (formData.password !== formData.password_confirmation) {
+      toast.warning("Password dan Konfirmasi Password tidak sama!");
+      return;
+    }
+
+    if (formData.tanggal_lahir >= new Date().toISOString().split("T")[0]) {
+      toast.warning("Tanggal Lahir tidak valid!");
+      return;
+    }
 
     try {
-      if (formData.password !== formData.password_confirmation) {
-        toast.warning("Password dan Konfirmasi Password tidak sama!");
-        return;
-      }
-  
-      if (formData.tanggal_lahir > new Date().toISOString().split("T")[0]) {
-        toast.warning("Tanggal Lahir tidak valid!");
-        return;
-      }
-  
-      toast.success("Registrasi berhasil!");
+      await result.mutateAsync(formData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -133,6 +154,7 @@ export default function Register() {
                 <Form.Control
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   type="date"
+                  max={new Date().toISOString().split("T")[0]}
                   placeholder="Masukkan Tanggal Lahir"
                   name="tanggal_lahir"
                   onChange={inputHelper.handleInputChange}
@@ -192,7 +214,7 @@ export default function Register() {
               </Container>
               <Container className="text-center">
                 <Button className="button-custom" type="submit" disabled={isLoading}>
-                  Daftar
+                  {isLoading ? "Loading..." : "Daftar"}
                 </Button>
               </Container>
             </Form>

@@ -7,9 +7,9 @@ const login = async (data) => {
         "Content-Type": "application/json",
       },
     });
-    return response;
+    return response.data;
   } catch (error) {
-    return error.response;
+    throw error.response.data;
   }
 };
 
@@ -24,9 +24,9 @@ const logout = async () => {
         },
       }
     );
-    return response;
+    return response.data;
   } catch (error) {
-    return error.response;
+    throw error.response.data;
   }
 };
 
@@ -37,14 +37,14 @@ const register = async (data) => {
             "Content-Type": "application/json",
         },
     });
-    return response;
+    return response.data;
   } catch (error) {
-    return error.response;
+    throw error.response.data;
   }
 };
 
 const sendEmailForResetPassword = async (data) => {
-  try {
+  try { 
     const response = await useAxios.post("password/email", {}, {
         params: {
             email: data.email,
@@ -53,9 +53,9 @@ const sendEmailForResetPassword = async (data) => {
             "Content-Type": "application/json",
         },
     });
-    return response;
+    return response.data;
   } catch (error) {
-    return error.response;
+    throw error.response.data;
   }
 };
 
@@ -66,9 +66,9 @@ const resetPassword = async (data) => {
             "Content-Type": "application/json",
         },
     });
-    return response;
+    return response.data;
   } catch (error) {
-    return error.response;
+    throw error.response.data;
   }
 };
 

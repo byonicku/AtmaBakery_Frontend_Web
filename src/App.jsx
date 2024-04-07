@@ -27,7 +27,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/reset" element={<ResetPass />} />
-            <Route path="/changePass" element={<ChangePass />} />
+            <Route path="/password/:key" element={<ChangePass />} />
             <Route path="/admin" element={<Dashboard />}>
               <Route path="produk" element={<Produk />} />
               <Route path="bahan_baku" element={<BahanBaku />} />

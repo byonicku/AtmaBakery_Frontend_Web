@@ -1,13 +1,15 @@
+import { useState } from "react";
 import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
 import { useMutation } from '@tanstack/react-query';
+
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import "./css/Auth.css";
-import APIAuth from '@/api/APIAuth.js'
 
-import imageBg from "@/assets/images/bg.png";
-import { useState } from "react";
 import InputHelper from "../InputHelper";
+import APIAuth from "@/api/APIAuth";
+
+import "./css/Auth.css";
+import imageBg from "@/assets/images/bg.png";
 
 export default function ResetPass() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +26,10 @@ export default function ResetPass() {
   };
 
   const result = useMutation({
-    mutationFn: APIAuth.sendEmailForResetPassword,
+    mutationFn: (data) => APIAuth.sendEmailForResetPassword(data),
+    onSuccess: () => {
+      toast.success("Email berhasil dikirim ke " + formData.email + " !");
+    },
     onError: (error) => {
       toast.error(error.message);
     },
@@ -38,9 +43,8 @@ export default function ResetPass() {
 
     try {
       await result.mutateAsync(formData);
-      toast.success("Email berhasil dikirim!");
     } catch (error) {
-      toast.error(result.error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +91,7 @@ export default function ResetPass() {
                   placeholder="Masukkan alamat email"
                   name="email"
                   onChange={inputHelper.handleInputChange}
-                  reqired
+                  required
                 />
               </Form.Group>
               <Container className="text-center">
