@@ -1,4 +1,4 @@
-import { Button, Col, Row, Form, Table, Modal, Badge, InputGroup } from "react-bootstrap";
+import { Button, Col, Row, Form, Table, Modal, Badge, InputGroup, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -15,6 +15,29 @@ export default function ProdukPage() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const listProduk=[
+    {
+      nama: "Lapis Legit",
+      deskripsi: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      kategori: "cake",
+      ukuran: "1",
+      harga: "350000",
+      limit:"10",
+      status:"Pre Order",
+      stok: "0",
+    },
+    {
+      nama: "Lapis Legit",
+      deskripsi: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      kategori: "cake",
+      ukuran: "1/2",
+      harga: "200000",
+      limit:"10",
+      status:"Ready Stock",
+      stok: "2",
+    }
+    ];
 
   return (
     <>
@@ -77,78 +100,52 @@ export default function ProdukPage() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Lapis Legit</td>
-              <td>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur
-              </td>
-              <td>Cake</td>
-              <td>1</td>
-              <td>350000</td>
-              <td>10</td>
-              <td>
-                <Badge bg="primary">Pre Order</Badge>
-              </td>
-              <td>0</td>
-              <td className="text-start">
-                <Button variant="primary" className="me-1">
-                  <BsJournalText className="mb-1" /> Resep{" "}
-                </Button>
-                <Button variant="secondary" className="mx-1">
-                  <BsPencilSquare className="mb-1" /> Ubah
-                </Button>
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#FF5B19" }}
-                  className="mx-1"
-                  onClick={handleShow}
-                >
-                  <BsFillTrash3Fill className="mb-1" /> Hapus
-                </Button>
-              </td>
-            </tr>
-            <tr>
-              <td>Lapis Legit</td>
-              <td>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
-              </td>
-              <td>Titipan</td>
-              <td>1/2</td>
-              <td>200000</td>
-              <td>10</td>
-              <td>
-                <Badge bg="success">Ready Stock</Badge>
-              </td>
-              <td>0</td>
-              <td className="text-start">
-                <Button variant="primary" className="me-1">
-                  <BsJournalText className="mb-1" /> Resep{" "}
-                </Button>
-                <Button variant="secondary" className="mx-1">
-                  <BsPencilSquare className="mb-1" /> Ubah
-                </Button>
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#FF5B19" }}
-                  className="mx-1"
-                  onClick={handleShow}
-                >
-                  <BsFillTrash3Fill className="mb-1" /> Hapus
-                </Button>
-              </td>
-            </tr>
-            {/* nanti abis ini perulangan -- */}
+            {listProduk.map((produk, index) => (
+              <tr key={index}>
+                <td>{produk.nama}</td>
+                <td>{produk.deskripsi}</td>
+                <td>{produk.kategori}</td>
+                <td>{produk.ukuran}</td>
+                <td>{produk.harga}</td>
+                <td>{produk.limit}</td>
+                <td>
+                  {produk.status == "Pre Order" ?
+                    <Badge bg="primary">{produk.status}</Badge>
+                  :
+                    <Badge bg="success">{produk.status}</Badge>
+                  }
+                </td>
+                <td>{produk.stok}</td>
+                <td className="text-start">
+                  <Button variant="primary" className="me-2">
+                    <BsJournalText className="mb-1" /> Resep
+                  </Button>
+                  <Link to='./tambah' className="btn btn-secondary me-2">
+                    <BsPencilSquare className="mb-1" /> Ubah
+                  </Link>
+                  <Button
+                    variant="danger"
+                    style={{ backgroundColor: "#FF5B19" }}
+                    onClick={handleShow}
+                  >
+                    <BsFillTrash3Fill className="mb-1" /> Hapus
+                  </Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
-
+        {listProduk.length == 0 ?
+            <Container className="text-center p-5">
+              <h1 style={{ fontWeight:"bold" }}>Belum Ada Produk Disini</h1>
+              <img 
+                src="https://stickerly.pstatic.net/sticker_pack/av92AOiHUVOzBhObB66Aw/KS87PY/22/393b3119-d2cd-43e5-8f35-c53692674917.png"
+                style={{ 
+                  width:"15em",
+                 }}
+              />
+            </Container>
+            : null}
         <Modal
           show={show}
           onHide={handleClose}

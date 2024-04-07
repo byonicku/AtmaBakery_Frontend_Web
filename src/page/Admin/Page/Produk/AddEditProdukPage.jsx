@@ -1,5 +1,6 @@
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import { Button, Col, Row, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
@@ -178,9 +179,9 @@ export default function AddEditProdukPage({ isEdit }) {
                 <Button variant="success" type="submit">
                   Simpan Produk
                 </Button>
-                <Button className="mx-2" variant="danger">
+                <Link to='/admin/produk' className="btn btn-danger mx-2">
                   Batal Simpan Produk
-                </Button>
+                </Link>
               </Col>
             </Row>
           </Row>

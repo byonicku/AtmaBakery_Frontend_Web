@@ -6,6 +6,7 @@ import {
   Table,
   Modal,
   InputGroup,
+  Container,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -32,6 +33,20 @@ export default function PenitipPage() {
 
   const handleClosePrintModal = () => setshowPrintModal(false);
   const handleShowPrintModal = () => setshowPrintModal(true);
+
+  
+  const listPenitip=[
+  {
+    id: "Penitip01",
+    nama: "Celine Wongso",
+    noTelp: "089765432123",
+  },
+  {
+    id: "Penitip02",
+    nama: "Clayton Pakuwon",
+    noTelp: "089765432123",
+  }
+  ];
 
   return (
     <>
@@ -92,55 +107,44 @@ export default function PenitipPage() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Penitip01</td>
-              <td>Celine Hartono</td>
-              <td>0812345678901</td>
-              <td className="text-start">
-                <Button
-                  variant="primary"
-                  style={{ width: "40%" }}
-                  className="mx-2"
-                  onClick={handleShowAddEditModal}
-                >
-                  <BsPencilSquare className="mb-1" /> Ubah
-                </Button>
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#FF5B19", width: "40%" }}
-                  className="mx-2"
-                  onClick={handleShowDelModal}
-                >
-                  <BsFillTrash3Fill className="mb-1" /> Hapus
-                </Button>
-              </td>
-            </tr>
-            <tr>
-              <td>Penitip02</td>
-              <td>Clayton Pakuwon</td>
-              <td>0898765432122</td>
-              <td className="text-start">
-                <Button
-                  variant="primary"
-                  style={{ width: "40%" }}
-                  className="mx-2"
-                  onClick={handleShowAddEditModal}
-                >
-                  <BsPencilSquare className="mb-1" /> Ubah
-                </Button>
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#FF5B19", width: "40%" }}
-                  className="mx-2"
-                  onClick={handleShowDelModal}
-                >
-                  <BsFillTrash3Fill className="mb-1" /> Hapus
-                </Button>
-              </td>
-            </tr>
-            {/* nanti abis ini perulangan -- */}
+            {listPenitip.map((penitip, index) => (
+              <tr key={index}>
+                <td>{penitip.id}</td>
+                <td>{penitip.nama}</td>
+                <td>{penitip.noTelp}</td>
+                <td className="text-start">
+                  <Button
+                    variant="primary"
+                    style={{ width: "40%" }}
+                    className="mx-2"
+                    onClick={handleShowAddEditModal}
+                  >
+                    <BsPencilSquare className="mb-1" /> Ubah
+                  </Button>
+                  <Button
+                    variant="danger"
+                    style={{ backgroundColor: "#FF5B19", width: "40%" }}
+                    className="mx-2"
+                    onClick={handleShowDelModal}
+                  >
+                    <BsFillTrash3Fill className="mb-1" /> Hapus
+                  </Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
+        {listPenitip.length == 0 ?
+            <Container className="text-center p-5">
+              <h1 style={{ fontWeight:"bold" }}>Belum Ada Penitip Disini</h1>
+              <img 
+                src="https://stickerly.pstatic.net/sticker_pack/av92AOiHUVOzBhObB66Aw/KS87PY/22/393b3119-d2cd-43e5-8f35-c53692674917.png"
+                style={{ 
+                  width:"15em",
+                 }}
+              />
+            </Container>
+            : null}
 
         {/* ini modal modalnya */}
         <Modal
