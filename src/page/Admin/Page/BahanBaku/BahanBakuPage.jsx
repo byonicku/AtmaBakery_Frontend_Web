@@ -8,14 +8,12 @@ import {
     InputGroup,
     Container,
   } from "react-bootstrap";
-  import { Link } from "react-router-dom";
   import { useState } from "react";
   import {
     BsSearch,
     BsPlusSquare,
     BsPencilSquare,
     BsFillTrash3Fill,
-    BsJournalText,
     BsPrinterFill,
   } from "react-icons/bs";
   import OutlerHeader from "@/component/Admin/OutlerHeader";

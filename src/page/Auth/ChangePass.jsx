@@ -1,5 +1,4 @@
 import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
 
 import "./css/Auth.css";
 

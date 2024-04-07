@@ -5,6 +5,26 @@ import "./css/Auth.css";
 import imageBg from "@/assets/images/bg.png";
 
 export default function Register() {
+  const [formData, setFormData] = useState({
+    nama: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+    no_telp: "",
+    tanggal_lahir: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    console.log(formData);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+  }
+
   return (
     <div className="bg-half">
       <Container>
