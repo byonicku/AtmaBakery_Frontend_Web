@@ -49,10 +49,10 @@ export default function PenitipPage() {
             md="6"
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
-            <Link to="./tambah" className="btn btn-success me-2">
+            <Button variant="success" onClick={handleShowAddEditModal} className="me-2">
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
-            </Link>
+            </Button>
             <Button variant="secondary" onClick={handleShowPrintModal}>
               <BsPrinterFill className="mb-1 me-2" />
               Print Laporan
