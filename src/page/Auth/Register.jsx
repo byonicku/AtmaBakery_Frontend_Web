@@ -1,10 +1,13 @@
 import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
-import "./css/Auth.css";
+import { toast } from "sonner";
+import { useState } from "react";
+import InputHelper from "../InputHelper";
 import imageBg from "@/assets/images/bg.png";
+import "./css/Auth.css";
 
 export default function Register() {
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     nama: "",
     email: "",
@@ -14,26 +17,62 @@ export default function Register() {
     tanggal_lahir: "",
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    console.log(formData);
+  const validationSchema = {
+    nama: { required: true, alias: "Nama Lengkap" },
+    email: {
+      required: true,
+      alias: "Email",
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    },
+    password: { required: true, alias: "Kata Sandi", minLength: 8 },
+    password_confirmation: { required: true, alias: "Konfirmasi Kata Sandi" },
+    no_telp: {
+      required: true,
+      alias: "Nomor Telepon",
+      minLength: 10,
+      maxLength: 13,
+      pattern: /^(?:\+?08)(?:\d{2,3})?[ -]?\d{3,4}[ -]?\d{4}$/,
+    },
+    tanggal_lahir: { required: true, alias: "Tanggal Lahir" },
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-  }
+  const onSubmit = (formData) => {
+    if (isLoading) return;
+    
+    setIsLoading(true);
+
+    try {
+      if (formData.password !== formData.password_confirmation) {
+        toast.warning("Password dan Konfirmasi Password tidak sama!");
+        return;
+      }
+  
+      if (formData.tanggal_lahir > new Date().toISOString().split("T")[0]) {
+        toast.warning("Tanggal Lahir tidak valid!");
+        return;
+      }
+  
+      toast.success("Registrasi berhasil!");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const inputHelper = new InputHelper(
+    formData,
+    setFormData,
+    validationSchema,
+    onSubmit
+  );
 
   return (
     <div className="bg-half">
-      <Container>
-        <Row className="m-5 no-gutters shadow-lg rounded h-auto">
-          <Col sm className="p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
-            <Image
-              src={imageBg}
-              className="p-0 m-0 rounded left-img"
-            />
+      <Container className="container-setting">
+        <Row className="no-gutters shadow-lg rounded h-auto">
+          <Col sm className="remove p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
+            <Image src={imageBg} className="p-0 m-0 rounded left-img" />
           </Col>
           <Col sm style={{ backgroundColor: "#FFFFFF" }}>
             <div className="pt-5 px-5" style={{ color: "black" }}>
@@ -47,7 +86,7 @@ export default function Register() {
               </p>
             </div>
 
-            <Form className="px-5 py-2">
+            <Form className="px-5 py-2" onSubmit={inputHelper.handleSubmit}>
               <Form.Group>
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                   Email
@@ -56,6 +95,9 @@ export default function Register() {
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   type="email"
                   placeholder="Masukkan alamat email"
+                  name="email"
+                  onChange={inputHelper.handleInputChange}
+                  required
                 />
               </Form.Group>
               <Form.Group className="mt-3">
@@ -66,6 +108,9 @@ export default function Register() {
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   type="text"
                   placeholder="Masukkan nama lengkap"
+                  name="nama"
+                  onChange={inputHelper.handleInputChange}
+                  required
                 />
               </Form.Group>
               <Form.Group className="mt-3">
@@ -76,6 +121,9 @@ export default function Register() {
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   type="text"
                   placeholder="Masukkan nomor telepon"
+                  name="no_telp"
+                  onChange={inputHelper.handleInputChange}
+                  required
                 />
               </Form.Group>
               <Form.Group className="mt-3">
@@ -86,6 +134,9 @@ export default function Register() {
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   type="date"
                   placeholder="Masukkan Tanggal Lahir"
+                  name="tanggal_lahir"
+                  onChange={inputHelper.handleInputChange}
+                  required
                 />
               </Form.Group>
               <Form.Group className="mt-3">
@@ -96,6 +147,9 @@ export default function Register() {
                   type="password"
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   placeholder="Masukkan kata sandi"
+                  name="password"
+                  onChange={inputHelper.handleInputChange}
+                  required
                 />
               </Form.Group>
               <Form.Group className="mt-3">
@@ -106,16 +160,20 @@ export default function Register() {
                   type="password"
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   placeholder="Masukkan kembali kata sandi"
+                  name="password_confirmation"
+                  onChange={inputHelper.handleInputChange}
+                  required
                 />
               </Form.Group>
               <Container className="mt-3 d-flex justify-content-start">
                 <Form.Check
+                  required
                   style={{ color: "#ADADAD", fontSize: "0.8em" }}
                   label={
                     <p>
                       <span>
                         Dengan mencentang kotak centang ini, Anda telah
-                        menyetujui
+                        menyetujui{" "}
                       </span>
                       <span>
                         <a href="#" style={{ textDecoration: "none" }}>
@@ -133,7 +191,7 @@ export default function Register() {
                 />
               </Container>
               <Container className="text-center">
-                <Button className="button-custom w-75 mx-5 h-25" type="submit">
+                <Button className="button-custom" type="submit" disabled={isLoading}>
                   Daftar
                 </Button>
               </Container>

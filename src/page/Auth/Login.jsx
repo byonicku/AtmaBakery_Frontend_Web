@@ -8,9 +8,9 @@ import imageBg from "@/assets/images/bg.png";
 export default function Login() {
   return (
     <div className="bg-half">
-      <Container>
-        <Row className="m-5 no-gutters shadow-lg rounded h-auto">
-          <Col sm className="p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
+      <Container className="container-setting">
+        <Row className="no-gutters shadow-lg rounded h-auto">
+          <Col sm className="remove p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
             <Image
               src={imageBg}
               className="p-0 m-0 rounded left-img"
@@ -55,7 +55,7 @@ export default function Login() {
 
               <Container className="text-center">
                 <Button
-                  className="button-custom w-75 mx-5 my-3 h-25"
+                  className="button-custom"
                   type="submit"
                 >
                   Masuk

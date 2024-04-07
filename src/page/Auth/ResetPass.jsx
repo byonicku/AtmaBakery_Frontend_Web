@@ -1,16 +1,63 @@
 import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
+import { useMutation } from '@tanstack/react-query';
 import { Link } from "react-router-dom";
-
+import { toast } from "sonner";
 import "./css/Auth.css";
+import APIAuth from '@/api/APIAuth.js'
 
 import imageBg from "@/assets/images/bg.png";
+import { useState } from "react";
+import InputHelper from "../InputHelper";
 
 export default function ResetPass() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+  });
+
+  const validationSchema = {
+    email: {
+      required: true,
+      alias: "Email",
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    },
+  };
+
+  const result = useMutation({
+    mutationFn: APIAuth.sendEmailForResetPassword,
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onMutate: () => {
+      setIsLoading(true);
+    },
+  });
+
+  const onSubmit = async (formData) => {
+    if (isLoading) return;
+
+    try {
+      await result.mutateAsync(formData);
+      toast.success("Email berhasil dikirim!");
+    } catch (error) {
+      toast.error(result.error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const inputHelper = new InputHelper(
+    formData,
+    setFormData,
+    validationSchema,
+    onSubmit
+  );
+  
   return (
     <div className="bg-half">
-      <Container>
-        <Row className="m-5 no-gutters shadow-lg rounded h-auto">
-          <Col sm className="p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
+      <Container className="container-setting">
+        <Row className="no-gutters shadow-lg rounded h-auto">
+          <Col sm className="remove p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
             <Image
               src={imageBg}
               className="p-0 m-0 rounded left-img"
@@ -29,8 +76,8 @@ export default function ResetPass() {
               </p>
             </div>
 
-            <Form className="px-5 py-4">
-              <Form.Group>
+            <Form className="px-5 py-4" onSubmit={inputHelper.handleSubmit}>
+              <Form.Group className="pb-3">
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                   Email
                 </Form.Label>
@@ -38,14 +85,18 @@ export default function ResetPass() {
                   style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
                   type="email"
                   placeholder="Masukkan alamat email"
+                  name="email"
+                  onChange={inputHelper.handleInputChange}
+                  reqired
                 />
               </Form.Group>
               <Container className="text-center">
                 <Button
-                  className="button-custom w-75 mx-5 my-5 h-25"
+                  className="button-custom"
                   type="submit"
+                  disabled={isLoading}
                 >
-                  Kirim Email
+                  { isLoading ? "Loading..." : "Kirim Email" }
                 </Button>
               </Container>
             </Form>
