@@ -3,6 +3,7 @@
     min-height: 100vh;
     overflow: hidden;
     align-content: center;
+    vertical-align: middle;
 }
 
 .button-custom {
