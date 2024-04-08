@@ -6,11 +6,10 @@ import {
   Table,
   Modal,
   InputGroup,
-  Container,
   Spinner,
 } from "react-bootstrap";
-import { useEffect,useState } from "react";
-import { useMutation } from '@tanstack/react-query';
+import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import InputHelper from "@/page/InputHelper";
@@ -24,40 +23,61 @@ import {
 
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIPenitip from "@/api/APIPenitip";
+import NotFound from "@/component/Admin/NotFound";
 
 export default function PenitipPage() {
   const [showDelModal, setShowDelModal] = useState(false);
   const [showPrintModal, setshowPrintModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedPenitip, setSelectedPenitip] = useState(null);
+  const [search, setSearch] = useState("");
   
-  const [Penitip, setPenitip] = useState([]); 
-  const [selectedPenitipId, setSelectedPenitipId] = useState(null);
+  const [originalPenitip, setOriginalPenitip] = useState([]);
+  const [penitip, setPenitip] = useState([]);
+  const [mode, setMode] = useState("add");
 
-
-  const handleCloseDelModal = () => {
-    setShowDelModal(false);
-    setSelectedPenitipId(null);
-  }
+  const handleCloseDelModal = () => setShowDelModal(false);
   const handleShowDelModal = () => setShowDelModal(true);
 
-  const handleCloseAddEditModal = () => {
-    setShowAddEditModal(false);
-    {selectedPenitipId ? 
-      setSelectedPenitipId(null)
-      :
-      null
-    }
-    setFormData({
-      nama: "",
-      no_telp: ""
-    });
-  }
+  const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
 
   const handleClosePrintModal = () => setshowPrintModal(false);
   const handleShowPrintModal = () => setshowPrintModal(true);
 
+  // Fetch penitip
+  const fetchPenitip = async () => {
+    try {
+      const response = await APIPenitip.getAllPenitip();
+      setPenitip(response);
+      setOriginalPenitip(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Pas masuk load penitip
+  useEffect(() => {
+    fetchPenitip();
+  }, []);
+
+  useEffect(() => {
+    if (search) {
+      const filtered = originalPenitip.filter((penitip) =>
+        penitip.nama.toLowerCase().includes(search.toLowerCase()) ||
+        penitip.no_telp.toLowerCase().includes(search.toLowerCase()) ||
+        penitip.id_penitip.toString().includes(search.toLocaleLowerCase())
+      );
+      setPenitip(filtered);
+    } else {
+      setPenitip(originalPenitip);
+    }
+  }, [search, penitip, originalPenitip]);
+
+  // CRUD Penitip
   const [formData, setFormData] = useState({
     nama: "",
     no_telp: "",
@@ -68,106 +88,89 @@ export default function PenitipPage() {
       required: true,
       alias: "Nama Penitip",
     },
-    no_telp: { required: true, alias: "Nomor Telepon" },
+    no_telp: {
+      required: true,
+      alias: "Nomor Telepon",
+      minLength: 10,
+      maxLength: 13,
+      pattern: /^(?:\+?08)(?:\d{2,3})?[ -]?\d{3,4}[ -]?\d{4}$/,
+    },
   };
 
   //ini tambah dan edit penitip nya
-  const result = useMutation({
-    mutationFn: (data) => {
-      if (selectedPenitipId) {
-        return APIPenitip.UpdatePenitip(data, selectedPenitipId);
-      } else {
-        return APIPenitip.CreatePenitip(data); 
-      }
-    },
-    onSuccess: () => {
-      if (selectedPenitipId) {
-        toast.success("Edit Penitip berhasil!"); 
-      } else {
-        toast.success("Tambah Penitip berhasil!");
-      }
+  const add = useMutation({
+    mutationFn: (data) => APIPenitip.createPenitip(data),
+    onSuccess: async () => {
+      toast.success("Tambah Penitip berhasil!");
       handleCloseAddEditModal();
-      setFormData({
-        nama: "",
-        no_telp: ""
-      });
-      fetchPenitip();
-      setTimeout(() => {
-      }, 250);
     },
     onError: (error) => {
       toast.error(error.message);
     },
-    onMutate: () => {
-      setIsLoading(true);
+  });
+
+  const edit = useMutation({
+    mutationFn: (data) =>
+      APIPenitip.updatePenitip(data, selectedPenitip.id_penitip),
+    onSuccess: async () => {
+      toast.success("Edit Penitip berhasil!");
+      handleCloseAddEditModal();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const del = useMutation({
+    mutationFn: (id) => APIPenitip.deletePenitip(id),
+    onSuccess: async () => {
+      toast.success("Hapus Penitip berhasil!");
+      handleCloseDelModal();
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
   const onSubmit = async (formData) => {
     if (isLoading) return;
-    
+
     try {
-      await result.mutateAsync(formData);
+      if (mode === "add") {
+        await add.mutateAsync(formData);
+        return;
+      }
+
+      if (mode === "edit") {
+        await edit.mutateAsync(formData);
+        return;
+      }
+
+      if (mode === "delete") {
+        await del.mutateAsync(selectedPenitip.id_penitip);
+        return;
+      }
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsLoading(true);
+      fetchPenitip();
+      setTimeout(() => {
+        setSelectedPenitip(null);
+        setFormData({
+          nama: "",
+          no_telp: "",
+        });
+      }, 125);
     }
   };
 
-  
   const inputHelper = new InputHelper(
     formData,
     setFormData,
     validationSchema,
     onSubmit
   );
-
-  const fetchPenitip = async () => {
-    try{
-      setIsLoading(true);
-      APIPenitip.GetAllPenitip()
-        .then((data) => {
-          setPenitip(data);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
-    }
-    
-  };
-
-  //ini delete data penitip
-  const deletePenitip = (id) => { 
-    setIsLoading(true); 
-    APIPenitip.DeletePenitip(id).then(() => { 
-      setIsLoading(false); 
-      toast.success("Delete Penitip Berhasil"); 
-      handleCloseDelModal();
-      fetchPenitip();
-    }).catch((error) => { 
-      console.log(error); 
-      setIsLoading(false); 
-      toast.error(error.message); 
-    }) 
-  } 
-
-  // ini read data penitip
-  useEffect(() => { 
-    setIsLoading(true); 
-    APIPenitip.GetAllPenitip() 
-      .then((data) => { 
-        setPenitip(data); 
-        setIsLoading(false); 
-      }) 
-      .catch((err) => { 
-        console.log(err); 
-      }); 
-  }, []);
 
   return (
     <>
@@ -185,7 +188,18 @@ export default function PenitipPage() {
             md="6"
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
-            <Button variant="success" onClick={handleShowAddEditModal} className="me-2">
+            <Button
+              variant="success"
+              onClick={() => {
+                handleShowAddEditModal();
+                setMode("add");
+                setFormData({
+                  nama: "",
+                  no_telp: "",
+                });
+              }}
+              className="me-2"
+            >
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
             </Button>
@@ -202,102 +216,103 @@ export default function PenitipPage() {
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <InputGroup>
-              <Form.Control type="text" placeholder="Cari Penitip disini" />
+              <Form.Control type="text" placeholder="Cari Penitip disini" name="search" onChange={(e) => setSearch(e.target.value)}/>
               <Button variant="secondary">
                 <BsSearch />
               </Button>
             </InputGroup>
           </Col>
         </Row>
-      {isLoading ? ( 
-        <div className="text-center"> 
-          <Spinner 
-            as="span" 
-            animation="border" 
-            variant="primary" 
-            size="lg" 
-            role="status" 
-            aria-hidden="true" 
-          /> 
-          <h6 className="mt-2 mb-0">Loading...</h6> 
-        </div>
-      ) : Penitip?.length > 0 ? ( 
-        <Table className="table-striped">
-          <thead>
-            <tr>
-              <th style={{ width: "25%" }} className="th-style">
-                ID Penitip
-              </th>
-              <th style={{ width: "25%" }} className="th-style">
-                Nama
-              </th>
-              <th style={{ width: "25%" }} className="th-style">
-                Nomor Telepon
-              </th>
-              <th style={{ width: "25%" }} className="th-style">
-                Aksi
-              </th>
-            </tr>
-          </thead>
+        {isLoading ? (
+          <div className="text-center">
+            <Spinner
+              as="span"
+              animation="border"
+              variant="primary"
+              size="lg"
+              role="status"
+              aria-hidden="true"
+            />
+            <h6 className="mt-2 mb-0">Loading...</h6>
+          </div>
+        ) : penitip?.length > 0 ? (
+          <>
+            <Table className="table-striped">
+              <thead>
+                <tr>
+                  <th style={{ width: "25%" }} className="th-style">
+                    ID Penitip
+                  </th>
+                  <th style={{ width: "25%" }} className="th-style">
+                    Nama
+                  </th>
+                  <th style={{ width: "25%" }} className="th-style">
+                    Nomor Telepon
+                  </th>
+                  <th style={{ width: "25%" }} className="th-style">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
 
-          <tbody>
-            {Penitip?.map((penitip, index) => (
-              <tr key={index}>
-                <td>{penitip.id_penitip}</td>
-                <td>{penitip.nama}</td>
-                <td>{penitip.no_telp}</td>
-                <td className="text-start">
-                  <Button
-                    variant="primary"
-                    style={{ width: "40%" }}
-                    className="mx-2"
-                    onClick={() => {
-                      setSelectedPenitipId(penitip.id_penitip);
-                      setFormData({
-                        nama: penitip.nama,
-                        no_telp: penitip.no_telp
-                      });
-                      handleShowAddEditModal();
-                    }}
-                  >
-                    <BsPencilSquare className="mb-1" /> Ubah
-                  </Button>
-                  <Button
-                    variant="danger"
-                    style={{ backgroundColor: "#FF5B19", width: "40%" }}
-                    className="mx-2"
-                    onClick={() => {
-                      setSelectedPenitipId(penitip.id_penitip);
-                      handleShowDelModal();
-                    }}
-                  >
-                    <BsFillTrash3Fill className="mb-1" /> Hapus
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+              <tbody>
+                {penitip.map((penitip, index) => (
+                  <tr key={index}>
+                    <td>{penitip.id_penitip}</td>
+                    <td>{penitip.nama}</td>
+                    <td>{penitip.no_telp}</td>
+                    <td className="text-start">
+                      <Button
+                        variant="primary"
+                        style={{ width: "40%" }}
+                        className="mx-2"
+                        onClick={() => {
+                          setSelectedPenitip(penitip);
+                          setMode("edit");
+                          setFormData({
+                            nama: penitip.nama,
+                            no_telp: penitip.no_telp,
+                          });
+                          handleShowAddEditModal();
+                        }}
+                      >
+                        <BsPencilSquare className="mb-1" /> Ubah
+                      </Button>
+                      <Button
+                        variant="danger"
+                        style={{ backgroundColor: "#FF5B19", width: "40%" }}
+                        className="mx-2"
+                        onClick={() => {
+                          setSelectedPenitip(penitip);
+                          setMode("delete");
+                          handleShowDelModal();
+                        }}
+                      >
+                        <BsFillTrash3Fill className="mb-1" /> Hapus
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </>
         ) : (
-          <Container className="text-center p-5">
-            <h1 style={{ fontWeight:"bold" }}>Belum Ada Penitip Disini</h1>
-              <img 
-                src="https://stickerly.pstatic.net/sticker_pack/av92AOiHUVOzBhObB66Aw/KS87PY/22/393b3119-d2cd-43e5-8f35-c53692674917.png"
-                style={{ 
-                  width:"15em",
-                 }}
-              />
-            </Container>
+          <NotFound />
         )}
-          
+
         {/* ini modal modalnya */}
         <Modal
           show={showDelModal}
-          onHide={handleCloseDelModal}
-          animation={false}
+          onHide={() => {
+            handleCloseDelModal();
+            setSelectedPenitip(null);
+            setMode("add");
+          }}
           centered
           size="lg"
           style={{ border: "none" }}
+          keyboard={false}
+          backdrop="static"
         >
           <Modal.Body className="text-center p-5">
             <h3 style={{ fontWeight: "bold" }}>
@@ -317,8 +332,11 @@ export default function PenitipPage() {
                 <Button
                   style={{ backgroundColor: "#FF5B19", border: "none" }}
                   className="mx-2 w-100 p-1"
-                  onClick={handleCloseDelModal}
-                  disabled={isLoading}
+                  onClick={() => {
+                    handleCloseDelModal();
+                    setSelectedPenitip(null);
+                  }}
+                  disabled={del.isPending}
                 >
                   <h5 className="mt-2">Batal</h5>
                 </Button>
@@ -327,12 +345,12 @@ export default function PenitipPage() {
                 <Button
                   style={{ backgroundColor: "#F48E28", border: "none" }}
                   className="mx-2 w-100 p-1"
-                  onClick={() => {
-                    deletePenitip(selectedPenitipId);
-                  }}
-                  disabled={isLoading}
-                  >
-                    <h5 className="mt-2">{isLoading ? "Loading..." : "Hapus"}</h5>
+                  onClick={() => onSubmit()}
+                  disabled={del.isPending}
+                >
+                  <h5 className="mt-2">
+                    {del.isPending ? "Loading..." : "Hapus"}
+                  </h5>
                 </Button>
               </Col>
             </Row>
@@ -342,9 +360,10 @@ export default function PenitipPage() {
         <Modal
           show={showPrintModal}
           onHide={handleClosePrintModal}
-          animation={false}
           centered
           style={{ border: "none" }}
+          keyboard={false}
+          backdrop="static"
         >
           <Form>
             <Modal.Body className="text-center p-4 m-2">
@@ -393,22 +412,23 @@ export default function PenitipPage() {
 
         <Modal
           show={showAddEditModal}
-          onHide={() => {
-            
-            handleCloseAddEditModal();
-          }}
-          animation={false}
           centered
           style={{ border: "none" }}
+          keyboard={false}
+          backdrop="static"
         >
           <Form onSubmit={inputHelper.handleSubmit}>
             <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>{selectedPenitipId ? "Edit Data Penitip" : "Tambah Data Penitip"}</h4>
+              <h4 style={{ fontWeight: "bold" }}>
+                {selectedPenitip ? "Edit Data Penitip" : "Tambah Data Penitip"}
+              </h4>
               <p
                 style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
                 className="mt-1"
               >
-                {selectedPenitipId ? "Pastikan data penitip yang Anda tambahkan benar" : "Pastikan data penitip yang Anda ubahkan benar" }
+                {selectedPenitip
+                  ? "Pastikan data penitip yang Anda tambahkan benar"
+                  : "Pastikan data penitip yang Anda ubahkan benar"}
               </p>
               <Form.Group className="text-start mt-3">
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -419,8 +439,7 @@ export default function PenitipPage() {
                   type="text"
                   placeholder="Masukkan nama penitip"
                   name="nama"
-                  disabled={isLoading}
-                  value={formData.nama || ""}
+                  value={formData.nama || selectedPenitip?.nama || ""}
                   onChange={inputHelper.handleInputChange}
                 />
               </Form.Group>
@@ -433,8 +452,7 @@ export default function PenitipPage() {
                   type="text"
                   placeholder="Masukkan nomor telepon"
                   name="no_telp"
-                  disabled={isLoading}
-                  value={formData.no_telp || ""}
+                  value={formData.no_telp || selectedPenitip?.no_telp || ""}
                   onChange={inputHelper.handleInputChange}
                 />
               </Form.Group>
@@ -443,8 +461,13 @@ export default function PenitipPage() {
                   <Button
                     style={{ backgroundColor: "#FF5B19", border: "none" }}
                     className="w-100"
-                    onClick={handleCloseAddEditModal}
-                    disabled={isLoading}
+                    onClick={() => {
+                      handleCloseAddEditModal();
+                      setTimeout(() => {
+                        setSelectedPenitip(null);
+                      }, 125);
+                    }}
+                    disabled={add.isPending || edit.isPending}
                   >
                     Batal
                   </Button>
@@ -454,9 +477,9 @@ export default function PenitipPage() {
                     style={{ backgroundColor: "#F48E28", border: "none" }}
                     className="w-100"
                     type="submit"
-                    disabled={isLoading}
-                    >
-                      {isLoading ? "Loading..." : "Simpan"}
+                    disabled={add.isPending || edit.isPending}
+                  >
+                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
                   </Button>
                 </Col>
               </Row>

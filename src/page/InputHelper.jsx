@@ -10,8 +10,7 @@ class InputHelper {
 
   handleInputChange = (e) => {
     const { name, value } = e.target;
-    const trimmedValue = value.trim();
-    this.setFormData({ ...this.formData, [name]: trimmedValue });
+    this.setFormData({ ...this.formData, [name]: value });
   };
 
   validateForm = () => {
@@ -51,6 +50,10 @@ class InputHelper {
   handleSubmit = (e) => {
     e.preventDefault();
     if (this.validateForm()) {
+      this.formData = Object.fromEntries(
+        Object.entries(this.formData).map(([key, value]) => [key, value.trim()])
+      );
+
       this.onSubmit(this.formData);
     }
   };

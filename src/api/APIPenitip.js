@@ -1,6 +1,6 @@
 import useAxios from "./APIConstant.js";
 
-const GetAllPenitip = async () => { 
+const getAllPenitip = async () => { 
     try { 
       const response = await useAxios.get("/penitip", { 
         headers: { 
@@ -14,7 +14,24 @@ const GetAllPenitip = async () => {
     } 
 };
 
-const CreatePenitip = async (data) => { 
+const getPenitipByPage = async (page = 0) => { 
+  try { 
+    const response = await useAxios.get("/paginate/penitip", {
+      params: {
+        page: page,
+      }, 
+      headers: { 
+        "Content-Type": "application/json", 
+      //   Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
+      }, 
+    }); 
+    return response.data.data; 
+  } catch (error) { 
+    throw error.response.data; 
+  } 
+};
+
+const createPenitip = async (data) => { 
   try { 
     const response = await useAxios.post("/penitip", data, { 
       headers: { 
@@ -28,10 +45,9 @@ const CreatePenitip = async (data) => {
   } 
 }; 
 
-const UpdatePenitip = async (values, id_penitip) => { 
+const updatePenitip = async (data, id_penitip) => { 
   try { 
-    console.log(id_penitip, values.no_telp);
-    const response = await useAxios.put(`/penitip/${id_penitip}`, values, { 
+    const response = await useAxios.put(`/penitip/${id_penitip}`, data, { 
       headers: { 
         "Content-Type": "application/json", 
         // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
@@ -43,10 +59,8 @@ const UpdatePenitip = async (values, id_penitip) => {
   } 
 }; 
 
-const DeletePenitip = async (id) => { 
-  await new Promise((resolve) => setTimeout(resolve, 1000)); 
- 
-  try { 
+const deletePenitip = async (id) => { 
+    try { 
     const response = await useAxios.delete(`/penitip/${id}`, { 
       headers: { 
         "Content-Type": "application/json", 
@@ -60,10 +74,11 @@ const DeletePenitip = async (id) => {
 }; 
 
 const APIPenitip = {
-  GetAllPenitip,
-  CreatePenitip,
-  UpdatePenitip,
-  DeletePenitip,
+  getAllPenitip,
+  getPenitipByPage,
+  createPenitip,
+  updatePenitip,
+  deletePenitip,
 };
 
 export default APIPenitip;

@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import InputHelper from "../InputHelper";
+import InputHelper from "@/page/InputHelper";
 import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
@@ -47,7 +47,7 @@ export default function Login() {
 
   const onSubmit = async (formData) => {
     if (isLoading) return;
-    
+  
     try {
       await result.mutateAsync(formData);
     } catch (error) {

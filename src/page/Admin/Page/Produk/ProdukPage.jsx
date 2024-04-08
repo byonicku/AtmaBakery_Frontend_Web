@@ -1,4 +1,4 @@
-import { Button, Col, Row, Form, Table, Modal, Badge, InputGroup, Container } from "react-bootstrap";
+import { Button, Col, Row, Form, Table, Modal, Badge, InputGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -9,6 +9,7 @@ import {
   BsJournalText,
 } from "react-icons/bs";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
+import NotFound from "@/component/Admin/NotFound";
 
 export default function ProdukPage() {
   const [show, setShow] = useState(false);
@@ -136,23 +137,16 @@ export default function ProdukPage() {
           </tbody>
         </Table>
         {listProduk.length == 0 ?
-            <Container className="text-center p-5">
-              <h1 style={{ fontWeight:"bold" }}>Belum Ada Produk Disini</h1>
-              <img 
-                src="https://stickerly.pstatic.net/sticker_pack/av92AOiHUVOzBhObB66Aw/KS87PY/22/393b3119-d2cd-43e5-8f35-c53692674917.png"
-                style={{ 
-                  width:"15em",
-                 }}
-              />
-            </Container>
+            <NotFound />
             : null}
         <Modal
           show={show}
           onHide={handleClose}
-          animation={false}
           centered
           size="lg"
           style={{ border: "none" }}
+          keyboard={false}
+          backdrop="static"
         >
           <Modal.Body className="text-center p-5">
             <h3 style={{ fontWeight: "bold" }}>

@@ -17,6 +17,7 @@ import {
     BsPrinterFill,
   } from "react-icons/bs";
   import OutlerHeader from "@/component/Admin/OutlerHeader";
+import NotFound from "@/component/Admin/NotFound";
   
   export default function BahanBakuPage() {
     const [showDelModal, setShowDelModal] = useState(false);
@@ -129,15 +130,7 @@ import {
             </tbody>
           </Table>
           {listBahanBaku.length == 0 ?
-              <Container className="text-center p-5">
-                <h1 style={{ fontWeight:"bold" }}>Belum Ada Bahan Baku Disini</h1>
-                <img 
-                  src="https://stickerly.pstatic.net/sticker_pack/av92AOiHUVOzBhObB66Aw/KS87PY/22/393b3119-d2cd-43e5-8f35-c53692674917.png"
-                  style={{ 
-                    width:"15em",
-                   }}
-                />
-              </Container>
+             <NotFound />
               : null}
   
           {/* ini modal modalnya */}

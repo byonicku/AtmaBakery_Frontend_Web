@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
-import InputHelper from "../InputHelper";
+import InputHelper from "@/page/InputHelper";
 import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
