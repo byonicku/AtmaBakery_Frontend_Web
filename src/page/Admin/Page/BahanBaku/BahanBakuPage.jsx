@@ -137,10 +137,11 @@ import NotFound from "@/component/Admin/NotFound";
           <Modal
             show={showDelModal}
             onHide={handleCloseDelModal}
-            animation={false}
             centered
             size="lg"
             style={{ border: "none" }}
+            keyboard={false}
+            backdrop="static"
           >
             <Modal.Body className="text-center p-5">
               <h3 style={{ fontWeight: "bold" }}>
@@ -180,9 +181,10 @@ import NotFound from "@/component/Admin/NotFound";
           <Modal
             show={showPrintModal}
             onHide={handleClosePrintModal}
-            animation={false}
             centered
             style={{ border: "none" }}
+            keyboard={false}
+            backdrop="static"
           >
             <Form>
               <Modal.Body className="text-center p-4 m-2">
@@ -241,10 +243,11 @@ import NotFound from "@/component/Admin/NotFound";
   
           <Modal
             show={showAddEditModal}
-            onHide={handleCloseAddEditModal}
-            animation={false}
+            onHide={handleCloseAddEditModal}            
             centered
             style={{ border: "none" }}
+            keyboard={false}
+            backdrop="static"
           >
             <Form>
               <Modal.Body className="text-center p-4 m-2">
