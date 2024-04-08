@@ -120,7 +120,7 @@ export default function ProdukPage() {
                   <Button variant="primary" className="me-2">
                     <BsJournalText className="mb-1" /> Resep
                   </Button>
-                  <Link to='./tambah' className="btn btn-secondary me-2">
+                  <Link to='./edit' className="btn btn-secondary me-2">
                     <BsPencilSquare className="mb-1" /> Ubah
                   </Link>
                   <Button
