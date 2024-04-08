@@ -48,7 +48,12 @@ export default function ResetPass() {
 
   const onSubmit = async (formData) => {
     if (isLoading) return;
-    console.log(formData);
+    
+    if (formData.password !== formData.password_confirmation) {
+      toast.warning("Password dan Konfirmasi Password tidak sama!");
+      return;
+    }
+
     try {
       await result.mutateAsync(formData);
     } catch (error) {
