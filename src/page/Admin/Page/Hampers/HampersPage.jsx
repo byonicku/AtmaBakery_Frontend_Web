@@ -18,9 +18,8 @@ import {
   } from "react-icons/bs";
   import OutlerHeader from "@/component/Admin/OutlerHeader";
   
-  export default function BahanBakuPage() {
+  export default function HampersPage() {
     const [showDelModal, setShowDelModal] = useState(false);
-    const [showPrintModal, setshowPrintModal] = useState(false);
     const [showAddEditModal, setShowAddEditModal] = useState(false);
   
     const handleCloseDelModal = () => setShowDelModal(false);
@@ -28,30 +27,26 @@ import {
   
     const handleCloseAddEditModal = () => setShowAddEditModal(false);
     const handleShowAddEditModal = () => setShowAddEditModal(true);
-  
-    const handleClosePrintModal = () => setshowPrintModal(false);
-    const handleShowPrintModal = () => setshowPrintModal(true);
-  
     
-    const listBahanBaku=[
-    {
-      nama: "Butter",
-      stok: "3950",
-      satuan: "gram",
-    },
-    {
-        nama: "Creamer",
-        stok: "345",
-        satuan: "gram",
-    }
-    ];
+    // const listBahanBaku=[
+    // {
+    //   nama: "Butter",
+    //   stok: "3950",
+    //   satuan: "gram",
+    // },
+    // {
+    //     nama: "Creamer",
+    //     stok: "345",
+    //     satuan: "gram",
+    // }
+    // ];
   
     return (
       <>
         <OutlerHeader
-          title="Kelola Data Bahan Baku"
-          desc="Lakukan pengelolaan data bahan baku Atma Bakery"
-          breadcrumb="Bahan Baku"
+          title="Kelola Data Hampers"
+          desc="Lakukan pengelolaan data hampers Atma Bakery"
+          breadcrumb="Hampers"
         />
         <section className="content px-3">
           <Row className="pb-3">
@@ -75,14 +70,15 @@ import {
               className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
             >
               <InputGroup>
-                <Form.Control type="text" placeholder="Cari Bahan Baku disini" />
+                <Form.Control type="text" placeholder="Cari Hampers disini" />
                 <Button variant="secondary">
                   <BsSearch />
                 </Button>
               </InputGroup>
             </Col>
           </Row>
-  
+
+          {/* edit mulai dari sini */}
           <Table className="table-striped">
             <thead>
               <tr>
@@ -130,7 +126,7 @@ import {
           </Table>
           {listBahanBaku.length == 0 ?
               <Container className="text-center p-5">
-                <h1 style={{ fontWeight:"bold" }}>Belum Ada Bahan Baku Disini</h1>
+                <h1 style={{ fontWeight:"bold" }}>Belum Ada Hampers Disini</h1>
                 <img 
                   src="https://stickerly.pstatic.net/sticker_pack/av92AOiHUVOzBhObB66Aw/KS87PY/22/393b3119-d2cd-43e5-8f35-c53692674917.png"
                   style={{ 
@@ -151,7 +147,7 @@ import {
           >
             <Modal.Body className="text-center p-5">
               <h3 style={{ fontWeight: "bold" }}>
-                Anda Yakin Ingin Menghapus Data Bahan Baku Ini?
+                Anda Yakin Ingin Menghapus Data Hampers Ini?
               </h3>
               <p
                 style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
@@ -159,7 +155,7 @@ import {
               >
                 <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
                 <p className="m-0 p-0">
-                  Semua data yang terkait dengan Bahan Baku tersebut akan hilang.
+                  Semua data yang terkait dengan Hampers tersebut akan hilang.
                 </p>
               </p>
               <Row className="py-2 pt-3">
@@ -182,68 +178,6 @@ import {
                 </Col>
               </Row>
             </Modal.Body>
-          </Modal>
-  
-          <Modal
-            show={showPrintModal}
-            onHide={handleClosePrintModal}
-            animation={false}
-            centered
-            style={{ border: "none" }}
-          >
-            <Form>
-              <Modal.Body className="text-center p-4 m-2">
-                <h5 style={{ fontWeight: "bold" }}>
-                  Print Laporan Penggunaan Bahan Baku
-                </h5>
-                <p
-                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                  className="mt-1"
-                >
-                  Pilih tanggal awal Penggunaan Bahan Baku
-                </p>
-                <Form.Group className="text-start mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Pilih Tanggal Awal
-                  </Form.Label>
-                  <Form.Control
-                    style={{ border: "1px solid #808080" }}
-                    type="date"
-                    placeholder="Month YYYY"
-                  />
-                </Form.Group>
-                <Form.Group className="text-start mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Pilih Tanggal Akhir
-                  </Form.Label>
-                  <Form.Control
-                    style={{ border: "1px solid #808080" }}
-                    type="date"
-                    placeholder="Month YYYY"
-                  />
-                </Form.Group>
-                <Row className="py-2 pt-3 mt-4">
-                  <Col sm>
-                    <Button
-                      style={{ backgroundColor: "#FF5B19", border: "none" }}
-                      className="w-100"
-                      onClick={handleClosePrintModal}
-                    >
-                      Batal
-                    </Button>
-                  </Col>
-                  <Col sm>
-                    <Button
-                      style={{ backgroundColor: "#F48E28", border: "none" }}
-                      className="w-100"
-                      type="submit"
-                    >
-                      Simpan
-                    </Button>
-                  </Col>
-                </Row>
-              </Modal.Body>
-            </Form>
           </Modal>
   
           <Modal
