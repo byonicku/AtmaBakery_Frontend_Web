@@ -94,10 +94,11 @@ export default function PenitipPage() {
 
     try {
       const response = await APIPenitip.getAllPenitip();
-      const filtered = response.data.filter((penitip) =>
-        penitip.nama.toLowerCase().includes(search.toLowerCase()) ||
-        penitip.no_telp.toLowerCase().includes(search.toLowerCase()) ||
-        penitip.id_penitip.toString().includes(search.toLowerCase())
+      const filtered = response.data.filter(
+        (penitip) =>
+          penitip.nama.toLowerCase().includes(search.toLowerCase()) ||
+          penitip.no_telp.toLowerCase().includes(search.toLowerCase()) ||
+          penitip.id_penitip.toString().includes(search.toLowerCase())
       );
       setPenitip(filtered);
     } catch (error) {
@@ -221,12 +222,17 @@ export default function PenitipPage() {
                   no_telp: "",
                 });
               }}
+              disabled={isLoading}
               className="me-2"
             >
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
             </Button>
-            <Button variant="secondary" onClick={handleShowPrintModal}>
+            <Button
+              variant="secondary"
+              onClick={handleShowPrintModal}
+              disabled={isLoading}
+            >
               <BsPrinterFill className="mb-1 me-2" />
               Print Laporan
             </Button>
@@ -244,6 +250,7 @@ export default function PenitipPage() {
                 placeholder="Cari Penitip disini"
                 name="search"
                 value={search || ""}
+                disabled={isLoading}
                 onChange={(e) => {
                   if (e.target.value === "") {
                     if (page !== 1) {
@@ -260,7 +267,7 @@ export default function PenitipPage() {
                   }
                 }}
               />
-              <Button variant="secondary">
+              <Button variant="secondary" disabled={isLoading}>
                 <BsSearch onClick={() => fetchPenitipSearch(1, search)} />
               </Button>
             </InputGroup>
