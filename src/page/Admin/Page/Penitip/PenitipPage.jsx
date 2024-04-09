@@ -193,6 +193,7 @@ export default function PenitipPage() {
       const response = await APIPenitip.searchPenitip(search.trim());
       setPenitip(response);
     } catch (error) {
+      setPenitip([]); // Kalo error / tidak ditemukan set penitip jadi array kosong
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -271,7 +272,7 @@ export default function PenitipPage() {
                 }}
               />
               <Button variant="secondary" disabled={isLoading}>
-                <BsSearch onClick={() => fetchPenitipSearch(1, search)} />
+                <BsSearch onClick={() => fetchPenitipSearch()} />
               </Button>
             </InputGroup>
           </Col>
