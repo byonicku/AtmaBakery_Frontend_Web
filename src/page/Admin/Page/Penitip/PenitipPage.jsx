@@ -46,7 +46,6 @@ export default function PenitipPage() {
   const handleShowPrintModal = () => setshowPrintModal(true);
 
   // Fetch penitip with pagination
-  const [originalPenitip, setOriginalPenitip] = useState([]);
   const [penitip, setPenitip] = useState([]);
   const [page, setPage] = useState(0);
   const [lastPage, setLastPage] = useState(0);
@@ -56,7 +55,6 @@ export default function PenitipPage() {
     try {
       const response = await APIPenitip.getPenitipByPage(page);
       setPenitip(response.data);
-      setOriginalPenitip(response.data);
       setPage(response.current_page);
       setLastPage(response.last_page);
     } catch (error) {
@@ -77,11 +75,15 @@ export default function PenitipPage() {
   }, [fetchPenitip, search]);
 
   const fetchPenitipSearch = useCallback(async () => {
+    if (search.trim() === "") {
+      return;
+    }
+
     setIsLoading(true);
+
     try {
       const response = await APIPenitip.getPenitipByPageSearch(page, search);
       setPenitip(response.data);
-      setOriginalPenitip(response.data);
       setPage(response.current_page);
       setLastPage(response.last_page);
     } catch (error) {
