@@ -33,8 +33,6 @@ export default function PenitipPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPenitip, setSelectedPenitip] = useState(null);
 
-  const [mode, setMode] = useState("add");
-
   const handleCloseDelModal = () => setShowDelModal(false);
   const handleShowDelModal = () => setShowDelModal(true);
 
@@ -43,6 +41,12 @@ export default function PenitipPage() {
 
   const handleClosePrintModal = () => setshowPrintModal(false);
   const handleShowPrintModal = () => setshowPrintModal(true);
+
+  // Mode untuk CRD
+  // create -> "add"
+  // update -> "edit"
+  // delete -> "delete"
+  const [mode, setMode] = useState("add");
 
   // Fetch penitip with pagination
   const [penitip, setPenitip] = useState([]);
@@ -72,48 +76,13 @@ export default function PenitipPage() {
     fetchPenitip();
   }, [fetchPenitip]);
 
-  const handleMutationSuccess = () => {
-    setIsLoading(true);
-    fetchPenitip();
-    setTimeout(() => {
-      setSelectedPenitip(null);
-      setFormData({
-        nama: "",
-        no_telp: "",
-      });
-      setSearch(null);
-    }, 125);
-  };
-
-  const fetchPenitipSearch = async () => {
-    if (search.trim() === "") {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await APIPenitip.getAllPenitip();
-      const filtered = response.data.filter(
-        (penitip) =>
-          penitip.nama.toLowerCase().includes(search.toLowerCase()) ||
-          penitip.no_telp.toLowerCase().includes(search.toLowerCase()) ||
-          penitip.id_penitip.toString().includes(search.toLowerCase())
-      );
-      setPenitip(filtered);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // CRUD Penitip
   const [formData, setFormData] = useState({
     nama: "",
     no_telp: "",
   });
 
+  // Untuk validasi front-end (sebisa mungkin samain dengan backend ya)
   const validationSchema = {
     nama: {
       required: true,
@@ -128,7 +97,21 @@ export default function PenitipPage() {
     },
   };
 
-  //ini tambah dan edit penitip nya
+  // Wajib dipanggil abis mutation / query
+  const handleMutationSuccess = () => {
+    setIsLoading(true);
+    fetchPenitip();
+    setTimeout(() => {
+      setSelectedPenitip(null);
+      setFormData({
+        nama: "",
+        no_telp: "",
+      });
+      setSearch(null);
+    }, 125);
+  };
+
+  // Add Data
   const add = useMutation({
     mutationFn: (data) => APIPenitip.createPenitip(data),
     onSuccess: async () => {
@@ -141,6 +124,7 @@ export default function PenitipPage() {
     },
   });
 
+  // Edit Data
   const edit = useMutation({
     mutationFn: (data) =>
       APIPenitip.updatePenitip(data, selectedPenitip.id_penitip),
@@ -154,6 +138,7 @@ export default function PenitipPage() {
     },
   });
 
+  // Delete Data
   const del = useMutation({
     mutationFn: (id) => APIPenitip.deletePenitip(id),
     onSuccess: async () => {
@@ -195,6 +180,24 @@ export default function PenitipPage() {
     validationSchema,
     onSubmit
   );
+
+  // Search Data
+  const fetchPenitipSearch = async () => {
+    if (search.trim() === "") { // Kalo spasi doang bakal gabisa
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await APIPenitip.searchPenitip(search.trim());
+      setPenitip(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -345,6 +348,7 @@ export default function PenitipPage() {
                 ))}
               </tbody>
             </Table>
+            {/* Udah pasti kayak gini untuk pagination, jangan diotak atik :V */}
             {lastPage > 1 && !search && (
               <CustomPagination
                 totalPage={lastPage}
@@ -361,7 +365,14 @@ export default function PenitipPage() {
           />
         )}
 
-        {/* ini modal modalnya */}
+        {/* 
+          Modal - Modal dibawah
+          Notable note : 
+          jangan lupa setMode("add") atau setMode("edit") atau setMode("delete") ketika mau nampilin modal (set nya di button atas ye)
+          dan keluar modal di setMode("add")
+
+          add / edit / del .isPending itu ketika query sedang berjalan, mirip dengan isLoading tapi bawaan react querynya
+        */}
         <Modal
           show={showDelModal}
           onHide={() => {
@@ -403,6 +414,7 @@ export default function PenitipPage() {
                 </Button>
               </Col>
               <Col sm>
+                {/* Khusus delete panggil langsng onSubmit()*/} 
                 <Button
                   style={{ backgroundColor: "#F48E28", border: "none" }}
                   className="mx-2 w-100 p-1"
