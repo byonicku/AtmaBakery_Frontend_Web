@@ -32,7 +32,7 @@ export default function PenitipPage() {
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPenitip, setSelectedPenitip] = useState(null);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
 
   const [mode, setMode] = useState("add");
 
@@ -47,15 +47,14 @@ export default function PenitipPage() {
 
   // Fetch penitip with pagination
   const [penitip, setPenitip] = useState([]);
-  const [page, setPage] = useState(0);
-  const [lastPage, setLastPage] = useState(0);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
   const fetchPenitip = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await APIPenitip.getPenitipByPage(page);
       setPenitip(response.data);
-      setPage(response.current_page);
       setLastPage(response.last_page);
     } catch (error) {
       console.error(error);
@@ -69,10 +68,28 @@ export default function PenitipPage() {
   }, []);
 
   // Pas masuk load penitip
-  useEffect(() => {
-    if (search !== "") return;
+  useEffect(() => {  
     fetchPenitip();
-  }, [fetchPenitip, search]);
+  }, [fetchPenitip]);
+
+  useEffect(() => {
+    if (search === "") {
+      fetchPenitip();
+    }
+    
+  }, [search, fetchPenitip]);
+
+  const handleMutationSuccess = () => {
+    setIsLoading(true);
+    fetchPenitip();
+    setTimeout(() => {
+      setSelectedPenitip(null);
+      setFormData({
+        nama: "",
+        no_telp: "",
+      });
+    }, 125);
+  };
 
   const fetchPenitipSearch = useCallback(async () => {
     if (search.trim() === "") {
@@ -119,6 +136,7 @@ export default function PenitipPage() {
     onSuccess: async () => {
       toast.success("Tambah Penitip berhasil!");
       handleCloseAddEditModal();
+      handleMutationSuccess();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -131,6 +149,7 @@ export default function PenitipPage() {
     onSuccess: async () => {
       toast.success("Edit Penitip berhasil!");
       handleCloseAddEditModal();
+      handleMutationSuccess();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -142,6 +161,7 @@ export default function PenitipPage() {
     onSuccess: async () => {
       toast.success("Hapus Penitip berhasil!");
       handleCloseDelModal();
+      handleMutationSuccess();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -168,16 +188,6 @@ export default function PenitipPage() {
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsLoading(true);
-      fetchPenitip();
-      setTimeout(() => {
-        setSelectedPenitip(null);
-        setFormData({
-          nama: "",
-          no_telp: "",
-        });
-      }, 125);
     }
   };
 
@@ -322,6 +332,7 @@ export default function PenitipPage() {
               </tbody>
             </Table>
             {
+              lastPage > 1 &&
               <CustomPagination
                 totalPage={lastPage}
                 currentPage={page}

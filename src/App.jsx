@@ -20,7 +20,7 @@ export default function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <Toaster position="top-center" richColors closeButton />
+        <Toaster position="top-center" richColors duration="3000" />
         <main>
           <Routes>
             <Route path="/" element={<Home />} />

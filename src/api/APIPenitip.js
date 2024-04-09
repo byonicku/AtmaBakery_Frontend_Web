@@ -31,7 +31,7 @@ const getPenitipByPage = async (page = 0) => {
   } 
 };
 
-const getPenitipByPageSearch = async (page = 0, search) => { 
+const getPenitipByPageSearch = async (page, search) => { 
   try { 
     const response = await useAxios.get(`/paginate/penitip/${search}`, {
       params: {
