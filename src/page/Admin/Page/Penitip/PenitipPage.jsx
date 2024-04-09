@@ -61,6 +61,13 @@ export default function PenitipPage() {
       setPenitip(response.data);
       setLastPage(response.last_page);
     } catch (error) {
+      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+      if (page - 1 === 0 && error.response.status === 404) {
+        setPenitip([]);
+      } else {
+        setPage(page - 1);
+      }
       console.error(error);
     } finally {
       setIsLoading(false);
