@@ -56,6 +56,10 @@
         padding-right: 25px;
     }
     
+    .loading {
+        min-height: 50vh;
+    }
+    
     .remove {
         display: none;
     }

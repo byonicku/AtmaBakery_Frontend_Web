@@ -72,12 +72,26 @@ const resetPassword = async (data) => {
   }
 };
 
+const verifyPasswordToken = async (data) => {
+  try {
+    const response = await useAxios.post("password/verify", data, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+}
+
 const APIAuth = {
   login,
   logout,
   register,
   sendEmailForResetPassword,
   resetPassword,
+  verifyPasswordToken,
 };
 
 export default APIAuth;
