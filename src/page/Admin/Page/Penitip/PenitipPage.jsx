@@ -271,8 +271,8 @@ export default function PenitipPage() {
                   }
                 }}
               />
-              <Button variant="secondary" disabled={isLoading}>
-                <BsSearch onClick={() => fetchPenitipSearch()} />
+              <Button variant="secondary" disabled={isLoading} onClick={() => fetchPenitipSearch()}>
+                <BsSearch />
               </Button>
             </InputGroup>
           </Col>
