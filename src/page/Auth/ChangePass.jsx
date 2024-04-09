@@ -49,7 +49,6 @@ export default function ResetPass() {
         setStatus(response.state);
       } catch (error) {
         console.error(error);
-        setStatus(error.state);
       } finally {
         setIsLoadingVerify(false);
       }
@@ -236,12 +235,12 @@ export default function ResetPass() {
                     <span style={{ color: "#F48E28" }}>Gagal</span>
                     <span> Untuk Verifikasi</span>
                   </h1>
-                  <p className="py-2" style={{ fontSize: "1em" }}>
+                  <div className="py-2" style={{ fontSize: "1em" }}>
                     <p className="mb-1">
                       Tidak dapat melakukan penggantian password
                     </p>
                     <p className="mt-0 pt-0">Token tidak sah atau kadaluarsa</p>
-                  </p>
+                  </div>
                 </div>
                 <Container className="text-center">
                   <div className="px-5" style={{ color: "black" }}>

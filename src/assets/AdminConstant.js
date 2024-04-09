@@ -9,7 +9,6 @@ const MORoute = [
   { to: "./bahan_baku", icon: BsJournalText, label: "Bahan Baku" },
   { to: "./karyawan", icon: FaUserTie, label: "Karyawan" },
   { to: "./penitip", icon: FaUserFriends, label: "Penitip" },
-  { to: "./template", icon: BsJournalText, label: "Template" },
 ];
 
 const RouteData = {

@@ -13,6 +13,7 @@ import AddEditProdukPage from "@/page/Admin/Page/Produk/AddEditProdukPage";
 import BahanBaku from "@/page/Admin/Page/BahanBaku/BahanBakuPage";
 import Penitip from "@/page/Admin/Page/Penitip/PenitipPage";
 import Dashboard from "@/page/Admin/Dashboard";
+import Verify from "@/page/Auth/Verify";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/reset" element={<ResetPass />} />
             <Route path="/password/:key" element={<ChangePass />} />
+            <Route path="/verify/:key" element={<Verify />} />
             <Route path="/admin" element={<Dashboard />}>
               <Route path="produk" element={<Produk />} />
               <Route path="bahan_baku" element={<BahanBaku />} />
