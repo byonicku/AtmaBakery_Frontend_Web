@@ -25,27 +25,49 @@ export default function CustomPagination({
   };
 
   const renderPageNumbers = () => {
-    for (let page = 1; page <= totalPage; page++) {
-      if (
-        page === 1 ||
-        page === totalPage ||
-        (page >= currentPage - Math.floor(maxPageNumbers / 2) &&
-          page <= currentPage + Math.floor(maxPageNumbers / 2))
-      ) {
-        items.push(
-          <Pagination.Item
-            key={page}
-            active={page === currentPage}
-            onClick={() => onChangePage(page)}
-          >
-            {page}
-          </Pagination.Item>
-        );
-      } else if (
-        items[items.length - 1] !== <Pagination.Ellipsis key="ellipsis" />
-      ) {
+    let startPage = 1;
+    let endPage = totalPage;
+
+    if (currentPage > Math.floor(maxPageNumbers / 2) + 1) {
+      startPage = currentPage - Math.floor(maxPageNumbers / 2);
+    }
+
+    if (currentPage < totalPage - Math.floor(maxPageNumbers / 2)) {
+      endPage = currentPage + Math.floor(maxPageNumbers / 2);
+    }
+
+    if (startPage > 1) {
+      items.push(
+        <Pagination.Item key={1} onClick={() => onChangePage(1)}>
+          {1}
+        </Pagination.Item>
+      );
+      if (startPage > 2) {
         renderEllipsis();
       }
+    }
+
+    for (let page = startPage; page <= endPage; page++) {
+      items.push(
+        <Pagination.Item
+          key={page}
+          active={page === currentPage}
+          onClick={() => onChangePage(page)}
+        >
+          {page}
+        </Pagination.Item>
+      );
+    }
+    
+    if (endPage < totalPage) {
+      if (endPage < totalPage - 1) {
+        renderEllipsis();
+      }
+      items.push(
+        <Pagination.Item key={totalPage} onClick={() => onChangePage(totalPage)}>
+          {totalPage}
+        </Pagination.Item>
+      );
     }
   };
 
@@ -61,17 +83,7 @@ export default function CustomPagination({
     }
   };
 
-  if (totalPage <= maxPageNumbers) {
-    renderPageNumbers();
-  } else {
-    renderPageNumbers();
-    if (
-      currentPage > Math.floor(maxPageNumbers / 2) + 1 &&
-      currentPage < totalPage - Math.floor(maxPageNumbers / 2)
-    ) {
-      renderEllipsis();
-    }
-  }
+  renderPageNumbers();
 
   items.unshift(
     <Pagination.Prev
