@@ -8,7 +8,7 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ import {
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIPenitip from "@/api/APIPenitip";
 import NotFound from "@/component/Admin/NotFound";
+import CustomPagination from "@/component/Admin/CustomPagination";
 
 export default function PenitipPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -32,9 +33,7 @@ export default function PenitipPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPenitip, setSelectedPenitip] = useState(null);
   const [search, setSearch] = useState("");
-  
-  const [originalPenitip, setOriginalPenitip] = useState([]);
-  const [penitip, setPenitip] = useState([]);
+
   const [mode, setMode] = useState("add");
 
   const handleCloseDelModal = () => setShowDelModal(false);
@@ -46,36 +45,51 @@ export default function PenitipPage() {
   const handleClosePrintModal = () => setshowPrintModal(false);
   const handleShowPrintModal = () => setshowPrintModal(true);
 
-  // Fetch penitip
-  const fetchPenitip = async () => {
+  // Fetch penitip with pagination
+  const [originalPenitip, setOriginalPenitip] = useState([]);
+  const [penitip, setPenitip] = useState([]);
+  const [page, setPage] = useState(0);
+  const [lastPage, setLastPage] = useState(0);
+
+  const fetchPenitip = useCallback(async () => {
+    setIsLoading(true);
     try {
-      const response = await APIPenitip.getAllPenitip();
-      setPenitip(response);
-      setOriginalPenitip(response);
+      const response = await APIPenitip.getPenitipByPage(page);
+      setPenitip(response.data);
+      setOriginalPenitip(response.data);
+      setPage(response.current_page);
+      setLastPage(response.last_page);
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [page]);
+
+  const handleChangePage = useCallback((newPage) => {
+    setPage(newPage);
+  }, []);
 
   // Pas masuk load penitip
   useEffect(() => {
+    if (search !== "") return;
     fetchPenitip();
-  }, []);
+  }, [fetchPenitip, search]);
 
-  useEffect(() => {
-    if (search) {
-      const filtered = originalPenitip.filter((penitip) =>
-        penitip.nama.toLowerCase().includes(search.toLowerCase()) ||
-        penitip.no_telp.toLowerCase().includes(search.toLowerCase()) ||
-        penitip.id_penitip.toString().includes(search.toLocaleLowerCase())
-      );
-      setPenitip(filtered);
-    } else {
-      setPenitip(originalPenitip);
+  const fetchPenitipSearch = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await APIPenitip.getPenitipByPageSearch(page, search);
+      setPenitip(response.data);
+      setOriginalPenitip(response.data);
+      setPage(response.current_page);
+      setLastPage(response.last_page);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [search, penitip, originalPenitip]);
+  }, [page, search]);
 
   // CRUD Penitip
   const [formData, setFormData] = useState({
@@ -216,9 +230,19 @@ export default function PenitipPage() {
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <InputGroup>
-              <Form.Control type="text" placeholder="Cari Penitip disini" name="search" onChange={(e) => setSearch(e.target.value)}/>
+              <Form.Control
+                type="text"
+                placeholder="Cari Penitip disini"
+                name="search"
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    fetchPenitipSearch(1, search);
+                  }
+                }}
+              />
               <Button variant="secondary">
-                <BsSearch />
+                <BsSearch onClick={() => fetchPenitipSearch(1, search)} />
               </Button>
             </InputGroup>
           </Col>
@@ -237,7 +261,7 @@ export default function PenitipPage() {
           </div>
         ) : penitip?.length > 0 ? (
           <>
-            <Table className="table-striped">
+            <Table striped>
               <thead>
                 <tr>
                   <th style={{ width: "25%" }} className="th-style">
@@ -295,6 +319,13 @@ export default function PenitipPage() {
                 ))}
               </tbody>
             </Table>
+            {
+              <CustomPagination
+                totalPage={lastPage}
+                currentPage={page}
+                onChangePage={handleChangePage}
+              />
+            }
           </>
         ) : (
           <NotFound />

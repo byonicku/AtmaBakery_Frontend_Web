@@ -31,6 +31,23 @@ const getPenitipByPage = async (page = 0) => {
   } 
 };
 
+const getPenitipByPageSearch = async (page = 0, search) => { 
+  try { 
+    const response = await useAxios.get(`/paginate/penitip/${search}`, {
+      params: {
+        page: page,
+      }, 
+      headers: { 
+        "Content-Type": "application/json", 
+      //   Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
+      }, 
+    }); 
+    return response.data.data; 
+  } catch (error) { 
+    throw error.response.data; 
+  } 
+};
+
 const createPenitip = async (data) => { 
   try { 
     const response = await useAxios.post("/penitip", data, { 
@@ -76,6 +93,7 @@ const deletePenitip = async (id) => {
 const APIPenitip = {
   getAllPenitip,
   getPenitipByPage,
+  getPenitipByPageSearch,
   createPenitip,
   updatePenitip,
   deletePenitip,
