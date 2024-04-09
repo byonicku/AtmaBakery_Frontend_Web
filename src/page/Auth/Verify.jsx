@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Image,
-  Col,
-  Spinner,
-} from "react-bootstrap";
+import { Container, Row, Image, Col, Spinner } from "react-bootstrap";
 
-import {
-  useParams,
-  Link,
-} from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import notVerified from "@/assets/images/notVerified.png";
 import verified from "@/assets/images/verified.png";
@@ -23,14 +14,13 @@ import imageBg from "@/assets/images/bg.png";
 export default function Verify() {
   const { key } = useParams();
   const [isLoadingVerify, setIsLoadingVerify] = useState(true);
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(-1);
 
   useEffect(() => {
     const fetchToken = async () => {
       try {
         const data = { token: key };
         const response = await APIAuth.verifyEmailToken(data);
-        console.log(response);
         setStatus(response.state);
       } catch (error) {
         console.error(error);
@@ -74,8 +64,8 @@ export default function Verify() {
                 />
                 <h6 className="mt-2 mb-0">Loading...</h6>
               </div>
-            ) : status === 1 ? (
-            <Col sm style={{ backgroundColor: "#FFFFFF" }}>
+            ) : status == 1 ? (
+              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
                 <div
                   className="pt-5 px-5 text-center"
                   style={{ color: "black" }}
@@ -109,43 +99,7 @@ export default function Verify() {
                   </div>
                 </Container>
               </Col>
-            ) : status === 0 ? (
-              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-                <div
-                  className="pt-5 px-5 text-center"
-                  style={{ color: "black" }}
-                >
-                  <Image
-                    src={notVerified}
-                    style={{ width: "45%", height: "45%" }}
-                    className="mt-3"
-                  />
-                  <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                    <span style={{ color: "#FF5B19" }}>Gagal</span>
-                    <span> Verifikasi Akun</span>
-                  </h1>
-                  <div className="py-2" style={{ fontSize: "1em" }}>
-                    <p className="mb-1">
-                      Akun Anda Gagal terverifikasi
-                    </p>
-                    <p className="mt-0 pt-0">Token tidak sah atau kadaluarsa</p>
-                  </div>
-                </div>
-                <Container className="text-center">
-                  <div className="px-5" style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
-                      <span>Kembali ke halaman login!</span>
-                      <span>
-                        {" "}
-                        <Link to="/login" style={{ textDecoration: "none" }}>
-                          Masuk ke Akun
-                        </Link>
-                      </span>
-                    </p>
-                  </div>
-                </Container>
-              </Col>
-            ) : (
+            ) : status == 0 ? (
               <Col sm style={{ backgroundColor: "#FFFFFF" }}>
                 <div
                   className="pt-5 px-5 text-center"
@@ -170,6 +124,40 @@ export default function Verify() {
                   <div className="px-5" style={{ color: "black" }}>
                     <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
                       <span>Anda sudah dapat mengakses akun Anda!</span>
+                      <span>
+                        {" "}
+                        <Link to="/login" style={{ textDecoration: "none" }}>
+                          Masuk ke Akun
+                        </Link>
+                      </span>
+                    </p>
+                  </div>
+                </Container>
+              </Col>
+            ) : (
+              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
+                <div
+                  className="pt-5 px-5 text-center"
+                  style={{ color: "black" }}
+                >
+                  <Image
+                    src={notVerified}
+                    style={{ width: "45%", height: "45%" }}
+                    className="mt-3"
+                  />
+                  <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                    <span style={{ color: "#FF5B19" }}>Gagal</span>
+                    <span> Verifikasi Akun</span>
+                  </h1>
+                  <div className="py-2" style={{ fontSize: "1em" }}>
+                    <p className="mb-1">Akun Anda Gagal terverifikasi</p>
+                    <p className="mt-0 pt-0">Token tidak sah atau kadaluarsa</p>
+                  </div>
+                </div>
+                <Container className="text-center">
+                  <div className="px-5" style={{ color: "black" }}>
+                    <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
+                      <span>Kembali ke halaman login!</span>
                       <span>
                         {" "}
                         <Link to="/login" style={{ textDecoration: "none" }}>

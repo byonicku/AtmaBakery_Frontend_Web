@@ -45,7 +45,6 @@ export default function ResetPass() {
       try {
         const data = { token: key, email: email };
         const response = await APIAuth.verifyPasswordToken(data);
-        console.log(response);
         setStatus(response.state);
       } catch (error) {
         console.error(error);
@@ -134,7 +133,7 @@ export default function ResetPass() {
                 />
                 <h6 className="mt-2 mb-0">Loading...</h6>
               </div>
-            ) : status === 1 ? (
+            ) : status == 1 ? (
               <>
                 <div className="pt-5 px-5" style={{ color: "black" }}>
                   <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
@@ -190,7 +189,7 @@ export default function ResetPass() {
                   </Container>
                 </Form>
               </>
-            ) : status === 0 ? (
+            ) : status == 0 ? (
               <Col sm style={{ backgroundColor: "#FFFFFF" }}>
                 <div
                   className="pt-5 px-5 text-center"
