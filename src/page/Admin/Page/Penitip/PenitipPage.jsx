@@ -32,7 +32,6 @@ export default function PenitipPage() {
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPenitip, setSelectedPenitip] = useState(null);
-  const [search, setSearch] = useState(null);
 
   const [mode, setMode] = useState("add");
 
@@ -49,6 +48,7 @@ export default function PenitipPage() {
   const [penitip, setPenitip] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
+  const [search, setSearch] = useState(null);
 
   const fetchPenitip = useCallback(async () => {
     setIsLoading(true);
@@ -68,16 +68,9 @@ export default function PenitipPage() {
   }, []);
 
   // Pas masuk load penitip
-  useEffect(() => {  
+  useEffect(() => {
     fetchPenitip();
   }, [fetchPenitip]);
-
-  useEffect(() => {
-    if (search === "") {
-      fetchPenitip();
-    }
-    
-  }, [search, fetchPenitip]);
 
   const handleMutationSuccess = () => {
     setIsLoading(true);
@@ -88,10 +81,11 @@ export default function PenitipPage() {
         nama: "",
         no_telp: "",
       });
+      setSearch(null);
     }, 125);
   };
 
-  const fetchPenitipSearch = useCallback(async () => {
+  const fetchPenitipSearch = async () => {
     if (search.trim() === "") {
       return;
     }
@@ -99,16 +93,19 @@ export default function PenitipPage() {
     setIsLoading(true);
 
     try {
-      const response = await APIPenitip.getPenitipByPageSearch(page, search);
-      setPenitip(response.data);
-      setPage(response.current_page);
-      setLastPage(response.last_page);
+      const response = await APIPenitip.getAllPenitip();
+      const filtered = response.data.filter((penitip) =>
+        penitip.nama.toLowerCase().includes(search.toLowerCase()) ||
+        penitip.no_telp.toLowerCase().includes(search.toLowerCase()) ||
+        penitip.id_penitip.toString().includes(search.toLowerCase())
+      );
+      setPenitip(filtered);
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  }, [page, search]);
+  };
 
   // CRUD Penitip
   const [formData, setFormData] = useState({
@@ -246,10 +243,20 @@ export default function PenitipPage() {
                 type="text"
                 placeholder="Cari Penitip disini"
                 name="search"
-                onChange={(e) => setSearch(e.target.value)}
+                value={search || ""}
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    if (page !== 1) {
+                      setPage(1);
+                    } else {
+                      fetchPenitip();
+                    }
+                  }
+                  setSearch(e.target.value);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    fetchPenitipSearch(1, search);
+                    fetchPenitipSearch();
                   }
                 }}
               />
@@ -331,17 +338,20 @@ export default function PenitipPage() {
                 ))}
               </tbody>
             </Table>
-            {
-              lastPage > 1 &&
+            {lastPage > 1 && !search && (
               <CustomPagination
                 totalPage={lastPage}
                 currentPage={page}
                 onChangePage={handleChangePage}
               />
-            }
+            )}
           </>
         ) : (
-          <NotFound />
+          <NotFound
+            text={
+              search ? "Penitip Tidak Ditemukan" : "Belum Ada Penitip Disini"
+            }
+          />
         )}
 
         {/* ini modal modalnya */}
