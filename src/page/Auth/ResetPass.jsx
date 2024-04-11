@@ -75,7 +75,7 @@ export default function ResetPass() {
               </h1>
               <p className="py-2" style={{ fontSize: "1em" }}>
                 Mohon masukkan alamat email yang terhubung dengan akun Anda.
-                Kami akan mengirimkan instruksi uba kata sandi ke emailm
+                Kami akan mengirimkan instruksi ubah kata sandi ke email
                 tersebut.
               </p>
             </div>
