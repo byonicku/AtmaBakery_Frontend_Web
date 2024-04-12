@@ -1,4 +1,4 @@
-import useAxios from "./APIConstant";
+import useAxios from "./APIConstant.js";
 
 const getAllKaryawan = async () => {
     try { 
@@ -61,7 +61,7 @@ const createKaryawan = async (data) => {
 
 const updateKaryawan = async (data, id_karyawan) => { 
     try { 
-      const response = await useAxios.put(`/karyawan/${id_karayawan}`, data, { 
+      const response = await useAxios.put(`/karyawan/${id_karyawan}`, data, { 
         headers: { 
           "Content-Type": "application/json", 
           // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
