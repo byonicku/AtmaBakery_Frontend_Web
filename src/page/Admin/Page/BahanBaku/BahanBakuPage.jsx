@@ -264,7 +264,7 @@ import {
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      fetchBahanBaku();
+                      fetchBahanBakuSearch(search);
                     }
                   }}
                 />
