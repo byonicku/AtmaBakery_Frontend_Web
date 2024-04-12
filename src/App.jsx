@@ -39,7 +39,7 @@ export default function App() {
                 element={<AddEditProdukPage isEdit={false} />}
               />
               <Route
-                path="produk/edit"
+                path="produk/edit/:id"
                 element={<AddEditProdukPage isEdit={true} />}
               />
               <Route path="/admin" element={<HomeAdmin />} />

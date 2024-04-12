@@ -13,6 +13,11 @@ class InputHelper {
     this.setFormData({ ...this.formData, [name]: value });
   };
 
+  handleFileChange = (e) => {
+    const { name, files } = e.target;
+    this.setFormData({ ...this.formData, [name]: files });
+  }
+
   validateForm = () => {
     for (const fieldName in this.validationSchema) {
       const fieldValidation = this.validationSchema[fieldName];
@@ -37,12 +42,7 @@ class InputHelper {
       if (fieldValidation.pattern && !fieldValidation.pattern.test(fieldValue)) {
         toast.error(`${alias} tidak valid!`);
         return false;
-      }
-
-      if (fieldValue.trim() === "") {
-        toast.error(`${alias} tidak bisa hanya spasi!`);
-        return false;
-      }
+      } 
     }
     return true;
   };
@@ -51,7 +51,7 @@ class InputHelper {
     e.preventDefault();
     if (this.validateForm()) {
       this.formData = Object.fromEntries(
-        Object.entries(this.formData).map(([key, value]) => [key, value.trim()])
+        Object.entries(this.formData).map(([key, value]) => [key, value])
       );
 
       this.onSubmit(this.formData);
