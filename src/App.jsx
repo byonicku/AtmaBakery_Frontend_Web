@@ -11,6 +11,7 @@ import ChangePass from "@/page/Auth/ChangePass";
 import Produk from "@/page/Admin/Page/Produk/ProdukPage";
 import AddEditProdukPage from "@/page/Admin/Page/Produk/AddEditProdukPage";
 import BahanBaku from "@/page/Admin/Page/BahanBaku/BahanBakuPage";
+import Karyawan from "@/page/Admin/Page/Karyawan/KaryawanPage";
 import Penitip from "@/page/Admin/Page/Penitip/PenitipPage";
 import Dashboard from "@/page/Admin/Dashboard";
 import Verify from "@/page/Auth/Verify";
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/admin" element={<Dashboard />}>
               <Route path="produk" element={<Produk />} />
               <Route path="bahan_baku" element={<BahanBaku />} />
+              <Route path="karyawan" element={<Karyawan />} />
               <Route path="penitip" element={<Penitip />} />
               <Route
                 path="produk/tambah"
