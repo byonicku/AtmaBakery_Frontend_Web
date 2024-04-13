@@ -145,7 +145,7 @@ export default function AddEditProdukPage({ isEdit }) {
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
   });
 
@@ -157,7 +157,7 @@ export default function AddEditProdukPage({ isEdit }) {
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
   });
 
@@ -180,7 +180,7 @@ export default function AddEditProdukPage({ isEdit }) {
         await add.mutateAsync(formData);
       }
     } catch (error) {
-      console.error(error);
+      toast.error(error.message);
     }
   };
 
