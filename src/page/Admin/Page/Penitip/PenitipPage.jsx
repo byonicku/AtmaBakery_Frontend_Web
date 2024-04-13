@@ -177,7 +177,7 @@ export default function PenitipPage() {
         return;
       }
     } catch (error) {
-      console.error(error);
+      toast.error(error.message);
     }
   };
 

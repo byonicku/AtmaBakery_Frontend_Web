@@ -140,7 +140,7 @@ import {
         handleMutationSuccess();
       },
       onError: (error) => {
-        toast.error(error.message);
+        console.error(error);
       },
     });
   
@@ -154,7 +154,7 @@ import {
         handleMutationSuccess();
       },
       onError: (error) => {
-        toast.error(error.message);
+        console.error(error);
       },
     });
   
@@ -167,7 +167,7 @@ import {
         handleMutationSuccess();
       },
       onError: (error) => {
-        toast.error(error.message);
+        console.error(error);
       },
     });
   
@@ -190,7 +190,7 @@ import {
           return;
         }
       } catch (error) {
-        console.error(error);
+        toast.error(error.message);
       }
     };
   
