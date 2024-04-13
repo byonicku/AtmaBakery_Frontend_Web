@@ -10,6 +10,8 @@ import { useMutation } from "@tanstack/react-query";
 import InputHelper from "@/page/InputHelper";
 import APIPenitip from "@/api/APIPenitip";
 import APIGambar from "@/api/APIGambar";
+import "./css/Produk.css";
+import { FaTrash } from "react-icons/fa";
 
 AddEditProdukPage.propTypes = {
   isEdit: PropTypes.bool,
@@ -23,7 +25,10 @@ export default function AddEditProdukPage({ isEdit }) {
   const [id_produk, setIdProduk] = useState(null);
   const [penitip, setPenitip] = useState([{}]);
   const [image_preview, setImagePreview] = useState(null);
+  const [image, setImage] = useState(null);
   const [isTitipan, setIsTitipan] = useState(false);
+
+  const [deleteImage, setDeleteImage] = useState([]);
 
   const [formData, setFormData] = useState({
     nama_produk: "",
@@ -66,10 +71,12 @@ export default function AddEditProdukPage({ isEdit }) {
             limit: `${response.limit}`,
             status: response.status,
             id_kategori: response.id_kategori,
-            harga: response.harga,
-            stok: response.stok,
+            harga: `${response.harga}`,
+            stok: `${response.stok}`,
             id_penitip: response.id_penitip,
           });
+
+          setImage(response.gambar);
 
           setIsTitipan(response.id_kategori === "TP" ? true : false);
         } catch (error) {
@@ -108,7 +115,7 @@ export default function AddEditProdukPage({ isEdit }) {
       alias: "Status",
     },
     foto: {
-      required: true,
+      required: isEdit ? false : true,
       alias: "Gambar",
     },
     id_kategori: {
@@ -137,9 +144,28 @@ export default function AddEditProdukPage({ isEdit }) {
     }, 125);
   };
 
+  const handleDeleteImage = async () => {
+    try {
+      const result = {};
+
+      if (deleteImage.length === 0) return result;
+
+      for (const image of deleteImage) {
+        await APIGambar.deleteGambar(image.id_gambar);
+        result[image.public_id] = image.public_id;
+      }
+
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const uploadImage = async (id) => {
     try {
       const result = {};
+
+      if (image_preview == null) return result;
 
       for (const image of image_preview) {
         console.log(image);
@@ -177,7 +203,8 @@ export default function AddEditProdukPage({ isEdit }) {
 
   // Edit Data
   const edit = useMutation({
-    mutationFn: (data) => APIProduk.updateProduk(data, id_produk),
+    mutationFn: (data) =>
+      APIProduk.updateProduk(data, id_produk, uploadImage, handleDeleteImage),
     onSuccess: async () => {
       toast.success("Edit Produk berhasil!");
       handleMutationSuccess();
@@ -190,7 +217,10 @@ export default function AddEditProdukPage({ isEdit }) {
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
-    if (formData.gambar?.length > 5) {
+    if (
+      formData.gambar?.length > 5 ||
+      image.length + formData.gambar?.length > 5
+    ) {
       toast.error("Gambar maksimal 5!");
       return;
     }
@@ -293,9 +323,19 @@ export default function AddEditProdukPage({ isEdit }) {
                       type="file"
                       accept="image/png, image/jpg, image/jpeg"
                       multiple
-                      max={5}
+                      disabled={image?.length >= 5 || image_preview?.length > 5}
+                      onClick={() => {
+                        if (image.length >= 5 || image_preview > 5) {
+                          toast.error("Gambar maksimal 5!");
+                          return;
+                        }
+                      }}
                       onChange={(e) => {
-                        if (e.target.files.length > 5) {
+                        if (
+                          e.target.files.length > 5 ||
+                          image?.length + e.target.files.length > 5 ||
+                          image_preview?.length > 5
+                        ) {
                           toast.error("Gambar maksimal 5!");
                           return;
                         }
@@ -312,20 +352,74 @@ export default function AddEditProdukPage({ isEdit }) {
                       }}
                     />
                   </Form.Group>
-                  {image_preview != null && (
-                    <div>
-                      {Array.from(image_preview).map((file, index) => (
-                        <img
-                          key={index}
-                          src={URL.createObjectURL(file)}
-                          alt="preview"
-                          width="200"
-                          height="200"
-                          className="img-thumbnail my-2 mx-1"
-                        />
+                  <div>
+                    {image != null &&
+                      image.map((img, index) => (
+                        <div key={index} className="image-container">
+                          <img
+                            draggable="false"
+                            src={img.url}
+                            alt="preview"
+                            width="200"
+                            height="200"
+                            className={`img-thumbnail my-2 mx-1 ${
+                              deleteImage.includes(img) && "selected-delete"
+                            }`}
+                          />
+                          <div className="action-icons">
+                            <label
+                              className={`remove-icon text-white`}
+                              onClick={() => {
+                                const updatedDeleteImage = deleteImage.includes(
+                                  img
+                                )
+                                  ? deleteImage.filter((image) => image !== img)
+                                  : [...deleteImage, img];
+                                setDeleteImage(updatedDeleteImage);
+                              }}
+                            >
+                              <FaTrash />
+                            </label>
+                          </div>
+                        </div>
                       ))}
-                    </div>
-                  )}
+
+                    {image_preview != null &&
+                      Array.from(image_preview).map((file, index) => (
+                        <>
+                          <div className="image-container">
+                            <img
+                              key={index}
+                              src={URL.createObjectURL(file)}
+                              alt="preview"
+                              width="200"
+                              height="200"
+                              className="img-thumbnail my-2 mx-1 selected-new"
+                            />
+                            <div className="action-icons">
+                              <label
+                                className="remove-icon text-white"
+                                onClick={() => {
+                                  setImagePreview(
+                                    Array.from(image_preview).filter(
+                                      (image) => image !== file
+                                    )
+                                  );
+
+                                  if (image_preview?.length === 1) {
+                                    document.getElementsByName(
+                                      "foto"
+                                    )[0].value = "";
+                                  }
+                                }}
+                              >
+                                <FaTrash />
+                              </label>
+                            </div>
+                          </div>
+                        </>
+                      ))}
+                  </div>
                 </Col>
 
                 <Col lg={6} md={6} sm={12} className="my-3">

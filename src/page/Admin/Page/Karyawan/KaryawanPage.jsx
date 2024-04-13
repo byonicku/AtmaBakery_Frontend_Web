@@ -18,7 +18,7 @@ import {
     BsPlusSquare,
     BsPencilSquare,
     BsFillTrash3Fill,
-    BsPrinterFill,
+    // BsPrinterFill,
   } from "react-icons/bs";
   
   import OutlerHeader from "@/component/Admin/OutlerHeader";
@@ -40,7 +40,7 @@ import {
     const handleShowAddEditModal = () => setShowAddEditModal(true);
   
     const handleClosePrintModal = () => setshowPrintModal(false);
-    const handleShowPrintModal = () => setshowPrintModal(true);
+    // const handleShowPrintModal = () => setshowPrintModal(true);
   
     // Mode untuk CRD
     // create -> "add"
@@ -307,10 +307,10 @@ import {
             </div>
           ) : karyawan?.length > 0 ? (
             <>
-              <Table striped>
+              <Table responsive striped>
                 <thead>
                   <tr>
-                    <th style={{ width: "20%" }} className="th-style">
+                    <th style={{ width: "15%" }} className="th-style">
                       Nama
                     </th>
                     <th style={{ width: "15%" }} className="th-style">

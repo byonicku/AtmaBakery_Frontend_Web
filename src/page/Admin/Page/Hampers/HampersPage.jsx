@@ -6,7 +6,7 @@ import {
     Table,
     Modal,
     InputGroup,
-    Container,
+    // Container,
   } from "react-bootstrap";
   import { useState } from "react";
   import {
@@ -14,7 +14,7 @@ import {
     BsPlusSquare,
     BsPencilSquare,
     BsFillTrash3Fill,
-    BsPrinterFill,
+    // BsPrinterFill,
   } from "react-icons/bs";
   import OutlerHeader from "@/component/Admin/OutlerHeader";
 import NotFound from "@/component/Admin/NotFound";
@@ -29,18 +29,18 @@ import NotFound from "@/component/Admin/NotFound";
     const handleCloseAddEditModal = () => setShowAddEditModal(false);
     const handleShowAddEditModal = () => setShowAddEditModal(true);
     
-    // const listBahanBaku=[
-    // {
-    //   nama: "Butter",
-    //   stok: "3950",
-    //   satuan: "gram",
-    // },
-    // {
-    //     nama: "Creamer",
-    //     stok: "345",
-    //     satuan: "gram",
-    // }
-    // ];
+    const listBahanBaku=[
+    {
+      nama: "Butter",
+      stok: "3950",
+      satuan: "gram",
+    },
+    {
+        nama: "Creamer",
+        stok: "345",
+        satuan: "gram",
+    }
+    ];
   
     return (
       <>
@@ -80,7 +80,7 @@ import NotFound from "@/component/Admin/NotFound";
           </Row>
 
           {/* edit mulai dari sini */}
-          <Table className="table-striped">
+          <Table responsive striped>
             <thead>
               <tr>
                 <th style={{ width: "25%" }} className="th-style">

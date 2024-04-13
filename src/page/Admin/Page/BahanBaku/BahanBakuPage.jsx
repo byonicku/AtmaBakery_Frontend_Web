@@ -288,7 +288,7 @@ import {
           </div>
         ) : bahanBaku?.length > 0 ? (
           <>
-          <Table className="table-striped">
+          <Table responsive striped>
             <thead>
               <tr>
                 <th style={{ width: "25%" }} className="th-style">
