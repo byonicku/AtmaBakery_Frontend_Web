@@ -10,7 +10,7 @@ const getAllBahanBaku = async () => {
         }); 
         return response.data.data; 
       } catch (error) { 
-        throw error.response.data; 
+        throw error.response || error; 
       } 
 };
 
@@ -27,7 +27,7 @@ const getBahanBakuByPage = async (page = 0) => {
       }); 
       return response.data.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 
@@ -41,7 +41,7 @@ const searchBahanBaku = async (search) => {
       }); 
       return response.data.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 
@@ -55,7 +55,7 @@ const createBahanBaku = async (data) => {
       }); 
       return response.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 
@@ -69,7 +69,7 @@ const updateBahanBaku = async (data, id_bahan_baku) => {
       }); 
       return response.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 }; 
   
@@ -83,7 +83,7 @@ const updateBahanBaku = async (data, id_bahan_baku) => {
       }); 
       return response.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 

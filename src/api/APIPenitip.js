@@ -10,7 +10,7 @@ const getAllPenitip = async () => {
       }); 
       return response.data.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 
@@ -27,7 +27,7 @@ const getPenitipByPage = async (page = 0) => {
     }); 
     return response.data.data; 
   } catch (error) { 
-    throw error.response.data; 
+    throw error.response || error; 
   } 
 };
 
@@ -41,7 +41,7 @@ const searchPenitip = async (search) => {
     }); 
     return response.data.data; 
   } catch (error) { 
-    throw error.response.data; 
+    throw error.response || error; 
   } 
 };
 
@@ -55,7 +55,7 @@ const createPenitip = async (data) => {
     }); 
     return response.data; 
   } catch (error) { 
-    throw error.response.data; 
+    throw error.response || error; 
   } 
 }; 
 
@@ -69,7 +69,7 @@ const updatePenitip = async (data, id_penitip) => {
     }); 
     return response.data; 
   } catch (error) { 
-    throw error.response.data; 
+    throw error.response || error; 
   } 
 }; 
 
@@ -83,7 +83,7 @@ const deletePenitip = async (id) => {
     }); 
     return response.data; 
   } catch (error) { 
-    throw error.response.data; 
+    throw error.response || error; 
   } 
 }; 
 

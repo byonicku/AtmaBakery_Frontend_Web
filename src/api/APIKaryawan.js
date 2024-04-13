@@ -10,7 +10,7 @@ const getAllKaryawan = async () => {
         }); 
         return response.data.data; 
       } catch (error) { 
-        throw error.response.data; 
+        throw error.response || error; 
       } 
 };
 
@@ -27,7 +27,7 @@ const getKaryawanByPage = async (page = 0) => {
       }); 
       return response.data.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 
@@ -41,7 +41,7 @@ const searchKaryawan = async (search) => {
       }); 
       return response.data.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 
@@ -55,13 +55,13 @@ const createKaryawan = async (data) => {
       }); 
       return response.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 
 const updateKaryawan = async (data, id_karyawan) => { 
     try { 
-      const response = await useAxios.put(`/karyawan/${id_karayawan}`, data, { 
+      const response = await useAxios.put(`/karyawan/${id_karyawan}`, data, { 
         headers: { 
           "Content-Type": "application/json", 
           // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
@@ -69,7 +69,7 @@ const updateKaryawan = async (data, id_karyawan) => {
       }); 
       return response.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 }; 
   
@@ -83,7 +83,7 @@ const updateKaryawan = async (data, id_karyawan) => {
       }); 
       return response.data; 
     } catch (error) { 
-      throw error.response.data; 
+      throw error.response || error; 
     } 
 };
 

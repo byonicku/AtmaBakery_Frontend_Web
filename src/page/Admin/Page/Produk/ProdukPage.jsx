@@ -95,7 +95,7 @@ export default function ProdukPage() {
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error.message);
     },
   });
 
@@ -105,7 +105,7 @@ export default function ProdukPage() {
     try {
       await del.mutateAsync(selectedProduk.id_bahan_baku);
     } catch (error) {
-      console.error(error);
+      toast.error("Hapus Produk gagal!");
     }
   };
 
