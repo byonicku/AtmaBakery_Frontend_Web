@@ -34,9 +34,23 @@ const createGambar = async (data) => {
   }
 };
 
+const deleteGambar = async (id) => {
+  try {
+    const response = await useAxios.delete(`/gambar/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+}
+
 const APIGambar = {
   uploadImage,
-  createGambar
+  createGambar,
+  deleteGambar,
 };
 
 export default APIGambar;
