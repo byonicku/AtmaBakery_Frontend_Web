@@ -15,6 +15,7 @@ import Karyawan from "@/page/Admin/Page/Karyawan/KaryawanPage";
 import Penitip from "@/page/Admin/Page/Penitip/PenitipPage";
 import Dashboard from "@/page/Admin/Dashboard";
 import Verify from "@/page/Auth/Verify";
+import HampersPage from "./page/Admin/Page/Hampers/HampersPage";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/verify/:key" element={<Verify />} />
             <Route path="/admin" element={<Dashboard />}>
               <Route path="produk" element={<Produk />} />
+              <Route path="hampers" element={<HampersPage />} />
               <Route path="bahan_baku" element={<BahanBaku />} />
               <Route path="karyawan" element={<Karyawan />} />
               <Route path="penitip" element={<Penitip />} />
