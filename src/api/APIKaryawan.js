@@ -1,4 +1,4 @@
-import useAxios from "./APIConstant";
+import useAxios from "./APIConstant.js";
 
 const getAllKaryawan = async () => {
     try { 

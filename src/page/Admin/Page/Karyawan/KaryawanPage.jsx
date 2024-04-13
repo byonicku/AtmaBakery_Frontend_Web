@@ -310,25 +310,19 @@ import {
               <Table striped>
                 <thead>
                   <tr>
-                    <th style={{ width: "10%" }} className="th-style">
-                      ID Karyawan
-                    </th>
                     <th style={{ width: "20%" }} className="th-style">
                       Nama
                     </th>
-                    <th style={{ width: "10%" }} className="th-style">
+                    <th style={{ width: "15%" }} className="th-style">
                       Nomor Telepon
                     </th>
-                    <th style={{ width: "10%" }} className="th-style">
+                    <th style={{ width: "15%" }} className="th-style">
                       Email
                     </th>
-                    <th style={{ width: "10%" }} className="th-style">
-                      Tanggal Penerimaan
-                    </th>
-                    <th style={{ width: "10%" }} className="th-style">
+                    <th style={{ width: "15%" }} className="th-style">
                       Gaji
                     </th>
-                    <th style={{ width: "10%" }} className="th-style">
+                    <th style={{ width: "15%" }} className="th-style">
                       Bonus
                     </th>
                     <th style={{ width: "20%" }} className="th-style">
@@ -340,13 +334,11 @@ import {
                 <tbody>
                   {karyawan.map((karyawan, index) => (
                     <tr key={index}>
-                      <td>{karyawan.id_karyawan}</td>
                       <td>{karyawan.nama}</td>
                       <td>{karyawan.no_telp}</td>
                       <td>{karyawan.email}</td>
-                      <td>{karyawan.hire_date}</td>
-                      <td>{karyawan.gaji}</td>
-                      <td>{karyawan.bonus}</td>
+                      <td>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(karyawan.gaji)}</td>
+                      <td>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(karyawan.bonus)}</td>
                       <td className="text-start">
                         <Button
                           variant="primary"
