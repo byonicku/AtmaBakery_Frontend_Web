@@ -78,7 +78,7 @@ const createProduk = async (data, uploadImage) => {
   }
 };
 
-const updateProduk = async (data, id_produk) => {
+const updateProduk = async (data, id_produk, uploadImage, deleteImage) => {
   try {
     const response = await useAxios.put(`/produk/${id_produk}`, data, {
       headers: {
@@ -86,6 +86,10 @@ const updateProduk = async (data, id_produk) => {
         // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
+
+    await uploadImage(id_produk);
+    await deleteImage();
+    
     return response.data;
   } catch (error) {
     throw error.response || error;

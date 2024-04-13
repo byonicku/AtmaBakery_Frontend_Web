@@ -298,7 +298,7 @@ export default function PenitipPage() {
           </div>
         ) : penitip?.length > 0 ? (
           <>
-            <Table striped>
+            <Table responsive striped>
               <thead>
                 <tr>
                   <th style={{ width: "25%" }} className="th-style">
