@@ -23,6 +23,7 @@ import APIHampers from "@/api/APIHampers";
 import InputHelper from "@/page/InputHelper";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import CustomPagination from "@/component/Admin/CustomPagination";
 
 export default function HampersPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -247,147 +248,157 @@ export default function HampersPage() {
             <h6 className="mt-2 mb-0">Loading...</h6>
           </div>
         ) : hampers?.length > 0 ? (
-          <Table bordered responsive>
-            <thead>
-              <tr>
-                <th style={{ width: "7%" }} className="th-style">
-                  Nama Hampers
-                </th>
-                <th style={{ width: "7%" }} className="th-style">
-                  Harga
-                </th>
-                <th style={{ width: "25%" }} className="th-style">
-                  Produk
-                </th>
-                <th style={{ width: "25%" }} className="th-style">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {hampers.map((hampers, index) => {
-                return (
-                  <>
-                    {hampers.detail_hampers.map(function (detail_hampers, idx) {
-                      if (detail_hampers.produk == null) return null;
+          <>
+            <Table bordered responsive>
+              <thead>
+                <tr>
+                  <th style={{ width: "7%" }} className="th-style">
+                    Nama Hampers
+                  </th>
+                  <th style={{ width: "7%" }} className="th-style">
+                    Harga
+                  </th>
+                  <th style={{ width: "25%" }} className="th-style">
+                    Produk
+                  </th>
+                  <th style={{ width: "25%" }} className="th-style">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {hampers.map((hampers, index) => {
+                  return (
+                    <>
+                      {hampers.detail_hampers.map(function (
+                        detail_hampers,
+                        idx
+                      ) {
+                        if (detail_hampers.produk == null) return null;
 
-                      return (
-                        <tr key={`${index}-${idx}`}>
-                          {/* Nama Hampers and Harga */}
-                          {idx === 0 && (
-                            <>
-                              <td
-                                rowSpan={
-                                  hampers.detail_hampers.length > 2
-                                    ? hampers.detail_hampers.length - 2
-                                    : 2
-                                }
-                              >
-                                {hampers.nama_hampers}
-                              </td>
-                              <td
-                                rowSpan={
-                                  hampers.detail_hampers.length > 2
-                                    ? hampers.detail_hampers.length - 2
-                                    : 2
-                                }
-                              >
-                                {new Intl.NumberFormat("id-ID", {
-                                  style: "currency",
-                                  currency: "IDR",
-                                }).format(hampers.harga)}
-                              </td>
-                            </>
-                          )}
-                          {/* Tambahan, Nama Produk, Ukuran, and Aksi */}
-                          {detail_hampers.produk?.nama_produk && (
-                            <>
-                              <td>
-                                {detail_hampers.produk?.nama_produk +
-                                  " " +
-                                  detail_hampers.produk?.ukuran +
-                                  " Loyang"}
-                              </td>
-                              <td>
-                                <Button
-                                  variant="primary"
-                                  style={{ width: "40%" }}
-                                  className="mx-2"
-                                  onClick={() => {
-                                    setSelectedHampers(hampers);
-                                    setMode("edit");
-                                    setFormData({
-                                      nama_hampers: hampers.nama_hampers,
-                                      no_telp: hampers.no_telp,
-                                    });
-                                    handleShowAddEditModal();
-                                  }}
+                        return (
+                          <tr key={`${index}-${idx}`}>
+                            {/* Nama Hampers and Harga */}
+                            {idx === 0 && (
+                              <>
+                                <td
+                                  rowSpan={
+                                    hampers.detail_hampers.length > 2
+                                      ? hampers.detail_hampers.length - 2 + 1
+                                      : 3
+                                  }
                                 >
-                                  <BsPencilSquare className="mb-1" /> Ubah
-                                </Button>
-                                <Button
-                                  variant="danger"
-                                  style={{
-                                    backgroundColor: "#FF5B19",
-                                    width: "40%",
-                                  }}
-                                  className="mx-2"
-                                  onClick={() => {
-                                    setSelectedHampers(hampers);
-                                    setMode("delete");
-                                    handleShowDelModal();
-                                  }}
+                                  {hampers.nama_hampers}
+                                </td>
+                                <td
+                                  rowSpan={
+                                    hampers.detail_hampers.length > 2
+                                      ? hampers.detail_hampers.length - 2 + 1
+                                      : 3
+                                  }
                                 >
-                                  <BsFillTrash3Fill className="mb-1" /> Hapus
-                                </Button>
-                              </td>
-                            </>
-                          )}
-                        </tr>
-                      );
-                    })}
-                    {/* "Tambah Isi" button */}
-                    <tr key={`${index}-add`}>
-                      {hampers.detail_hampers.length == 0 ? (
-                        <>
-                          <td>{hampers.nama_hampers}</td>
-                          <td>
-                            {new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(hampers.harga)}
-                          </td>
-                        </>
-                      ) : (
-                        <td colSpan={2} />
-                      )}
-                      <td>
-                        <p className="opacity-50">Tambah Produk</p>
-                      </td>
-                      <td className="text-center">
-                        <Button
-                          variant="success"
-                          style={{ width: "50%" }}
-                          className="mx-2"
-                          onClick={() => {
-                            setSelectedHampers(hampers);
-                            setMode("edit");
-                            setFormData({
-                              nama_hampers: hampers.nama_hampers,
-                              no_telp: hampers.no_telp,
-                            });
-                            handleShowAddEditModal();
-                          }}
-                        >
-                          <BsPencilSquare className="mb-1" /> Tambah Produk
-                        </Button>
-                      </td>
-                    </tr>
-                  </>
-                );
-              })}
-            </tbody>
-          </Table>
+                                  {new Intl.NumberFormat("id-ID", {
+                                    style: "currency",
+                                    currency: "IDR",
+                                  }).format(hampers.harga)}
+                                </td>
+                              </>
+                            )}
+                            {/* Tambahan, Nama Produk, Ukuran, and Aksi */}
+                            {detail_hampers.produk?.nama_produk && (
+                              <>
+                                <td>
+                                  {detail_hampers.produk?.nama_produk +
+                                    " " +
+                                    detail_hampers.produk?.ukuran +
+                                    " Loyang"}
+                                </td>
+                                <td>
+                                  <Button
+                                    variant="primary"
+                                    style={{ width: "40%" }}
+                                    className="mx-2"
+                                    onClick={() => {
+                                      setSelectedHampers(hampers);
+                                      setMode("edit");
+                                      setFormData({
+                                        nama_hampers: hampers.nama_hampers,
+                                        no_telp: hampers.no_telp,
+                                      });
+                                      handleShowAddEditModal();
+                                    }}
+                                  >
+                                    <BsPencilSquare className="mb-1" /> Ubah
+                                  </Button>
+                                  <Button
+                                    variant="danger"
+                                    style={{
+                                      backgroundColor: "#FF5B19",
+                                      width: "40%",
+                                    }}
+                                    className="mx-2"
+                                    onClick={() => {
+                                      setSelectedHampers(hampers);
+                                      setMode("delete");
+                                      handleShowDelModal();
+                                    }}
+                                  >
+                                    <BsFillTrash3Fill className="mb-1" /> Hapus
+                                  </Button>
+                                </td>
+                              </>
+                            )}
+                          </tr>
+                        );
+                      })}
+                      {/* "Tambah Isi" button */}
+                      <tr key={`${index}-add`}>
+                        {hampers.detail_hampers.length == 0 ? (
+                          <>
+                            <td>{hampers.nama_hampers}</td>
+                            <td>
+                              {new Intl.NumberFormat("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                              }).format(hampers.harga)}
+                            </td>
+                          </>
+                        ) : null}
+                        <td>
+                          <p className="opacity-50">Tambah Produk</p>
+                        </td>
+                        <td className="text-center">
+                          <Button
+                            variant="success"
+                            style={{ width: "50%" }}
+                            className="mx-2"
+                            onClick={() => {
+                              setSelectedHampers(hampers);
+                              setMode("edit");
+                              setFormData({
+                                nama_hampers: hampers.nama_hampers,
+                                no_telp: hampers.no_telp,
+                              });
+                              handleShowAddEditModal();
+                            }}
+                          >
+                            <BsPencilSquare className="mb-1" /> Tambah Produk
+                          </Button>
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })}
+              </tbody>
+            </Table>
+            {lastPage > 1 && !search && (
+              <CustomPagination
+                totalPage={lastPage}
+                currentPage={page}
+                onChangePage={handleChangePage}
+              />
+            )}
+          </>
         ) : (
           <NotFound
             text={
