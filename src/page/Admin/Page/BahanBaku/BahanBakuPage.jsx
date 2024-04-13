@@ -155,6 +155,11 @@ import {
 
     const onSubmit = async (formData) => {
       if (isLoading) return;
+
+      if (parseInt(formData.stok) < 0) {
+        toast.error("Stok tidak boleh kurang dari 0!");
+        return;
+      }
   
       try {
         if (mode === "add") {

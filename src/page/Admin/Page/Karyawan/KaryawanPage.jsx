@@ -173,6 +173,16 @@ import {
   
     const onSubmit = async (formData) => {
       if (isLoading) return;
+
+      if (parseFloat(formData.gaji) < 0) {
+        toast.error("Gaji tidak boleh negatif!");
+        return;
+      }
+
+      if (parseFloat(formData.bonus) < 0) {
+        toast.error("Bonus tidak boleh negatif!");
+        return;
+      }
   
       try {
         if (mode === "add") {
