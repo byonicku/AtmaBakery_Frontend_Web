@@ -10,7 +10,7 @@ const getAllProduk = async () => {
     });
     return response.data.data;
   } catch (error) {
-    throw error.response;
+    throw error.response || error;
   }
 };
 
@@ -27,7 +27,8 @@ const getProdukByPage = async (page = 0) => {
     });
     return response.data.data;
   } catch (error) {
-    throw error.response;
+    
+    throw error.response || error;
   }
 };
 
@@ -41,7 +42,7 @@ const searchProduk = async (search) => {
     });
     return response.data.data;
   } catch (error) {
-    throw error.response;
+    throw error.response || error;
   }
 };
 
@@ -55,11 +56,11 @@ const showProduk = async (id) => {
     });
     return response.data.data;
   } catch (error) {
-    throw error.response;
+    throw error.response || error;
   }
 };
 
-const createProduk = async (data) => {
+const createProduk = async (data, uploadImage) => {
   try {
     const response = await useAxios.post("/produk", data, {
       headers: {
@@ -67,9 +68,13 @@ const createProduk = async (data) => {
         // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
+
+    const id = response.data.data.id_produk;
+    await uploadImage(id);
+    
     return response.data;
   } catch (error) {
-    throw error.response;
+    throw error.response || error;
   }
 };
 
@@ -83,7 +88,7 @@ const updateProduk = async (data, id_produk) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response;
+    throw error.response || error;
   }
 };
 
@@ -97,7 +102,7 @@ const deleteProduk = async (id) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response;
+    throw error.response || error;
   }
 };
 

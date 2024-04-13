@@ -1,8 +1,8 @@
-import useAxios from "./APIConstant";
+import useAxios from "./APIConstant.js";
 
-const getAllBahanBaku = async () => {
+const getAllKaryawan = async () => {
     try { 
-        const response = await useAxios.get("/bahan_baku", { 
+        const response = await useAxios.get("/karyawan", { 
           headers: { 
             "Content-Type": "application/json", 
           //   Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
@@ -14,9 +14,9 @@ const getAllBahanBaku = async () => {
       } 
 };
 
-const getBahanBakuByPage = async (page = 0) => { 
+const getKaryawanByPage = async (page = 0) => { 
     try { 
-      const response = await useAxios.get("/paginate/bahan_baku", {
+      const response = await useAxios.get("/paginate/karyawan", {
         params: {
           page: page,
         }, 
@@ -31,9 +31,9 @@ const getBahanBakuByPage = async (page = 0) => {
     } 
 };
 
-const searchBahanBaku = async (search) => { 
+const searchKaryawan = async (search) => { 
     try { 
-      const response = await useAxios.get(`/bahan_baku/search/${search}`, {
+      const response = await useAxios.get(`/karyawan/search/${search}`, {
         headers: { 
           "Content-Type": "application/json", 
         //   Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
@@ -45,9 +45,9 @@ const searchBahanBaku = async (search) => {
     } 
 };
 
-const createBahanBaku = async (data) => { 
+const createKaryawan = async (data) => { 
     try { 
-      const response = await useAxios.post("/bahan_baku", data, { 
+      const response = await useAxios.post("/karyawan", data, { 
         headers: { 
           "Content-Type": "multipart/form-data", 
           // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
@@ -59,9 +59,9 @@ const createBahanBaku = async (data) => {
     } 
 };
 
-const updateBahanBaku = async (data, id_bahan_baku) => { 
+const updateKaryawan = async (data, id_karyawan) => { 
     try { 
-      const response = await useAxios.put(`/bahan_baku/${id_bahan_baku}`, data, { 
+      const response = await useAxios.put(`/karyawan/${id_karyawan}`, data, { 
         headers: { 
           "Content-Type": "application/json", 
           // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
@@ -73,9 +73,9 @@ const updateBahanBaku = async (data, id_bahan_baku) => {
     } 
 }; 
   
-  const deleteBahanBaku = async (id) => { 
+  const deleteKaryawan = async (id) => { 
       try { 
-      const response = await useAxios.delete(`/bahan_baku/${id}`, { 
+      const response = await useAxios.delete(`/karyawan/${id}`, { 
         headers: { 
           "Content-Type": "application/json", 
           // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
@@ -87,13 +87,13 @@ const updateBahanBaku = async (data, id_bahan_baku) => {
     } 
 };
 
-const APIBahanBaku = {
-    getAllBahanBaku,
-    getBahanBakuByPage,
-    searchBahanBaku,
-    createBahanBaku,
-    updateBahanBaku,
-    deleteBahanBaku,
+const APIKaryawan = {
+    getAllKaryawan,
+    getKaryawanByPage,
+    searchKaryawan,
+    createKaryawan,
+    updateKaryawan,
+    deleteKaryawan,
 };
 
-export default APIBahanBaku;
+export default APIKaryawan;

@@ -9,7 +9,7 @@ const login = async (data) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response || error;
   }
 };
 
@@ -26,7 +26,7 @@ const logout = async () => {
     );
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response || error;
   }
 };
 
@@ -39,7 +39,7 @@ const register = async (data) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response || error;
   }
 };
 
@@ -59,7 +59,7 @@ const sendEmailForResetPassword = async (data) => {
     );
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response || error;
   }
 };
 
@@ -72,7 +72,7 @@ const resetPassword = async (data) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response || error;
   }
 };
 
@@ -85,7 +85,7 @@ const verifyPasswordToken = async (data) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response || error;
   }
 };
 
@@ -98,7 +98,7 @@ const verifyEmailToken = async (data) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response || error;
   }
 };
 

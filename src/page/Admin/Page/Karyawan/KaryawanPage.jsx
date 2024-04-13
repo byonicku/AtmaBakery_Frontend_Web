@@ -6,34 +6,33 @@ import {
     Table,
     Modal,
     InputGroup,
-    // Container,
-    Spinner
+    Spinner,
   } from "react-bootstrap";
-  import { useState,useEffect, useCallback } from "react";
+  import { useState, useEffect, useCallback } from "react";
   import { useMutation } from "@tanstack/react-query";
   import { toast } from "sonner";
-
+  
   import InputHelper from "@/page/InputHelper";
   import {
     BsSearch,
     BsPlusSquare,
     BsPencilSquare,
     BsFillTrash3Fill,
-    // BsPrinterFill,
+    BsPrinterFill,
   } from "react-icons/bs";
+  
   import OutlerHeader from "@/component/Admin/OutlerHeader";
-  import APIBahanBaku from "@/api/APIBahanBaku";
+  import APIKaryawan from "@/api/APIKaryawan";
   import NotFound from "@/component/Admin/NotFound";
   import CustomPagination from "@/component/Admin/CustomPagination";
-
   
-  export default function BahanBakuPage() {
+  export default function KaryawanPage() {
     const [showDelModal, setShowDelModal] = useState(false);
-    const [showAddEditModal, setShowAddEditModal] = useState(false);
     const [showPrintModal, setshowPrintModal] = useState(false);
-    const [selectedBahanBaku, setSelectedBahanBaku] = useState(null);
+    const [showAddEditModal, setShowAddEditModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-
+    const [selectedKaryawan, setSelectedKaryawan] = useState(null);
+  
     const handleCloseDelModal = () => setShowDelModal(false);
     const handleShowDelModal = () => setShowDelModal(true);
   
@@ -41,27 +40,31 @@ import {
     const handleShowAddEditModal = () => setShowAddEditModal(true);
   
     const handleClosePrintModal = () => setshowPrintModal(false);
-    // const handleShowPrintModal = () => setshowPrintModal(true);
+    const handleShowPrintModal = () => setshowPrintModal(true);
   
+    // Mode untuk CRD
+    // create -> "add"
+    // update -> "edit"
+    // delete -> "delete"
     const [mode, setMode] = useState("add");
-
-    // Fetch bahan baku with pagination
-    const [bahanBaku, setBahanBaku] = useState([]);
+  
+    // Fetch karyawan with pagination
+    const [karyawan, setKaryawan] = useState([]);
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [search, setSearch] = useState(null);
-    
-    const fetchBahanBaku = useCallback(async () => {
+  
+    const fetchKaryawan = useCallback(async () => {
       setIsLoading(true);
       try {
-        const response = await APIBahanBaku.getBahanBakuByPage(page);
-        setBahanBaku(response.data);
+        const response = await APIKaryawan.getKaryawanByPage(page);
+        setKaryawan(response.data);
         setLastPage(response.last_page);
       } catch (error) {
         // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
         // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
         if (page - 1 === 0 && error.response.status === 404) {
-          setBahanBaku([]);
+          setKaryawan([]);
         } else {
           setPage(page - 1);
         }
@@ -70,55 +73,69 @@ import {
         setIsLoading(false);
       }
     }, [page]);
-
+  
     const handleChangePage = useCallback((newPage) => {
       setPage(newPage);
     }, []);
-
+  
+    // Pas masuk load karyawan
     useEffect(() => {
-      fetchBahanBaku();
-    }, [fetchBahanBaku]);
-    
+      fetchKaryawan();
+    }, [fetchKaryawan]);
+  
+    // CRUD Karyawan
     const [formData, setFormData] = useState({
-      nama_bahan_baku: "",
-      stok: "",
-      satuan:"",
+      nama: "",
+      no_telp: "",
+      email: "",
+      hire_date: new Date().toISOString().split('T')[0],
+      gaji: 0,
+      bonus: 0,
     });
-
+  
+    // Untuk validasi front-end (sebisa mungkin samain dengan backend ya)
     const validationSchema = {
-      nama_bahan_baku: {
+      nama: {
         required: true,
-        alias: "Nama Bahan Baku",
+        alias: "Nama Karyawan",
       },
-      stok: {
+      no_telp: {
         required: true,
-        alias: "Stok Bahan Baku",
+        alias: "Nomor Telepon",
+        minLength: 10,
+        maxLength: 13,
+        pattern: /^(?:\+?08)(?:\d{2,3})?[ -]?\d{3,4}[ -]?\d{4}$/,
       },
-      satuan: {
+      email: {
         required: true,
-        alias: "Satuan Bahan Baku"
-      }
+        alias: "Nama Email",
+        email: true,
+      },
     };
-
+  
+    // Wajib dipanggil abis mutation / query
     const handleMutationSuccess = () => {
       setIsLoading(true);
-      fetchBahanBaku();
+      fetchKaryawan();
       setTimeout(() => {
-        setSelectedBahanBaku(null);
+        setSelectedKaryawan(null);
         setFormData({
-          nama_bahan_baku: "",
-          stok: "",
-          satuan:"",
+          nama: "",
+          no_telp: "",
+          email: "",
+          hire_date: new Date().toISOString().split('T')[0],
+          gaji: 0,
+          bonus: 0,
         });
         setSearch(null);
       }, 125);
     };
-
+  
     // Add Data
     const add = useMutation({
-      mutationFn: (data) => APIBahanBaku.createBahanBaku(data),
+      mutationFn: (data) => APIKaryawan.createKaryawan(data),
       onSuccess: async () => {
-        toast.success("Tambah Bahan Baku berhasil!");
+        toast.success("Tambah Karyawan berhasil!");
         handleCloseAddEditModal();
         handleMutationSuccess();
       },
@@ -126,33 +143,34 @@ import {
         toast.error(error.message);
       },
     });
-
+  
     // Edit Data
     const edit = useMutation({
       mutationFn: (data) =>
-        APIBahanBaku.updateBahanBaku(data, selectedBahanBaku.id_bahan_baku),
+        APIKaryawan.updateKaryawan(data, selectedKaryawan.id_karyawan),
       onSuccess: async () => {
-        toast.success("Edit Bahan Baku berhasil!");
+        toast.success("Edit Karyawan berhasil!");
         handleCloseAddEditModal();
         handleMutationSuccess();
       },
       onError: (error) => {
-        console.error(error.message);
+        toast.error(error.message);
       },
     });
-
+  
+    // Delete Data
     const del = useMutation({
-      mutationFn: (id) => APIBahanBaku.deleteBahanBaku(id),
+      mutationFn: (id) => APIKaryawan.deleteKaryawan(id),
       onSuccess: async () => {
-        toast.success("Hapus Bahan Baku berhasil!");
+        toast.success("Hapus Karyawan berhasil!");
         handleCloseDelModal();
         handleMutationSuccess();
       },
       onError: (error) => {
-        console.error(error);
+        toast.error(error.message);
       },
     });
-
+  
     const onSubmit = async (formData) => {
       if (isLoading) return;
   
@@ -168,14 +186,14 @@ import {
         }
   
         if (mode === "delete") {
-          await del.mutateAsync(selectedBahanBaku.id_bahan_baku);
+          await del.mutateAsync(selectedKaryawan.id_karyawan);
           return;
         }
       } catch (error) {
-        toast.error(error.message);
+        console.error(error);
       }
     };
-
+  
     const inputHelper = new InputHelper(
       formData,
       setFormData,
@@ -183,33 +201,31 @@ import {
       onSubmit
     );
   
-
     // Search Data
-    const fetchBahanBakuSearch = async () => {
+    const fetchKaryawanSearch = async () => {
       if (search.trim() === "") { // Kalo spasi doang bakal gabisa
         return;
       }
-
+  
       setIsLoading(true);
-
+  
       try {
-        const response = await APIBahanBaku.searchBahanBaku(search.trim());
-        setBahanBaku(response);
+        const response = await APIKaryawan.searchKaryawan(search.trim());
+        setKaryawan(response);
       } catch (error) {
-        setBahanBaku([]); // Kalo error / tidak ditemukan set bahan baku jadi array kosong
+        setKaryawan([]); // Kalo error / tidak ditemukan set karyawan jadi array kosong
         console.error(error);
       } finally {
         setIsLoading(false);
       }
     };
-
-
+  
     return (
       <>
         <OutlerHeader
-          title="Kelola Data Bahan Baku"
-          desc="Lakukan pengelolaan data bahan baku Atma Bakery"
-          breadcrumb="Bahan Baku"
+          title="Kelola Data Karyawan"
+          desc="Lakukan pengelolaan data karyawan Atma Bakery"
+          breadcrumb="Karyawan"
         />
         <section className="content px-3">
           <Row className="pb-3">
@@ -220,15 +236,18 @@ import {
               md="6"
               className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
             >
-              <Button 
-                variant="success" 
+              <Button
+                variant="success"
                 onClick={() => {
                   handleShowAddEditModal();
                   setMode("add");
                   setFormData({
-                    nama_bahan_baku: "",
-                    stok: "",
-                    satuan: ""
+                    nama: "",
+                    no_telp: "",
+                    email: "",
+                    hire_date: new Date().toISOString().split('T')[0],
+                    gaji: 0,
+                    bonus: 0,
                   });
                 }}
                 disabled={isLoading}
@@ -246,9 +265,9 @@ import {
               className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
             >
               <InputGroup>
-                <Form.Control 
-                  type="text" 
-                  placeholder="Cari Bahan Baku disini" 
+                <Form.Control
+                  type="text"
+                  placeholder="Cari Karyawan disini"
                   name="search"
                   value={search || ""}
                   disabled={isLoading}
@@ -257,115 +276,137 @@ import {
                       if (page !== 1) {
                         setPage(1);
                       } else {
-                        fetchBahanBaku();
+                        fetchKaryawan();
                       }
                     }
                     setSearch(e.target.value);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      fetchBahanBakuSearch(search);
+                      fetchKaryawanSearch();
                     }
                   }}
                 />
-                <Button variant="secondary">
+                <Button variant="secondary" disabled={isLoading} onClick={() => fetchKaryawanSearch()}>
                   <BsSearch />
                 </Button>
               </InputGroup>
             </Col>
           </Row>
           {isLoading ? (
-          <div className="text-center">
-            <Spinner
-              as="span"
-              animation="border"
-              variant="primary"
-              size="lg"
-              role="status"
-              aria-hidden="true"
-            />
-            <h6 className="mt-2 mb-0">Loading...</h6>
-          </div>
-        ) : bahanBaku?.length > 0 ? (
-          <>
-          <Table className="table-striped">
-            <thead>
-              <tr>
-                <th style={{ width: "25%" }} className="th-style">
-                  Nama
-                </th>
-                <th style={{ width: "25%" }} className="th-style">
-                  Stok
-                </th>
-                <th style={{ width: "25%" }} className="th-style">
-                  Satuan
-                </th>
-                <th style={{ width: "25%" }} className="th-style">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {bahanBaku.map((bahanBaku, index) => (
-                <tr key={index}>
-                  <td>{bahanBaku.nama_bahan_baku}</td>
-                  <td>{bahanBaku.stok}</td>
-                  <td>{bahanBaku.satuan}</td>
-                  <td className="text-start">
-                    <Button
-                      variant="primary"
-                      style={{ width: "40%" }}
-                      className="mx-2"
-                      onClick={() => {
-                        setSelectedBahanBaku(bahanBaku);
-                        setMode("edit");
-                        setFormData({
-                          nama_bahan_baku: bahanBaku.nama_bahan_baku,
-                          stok: bahanBaku.stok,
-                          satuan: bahanBaku.satuan,
-                        });
-                        handleShowAddEditModal();
-                      }}
-                    >
-                      <BsPencilSquare className="mb-1" /> Ubah
-                    </Button>
-                    <Button
-                      variant="danger"
-                      style={{ backgroundColor: "#FF5B19", width: "40%" }}
-                      className="mx-2"
-                      onClick={() => {
-                        setSelectedBahanBaku(bahanBaku);
-                        setMode("delete");
-                        handleShowDelModal();
-                      }}
-                    >
-                      <BsFillTrash3Fill className="mb-1" /> Hapus
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          {/* Udah pasti kayak gini untuk pagination, jangan diotak atik :V */}
-          {lastPage > 1 && !search && (
-              <CustomPagination
-                totalPage={lastPage}
-                currentPage={page}
-                onChangePage={handleChangePage}
+            <div className="text-center">
+              <Spinner
+                as="span"
+                animation="border"
+                variant="primary"
+                size="lg"
+                role="status"
+                aria-hidden="true"
               />
-            )}
-          </>
-         ): (
-          <NotFound 
-            text={
-              search ? "Bahan Baku Tidak Ditemukan" : "Belum Ada Bahan Baku Disini" }/>
-         )}
-          {/* ini modal modalnya */}
+              <h6 className="mt-2 mb-0">Loading...</h6>
+            </div>
+          ) : karyawan?.length > 0 ? (
+            <>
+              <Table striped>
+                <thead>
+                  <tr>
+                    <th style={{ width: "20%" }} className="th-style">
+                      Nama
+                    </th>
+                    <th style={{ width: "15%" }} className="th-style">
+                      Nomor Telepon
+                    </th>
+                    <th style={{ width: "15%" }} className="th-style">
+                      Email
+                    </th>
+                    <th style={{ width: "15%" }} className="th-style">
+                      Gaji
+                    </th>
+                    <th style={{ width: "15%" }} className="th-style">
+                      Bonus
+                    </th>
+                    <th style={{ width: "20%" }} className="th-style">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+  
+                <tbody>
+                  {karyawan.map((karyawan, index) => (
+                    <tr key={index}>
+                      <td>{karyawan.nama}</td>
+                      <td>{karyawan.no_telp}</td>
+                      <td>{karyawan.email}</td>
+                      <td>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(karyawan.gaji)}</td>
+                      <td>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(karyawan.bonus)}</td>
+                      <td className="text-start">
+                        <Button
+                          variant="primary"
+                          style={{ width: "40%" }}
+                          className="mx-2"
+                          onClick={() => {
+                            setSelectedKaryawan(karyawan);
+                            setMode("edit");
+                            setFormData({
+                              nama: karyawan.nama,
+                              no_telp: karyawan.no_telp,
+                              email: karyawan.email,
+                              hire_date: karyawan.hire_date,
+                              gaji: karyawan.gaji,
+                              bonus: karyawan.bonus,
+                            });
+                            handleShowAddEditModal();
+                          }}
+                        >
+                          <BsPencilSquare className="mb-1" /> Ubah
+                        </Button>
+                        <Button
+                          variant="danger"
+                          style={{ backgroundColor: "#FF5B19", width: "40%" }}
+                          className="mx-2"
+                          onClick={() => {
+                            setSelectedKaryawan(karyawan);
+                            setMode("delete");
+                            handleShowDelModal();
+                          }}
+                        >
+                          <BsFillTrash3Fill className="mb-1" /> Hapus
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+              {/* Udah pasti kayak gini untuk pagination, jangan diotak atik :V */}
+              {lastPage > 1 && !search && (
+                <CustomPagination
+                  totalPage={lastPage}
+                  currentPage={page}
+                  onChangePage={handleChangePage}
+                />
+              )}
+            </>
+          ) : (
+            <NotFound
+              text={
+                search ? "Karyawan Tidak Ditemukan" : "Belum Ada Karyawan Disini"
+              }
+            />
+          )}
+  
+          {/* 
+            Modal - Modal dibawah
+            Notable note : 
+            jangan lupa setMode("add") atau setMode("edit") atau setMode("delete") ketika mau nampilin modal (set nya di button atas ye)
+            dan keluar modal di setMode("add")
+  
+            add / edit / del .isPending itu ketika query sedang berjalan, mirip dengan isLoading tapi bawaan react querynya
+          */}
           <Modal
             show={showDelModal}
             onHide={() => {
               handleCloseDelModal();
-              setSelectedBahanBaku(null);
+              setSelectedKaryawan(null);
               setMode("add");
             }}
             centered
@@ -376,7 +417,7 @@ import {
           >
             <Modal.Body className="text-center p-5">
               <h3 style={{ fontWeight: "bold" }}>
-                Anda Yakin Ingin Menghapus Data Bahan Baku Ini?
+                Anda Yakin Ingin Menghapus Data Karyawan Ini?
               </h3>
               <p
                 style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
@@ -384,7 +425,7 @@ import {
               >
                 <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
                 <p className="m-0 p-0">
-                  Semua data yang terkait dengan Bahan Baku tersebut akan hilang.
+                  Semua data yang terkait dengan karyawan tersebut akan hilang.
                 </p>
               </p>
               <Row className="py-2 pt-3">
@@ -394,7 +435,7 @@ import {
                     className="mx-2 w-100 p-1"
                     onClick={() => {
                       handleCloseDelModal();
-                      setSelectedBahanBaku(null);
+                      setSelectedKaryawan(null);
                     }}
                     disabled={del.isPending}
                   >
@@ -402,6 +443,7 @@ import {
                   </Button>
                 </Col>
                 <Col sm>
+                  {/* Khusus delete panggil langsng onSubmit()*/} 
                   <Button
                     style={{ backgroundColor: "#F48E28", border: "none" }}
                     className="mx-2 w-100 p-1"
@@ -427,35 +469,6 @@ import {
           >
             <Form>
               <Modal.Body className="text-center p-4 m-2">
-                <h5 style={{ fontWeight: "bold" }}>
-                  Print Laporan Penggunaan Bahan Baku
-                </h5>
-                <p
-                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                  className="mt-1"
-                >
-                  Pilih tanggal awal Penggunaan Bahan Baku
-                </p>
-                <Form.Group className="text-start mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Pilih Tanggal Awal
-                  </Form.Label>
-                  <Form.Control
-                    style={{ border: "1px solid #808080" }}
-                    type="date"
-                    placeholder="Month YYYY"
-                  />
-                </Form.Group>
-                <Form.Group className="text-start mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Pilih Tanggal Akhir
-                  </Form.Label>
-                  <Form.Control
-                    style={{ border: "1px solid #808080" }}
-                    type="date"
-                    placeholder="Month YYYY"
-                  />
-                </Form.Group>
                 <Row className="py-2 pt-3 mt-4">
                   <Col sm>
                     <Button
@@ -481,7 +494,7 @@ import {
           </Modal>
   
           <Modal
-            show={showAddEditModal}          
+            show={showAddEditModal}
             centered
             style={{ border: "none" }}
             keyboard={false}
@@ -490,15 +503,15 @@ import {
             <Form onSubmit={inputHelper.handleSubmit}>
               <Modal.Body className="text-center p-4 m-2">
                 <h4 style={{ fontWeight: "bold" }}>
-                {selectedBahanBaku ? "Edit Data Bahan Baku" : "Tambah Data Bahan Baku"}
+                  {selectedKaryawan ? "Edit Data Karyawan" : "Tambah Data Karyawan"}
                 </h4>
                 <p
                   style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
                   className="mt-1"
                 >
-                  {selectedBahanBaku
-                    ? "Pastikan data bahan baku yang Anda tambahkan benar"
-                    : "Pastikan data bahan baku yang Anda ubahkan benar"}
+                  {selectedKaryawan
+                    ? "Pastikan data karyawan yang Anda tambahkan benar"
+                    : "Pastikan data karyawan yang Anda ubahkan benar"}
                 </p>
                 <Form.Group className="text-start mt-3">
                   <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -507,35 +520,35 @@ import {
                   <Form.Control
                     style={{ border: "1px solid #808080" }}
                     type="text"
-                    placeholder="Masukkan nama bahan baku"
-                    name="nama_bahan_baku"
-                    value={formData.nama_bahan_baku || selectedBahanBaku?.nama_bahan_baku || ""}
+                    placeholder="Masukkan nama karyawan"
+                    name="nama"
+                    value={formData.nama || selectedKaryawan?.nama || ""}
                     onChange={inputHelper.handleInputChange}
                   />
                 </Form.Group>
                 <Form.Group className="text-start mt-3">
                   <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Stok
-                  </Form.Label>
-                  <Form.Control
-                    style={{ border: "1px solid #808080" }}
-                    type="number"
-                    placeholder="Masukkan stok bahan baku"
-                    name="stok"
-                    value={formData.stok || selectedBahanBaku?.stok || ""}
-                    onChange={inputHelper.handleInputChange}
-                  />
-                </Form.Group>
-                <Form.Group className="text-start mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Satuan
+                    Nomor Telepon
                   </Form.Label>
                   <Form.Control
                     style={{ border: "1px solid #808080" }}
                     type="text"
-                    placeholder="Masukkan satuan bahan baku"
-                    name="satuan"
-                    value={formData.satuan || selectedBahanBaku?.satuan || ""}
+                    placeholder="Masukkan nomor telepon"
+                    name="no_telp"
+                    value={formData.no_telp || selectedKaryawan?.no_telp || ""}
+                    onChange={inputHelper.handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group className="text-start mt-3">
+                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    Email
+                  </Form.Label>
+                  <Form.Control
+                    style={{ border: "1px solid #808080" }}
+                    type="text"
+                    placeholder="Masukkan email"
+                    name="email"
+                    value={formData.email || selectedKaryawan?.karyawan || ""}
                     onChange={inputHelper.handleInputChange}
                   />
                 </Form.Group>
@@ -547,7 +560,7 @@ import {
                       onClick={() => {
                         handleCloseAddEditModal();
                         setTimeout(() => {
-                          setSelectedBahanBaku(null);
+                          setSelectedKaryawan(null);
                         }, 125);
                       }}
                       disabled={add.isPending || edit.isPending}

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import InputHelper from "@/page/InputHelper";
 import APIPenitip from "@/api/APIPenitip";
+import APIGambar from "@/api/APIGambar";
 
 AddEditProdukPage.propTypes = {
   isEdit: PropTypes.bool,
@@ -34,7 +35,6 @@ export default function AddEditProdukPage({ isEdit }) {
     harga: "",
     stok: "",
     id_penitip: "",
-    gambar: [],
   });
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export default function AddEditProdukPage({ isEdit }) {
       alias: "Status",
     },
     foto: {
-      required: false,
+      required: true,
       alias: "Gambar",
     },
     id_kategori: {
@@ -137,15 +137,41 @@ export default function AddEditProdukPage({ isEdit }) {
     }, 125);
   };
 
+  const uploadImage = async (id) => {
+    try {
+      const result = {};
+
+      for (const image of image_preview) {
+        console.log(image);
+        const formData = new FormData();
+        const filename = new Date().getTime() + "-produk";
+        formData.append("file", image);
+        const response = await APIGambar.uploadImage(formData, filename);
+        const url = response.secure_url;
+        const public_id = filename;
+        const insertData = await APIGambar.createGambar({
+          id_produk: id,
+          url,
+          public_id,
+        });
+        result[public_id] = insertData;
+      }
+
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Add Data
   const add = useMutation({
-    mutationFn: (data) => APIProduk.createProduk(data),
+    mutationFn: (data) => APIProduk.createProduk(data, uploadImage),
     onSuccess: async () => {
       toast.success("Tambah Produk berhasil!");
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
   });
 
@@ -157,15 +183,25 @@ export default function AddEditProdukPage({ isEdit }) {
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
   });
 
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
-    if (formData.gambar?.length > 3) {
-      toast.error("Gambar maksimal 3!");
+    if (formData.gambar?.length > 5) {
+      toast.error("Gambar maksimal 5!");
+      return;
+    }
+
+    if (formData.id_kategori === "TP" && formData.id_penitip === "") {
+      toast.error("Penitip tidak boleh kosong!");
+      return;
+    }
+
+    if (formData.gambar?.length === 0) {
+      toast.error("Gambar tidak boleh kosong!");
       return;
     }
 
@@ -180,7 +216,7 @@ export default function AddEditProdukPage({ isEdit }) {
         await add.mutateAsync(formData);
       }
     } catch (error) {
-      console.error(error);
+      toast.error(error.message);
     }
   };
 
@@ -250,7 +286,7 @@ export default function AddEditProdukPage({ isEdit }) {
                 <Col md={12} sm={12} lg={12} className="mt-3">
                   <Form.Group>
                     <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      Gambar
+                      Gambar (Max 5 Gambar, Max 1MB/Gambar)
                     </Form.Label>
                     <Form.Control
                       name="foto"
@@ -262,6 +298,13 @@ export default function AddEditProdukPage({ isEdit }) {
                         if (e.target.files.length > 5) {
                           toast.error("Gambar maksimal 5!");
                           return;
+                        }
+
+                        for (const image of e.target.files) {
+                          if (image.size > 1000000) {
+                            toast.error("Ukuran gambar maksimal 1MB!");
+                            return;
+                          }
                         }
 
                         inputHelper.handleFileChange(e);
@@ -298,7 +341,8 @@ export default function AddEditProdukPage({ isEdit }) {
                           setIsTitipan(true);
                         } else {
                           setIsTitipan(false);
-                          document.getElementsByName("id_penitip")[0].value = "";
+                          document.getElementsByName("id_penitip")[0].value =
+                            "";
                         }
                       }}
                       defaultValue={formData.id_kategori}
@@ -359,7 +403,7 @@ export default function AddEditProdukPage({ isEdit }) {
                 </Col>
 
                 <Col lg={6} md={6} sm={12} className="my-3">
-                <Form.Group>
+                  <Form.Group>
                     <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                       Status
                     </Form.Label>
@@ -410,27 +454,28 @@ export default function AddEditProdukPage({ isEdit }) {
                     </Form.Select>
                   </Form.Group>
                 </Col>
-                <Row>
-                  <Col>
-                    <Button
-                      variant="success"
-                      type="submit"
-                      disabled={add.isPending || edit.isPending}
-                    >
-                      Simpan Produk
-                    </Button>
-                    <Link
-                      to="/admin/produk"
-                      className={
-                        add.isPending || edit.isPending
-                          ? "btn btn-danger mx-2 disabled"
-                          : "btn btn-danger mx-2"
-                      }
-                    >
-                      Batal Simpan Produk
-                    </Link>
-                  </Col>
-                </Row>
+
+                <Col className="mb-3">
+                  <Button
+                    variant="success"
+                    type="submit"
+                    disabled={add.isPending || edit.isPending}
+                  >
+                    {add.isPending || edit.isPending
+                      ? "Loading"
+                      : "Simpan Produk"}
+                  </Button>
+                  <Link
+                    to="/admin/produk"
+                    className={
+                      add.isPending || edit.isPending
+                        ? "btn btn-danger mx-2 disabled"
+                        : "btn btn-danger mx-2"
+                    }
+                  >
+                    Batal Simpan Produk
+                  </Link>
+                </Col>
               </>
             )}
           </Row>
