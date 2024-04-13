@@ -127,7 +127,7 @@ export default function PenitipPage() {
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
   });
 
@@ -141,7 +141,7 @@ export default function PenitipPage() {
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
   });
 
@@ -154,7 +154,7 @@ export default function PenitipPage() {
       handleMutationSuccess();
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
   });
 
@@ -177,7 +177,7 @@ export default function PenitipPage() {
         return;
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.data.message);
     }
   };
 

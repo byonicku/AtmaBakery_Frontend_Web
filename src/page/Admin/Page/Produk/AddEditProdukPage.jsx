@@ -235,6 +235,21 @@ export default function AddEditProdukPage({ isEdit }) {
       return;
     }
 
+    if (parseInt(formData.limit) < 0) {
+      toast.error("Limit tidak boleh kurang dari 0!");
+      return;
+    }
+
+    if (parseFloat(formData.harga) < 0) {
+      toast.error("Harga tidak boleh kurang dari 0!");
+      return;
+    }
+
+    if (parseInt(formData.stok) < 0) {
+      toast.error("Stok tidak boleh kurang dari 0!");
+      return;
+    }
+
     try {
       if (isEdit) {
         await edit.mutateAsync(formData, id_produk);
@@ -246,7 +261,7 @@ export default function AddEditProdukPage({ isEdit }) {
         await add.mutateAsync(formData);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.data.message);
     }
   };
 
@@ -473,7 +488,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       Harga
                     </Form.Label>
                     <Form.Control
-                      type="text"
+                      type="number"
                       name="harga"
                       defaultValue={formData.harga}
                       onChange={inputHelper.handleInputChange}
@@ -486,7 +501,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       Limit
                     </Form.Label>
                     <Form.Control
-                      type="text"
+                      type="number"
                       name="limit"
                       defaultValue={formData.limit}
                       onChange={inputHelper.handleInputChange}
@@ -519,7 +534,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       Stok
                     </Form.Label>
                     <Form.Control
-                      type="text"
+                      type="number"
                       name="stok"
                       defaultValue={formData.stok}
                       onChange={inputHelper.handleInputChange}
