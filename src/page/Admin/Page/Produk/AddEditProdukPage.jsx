@@ -10,7 +10,10 @@ import { useMutation } from "@tanstack/react-query";
 import InputHelper from "@/page/InputHelper";
 import APIPenitip from "@/api/APIPenitip";
 import APIGambar from "@/api/APIGambar";
+
 import "./css/Produk.css";
+import "@/page/Admin/Page/css/Admin.css";
+
 import { FaTrash } from "react-icons/fa";
 
 AddEditProdukPage.propTypes = {
@@ -600,28 +603,32 @@ export default function AddEditProdukPage({ isEdit }) {
                     </Form.Select>
                   </Form.Group>
                 </Col>
-
-                <Col className="mb-3">
-                  <Button
-                    variant="success"
-                    type="submit"
-                    disabled={isLoading || add.isPending || edit.isPending}
-                  >
-                    {isLoading || add.isPending || edit.isPending
-                      ? "Loading"
-                      : "Simpan Produk"}
-                  </Button>
-                  <Link
-                    to="/admin/produk"
-                    className={
-                      isLoading || add.isPending || edit.isPending
-                        ? "btn btn-danger mx-2 disabled"
-                        : "btn btn-danger mx-2"
-                    }
-                  >
-                    Batal Simpan Produk
-                  </Link>
-                </Col>
+                <Row className="pb-3 gap-2 text-center">
+                  <Col xs={12} sm={12} md={12} lg={12} className="p-0">
+                    <Button
+                      className="w-50"
+                      variant="success"
+                      type="submit"
+                      disabled={isLoading || add.isPending || edit.isPending}
+                    >
+                      {isLoading || add.isPending || edit.isPending
+                        ? "Loading"
+                        : "Simpan Produk"}
+                    </Button>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} lg={12} className="m-0 p-0">
+                    <Link
+                      to="/admin/produk"
+                      className={
+                        isLoading || add.isPending || edit.isPending
+                          ? "btn btn-danger custom-danger-btn w-50 disabled"
+                          : "btn btn-danger custom-danger-btn w-50"
+                      }
+                    >
+                      Batal Simpan Produk
+                    </Link>
+                  </Col>
+                </Row>
               </>
             )}
           </Row>

@@ -220,12 +220,12 @@ export default function PenitipPage() {
         breadcrumb="Penitip"
       />
       <section className="content px-3">
-        <Row className="pb-3">
+        <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
           <Col
-            xs="12"
-            sm="6"
-            lg="6"
-            md="6"
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <Button
@@ -239,7 +239,7 @@ export default function PenitipPage() {
                 });
               }}
               disabled={isLoading}
-              className="me-2"
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
             >
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
@@ -248,16 +248,17 @@ export default function PenitipPage() {
               variant="secondary"
               onClick={handleShowPrintModal}
               disabled={isLoading}
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
             >
               <BsPrinterFill className="mb-1 me-2" />
               Print Laporan
             </Button>
           </Col>
           <Col
-            xs="12"
-            sm="6"
-            lg="6"
-            md="6"
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <InputGroup>
@@ -310,7 +311,7 @@ export default function PenitipPage() {
             <Table responsive striped>
               <thead>
                 <tr>
-                  <th style={{ width: "25%" }} className="th-style">
+                  <th style={{ width: "20%" }} className="th-style">
                     ID Penitip
                   </th>
                   <th style={{ width: "25%" }} className="th-style">
@@ -319,7 +320,7 @@ export default function PenitipPage() {
                   <th style={{ width: "25%" }} className="th-style">
                     Nomor Telepon
                   </th>
-                  <th style={{ width: "25%" }} className="th-style">
+                  <th style={{ width: "30%" }} className="th-style">
                     Aksi
                   </th>
                 </tr>
@@ -331,35 +332,39 @@ export default function PenitipPage() {
                     <td>{penitip.id_penitip}</td>
                     <td>{penitip.nama}</td>
                     <td>{penitip.no_telp}</td>
-                    <td className="text-start">
-                      <Button
-                        variant="primary"
-                        style={{ width: "40%" }}
-                        className="mx-2"
-                        onClick={() => {
-                          setSelectedPenitip(penitip);
-                          setMode("edit");
-                          setFormData({
-                            nama: penitip.nama,
-                            no_telp: penitip.no_telp,
-                          });
-                          handleShowAddEditModal();
-                        }}
-                      >
-                        <BsPencilSquare className="mb-1" /> Ubah
-                      </Button>
-                      <Button
-                        variant="danger"
-                        style={{ backgroundColor: "#FF5B19", width: "40%" }}
-                        className="mx-2"
-                        onClick={() => {
-                          setSelectedPenitip(penitip);
-                          setMode("delete");
-                          handleShowDelModal();
-                        }}
-                      >
-                        <BsFillTrash3Fill className="mb-1" /> Hapus
-                      </Button>
+                    <td>
+                      <Row className="gap-1 gap-lg-0 gap-md-0">
+                        <Col xs={12} sm={12} md={6} lg={6}>
+                          <Button
+                            variant="primary"
+                            className="w-100"
+                            onClick={() => {
+                              setSelectedPenitip(penitip);
+                              setMode("edit");
+                              setFormData({
+                                nama: penitip.nama,
+                                no_telp: penitip.no_telp,
+                              });
+                              handleShowAddEditModal();
+                            }}
+                          >
+                            <BsPencilSquare className="mb-1" /> Ubah
+                          </Button>
+                        </Col>
+                        <Col xs={12} sm={12} md={6} lg={6}>
+                          <Button
+                            variant="danger"
+                            className="custom-danger-btn w-100"
+                            onClick={() => {
+                              setSelectedPenitip(penitip);
+                              setMode("delete");
+                              handleShowDelModal();
+                            }}
+                          >
+                            <BsFillTrash3Fill className="mb-1" /> Hapus
+                          </Button>
+                        </Col>
+                      </Row>
                     </td>
                   </tr>
                 ))}
@@ -399,7 +404,6 @@ export default function PenitipPage() {
           }}
           centered
           size="lg"
-          style={{ border: "none" }}
           keyboard={false}
           backdrop="static"
         >
@@ -416,11 +420,23 @@ export default function PenitipPage() {
                 Semua data yang terkait dengan penitip tersebut akan hilang.
               </p>
             </p>
-            <Row className="py-2 pt-3">
-              <Col sm>
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
-                  style={{ backgroundColor: "#FF5B19", border: "none" }}
-                  className="mx-2 w-100 p-1"
+                  variant="danger"
+                  className="custom-agree-btn w-100 p-1"
+                  onClick={() => onSubmit()}
+                  disabled={del.isPending}
+                >
+                  <h5 className="mt-2">
+                    {del.isPending ? "Loading..." : "Hapus"}
+                  </h5>
+                </Button>
+              </Col>
+              <Col xs={12} sm={12} md={6} lg={6}>
+                <Button
+                  variant="danger"
+                  className="custom-danger-btn w-100 p-1"
                   onClick={() => {
                     handleCloseDelModal();
                     setSelectedPenitip(null);
@@ -429,19 +445,7 @@ export default function PenitipPage() {
                 >
                   <h5 className="mt-2">Batal</h5>
                 </Button>
-              </Col>
-              <Col sm>
                 {/* Khusus delete panggil langsng onSubmit()*/}
-                <Button
-                  style={{ backgroundColor: "#F48E28", border: "none" }}
-                  className="mx-2 w-100 p-1"
-                  onClick={() => onSubmit()}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">
-                    {del.isPending ? "Loading..." : "Hapus"}
-                  </h5>
-                </Button>
               </Col>
             </Row>
           </Modal.Body>
@@ -451,7 +455,6 @@ export default function PenitipPage() {
           show={showPrintModal}
           onHide={handleClosePrintModal}
           centered
-          style={{ border: "none" }}
           keyboard={false}
           backdrop="static"
         >
@@ -476,23 +479,23 @@ export default function PenitipPage() {
                   placeholder="Month YYYY"
                 />
               </Form.Group>
-              <Row className="py-2 pt-3 mt-4">
-                <Col sm>
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+                <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
-                    style={{ backgroundColor: "#FF5B19", border: "none" }}
-                    className="w-100"
-                    onClick={handleClosePrintModal}
-                  >
-                    Batal
-                  </Button>
-                </Col>
-                <Col sm>
-                  <Button
-                    style={{ backgroundColor: "#F48E28", border: "none" }}
-                    className="w-100"
+                    variant="danger"
+                    className="custom-agree-btn w-100"
                     type="submit"
                   >
                     Simpan
+                  </Button>
+                </Col>
+                <Col xs={12} sm={12} md={6} lg={6}>
+                  <Button
+                    variant="danger"
+                    className="custom-danger-btn w-100"
+                    onClick={handleClosePrintModal}
+                  >
+                    Batal
                   </Button>
                 </Col>
               </Row>
@@ -503,7 +506,6 @@ export default function PenitipPage() {
         <Modal
           show={showAddEditModal}
           centered
-          style={{ border: "none" }}
           keyboard={false}
           backdrop="static"
         >
@@ -548,11 +550,21 @@ export default function PenitipPage() {
                   disabled={edit.isPending || add.isPending}
                 />
               </Form.Group>
-              <Row className="py-2 pt-3 mt-4">
-                <Col sm>
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+                <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
-                    style={{ backgroundColor: "#FF5B19", border: "none" }}
-                    className="w-100"
+                    variant="danger"
+                    className="custom-agree-btn w-100"
+                    type="submit"
+                    disabled={add.isPending || edit.isPending}
+                  >
+                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
+                  </Button>
+                </Col>
+                <Col xs={12} sm={12} md={6} lg={6}>
+                  <Button
+                    variant="danger"
+                    className="custom-danger-btn w-100"
                     onClick={() => {
                       handleCloseAddEditModal();
                       setTimeout(() => {
@@ -562,16 +574,6 @@ export default function PenitipPage() {
                     disabled={add.isPending || edit.isPending}
                   >
                     Batal
-                  </Button>
-                </Col>
-                <Col sm>
-                  <Button
-                    style={{ backgroundColor: "#F48E28", border: "none" }}
-                    className="w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
                   </Button>
                 </Col>
               </Row>

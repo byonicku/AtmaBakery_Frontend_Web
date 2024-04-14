@@ -1,0 +1,32 @@
+.custom-danger-btn {
+  background-color: #ff5b19 !important;
+}
+
+.custom-danger-btn:hover {
+  background-color: #d74f19 !important;
+}
+
+.custom-danger-btn:active {
+  background-color: #d74f19 !important;
+}
+
+.custom-danger-btn:focus {
+  background-color: #d74f19 !important;
+}
+
+.custom-agree-btn {
+  background-color: rgb(244, 142, 40) !important;
+  border: none;
+}
+
+.custom-agree-btn:hover {
+  background-color: rgb(209, 121, 34) !important;
+}
+
+.custom-agree-btn:active {
+  background-color: rgb(209, 121, 34) !important;
+}
+
+.custom-agree-btn:focus {
+  background-color: rgb(209, 121, 34) !important;
+}

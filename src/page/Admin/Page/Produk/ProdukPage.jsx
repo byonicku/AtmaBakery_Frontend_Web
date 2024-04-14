@@ -21,6 +21,8 @@ import {
   BsJournalText,
 } from "react-icons/bs";
 
+import "@/page/Admin/Page/css/Admin.css";
+
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/CustomPagination";
@@ -141,20 +143,20 @@ export default function ProdukPage() {
         breadcrumb="Produk"
       />
       <section className="content px-3">
-        <Row className="pb-3">
+        <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
           <Col
-            xs="12"
-            sm="6"
-            lg="6"
-            md="6"
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <Link
               to="./tambah"
               className={
                 isLoading
-                  ? "btn btn-success me-2 disabled"
-                  : "btn btn-success me-2"
+                  ? "btn btn-success me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2 disabled"
+                  : "btn btn-success me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
               }
             >
               <BsPlusSquare className="mb-1 me-2" />
@@ -162,10 +164,10 @@ export default function ProdukPage() {
             </Link>
           </Col>
           <Col
-            xs="12"
-            sm="6"
-            lg="6"
-            md="6"
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <InputGroup>
@@ -212,10 +214,10 @@ export default function ProdukPage() {
             <Table responsive striped>
               <thead>
                 <tr>
-                  <th style={{ width: "14%" }} className="th-style">
+                  <th style={{ width: "13%" }} className="th-style">
                     Nama Produk
                   </th>
-                  <th style={{ width: "24%" }} className="th-style">
+                  <th style={{ width: "20%" }} className="th-style">
                     Deskripsi
                   </th>
                   <th style={{ width: "6.5%" }} className="th-style">
@@ -236,7 +238,7 @@ export default function ProdukPage() {
                   <th style={{ width: "5%" }} className="th-style">
                     Stok
                   </th>
-                  <th style={{ width: "30%" }} className="th-style">
+                  <th style={{ width: "40%" }} className="th-style">
                     Aksi
                   </th>
                 </tr>
@@ -258,26 +260,34 @@ export default function ProdukPage() {
                       )}
                     </td>
                     <td>{produk.stok}</td>
-                    <td className="text-start">
-                      <Button variant="primary" className="me-2">
-                        <BsJournalText className="mb-1" /> Resep
-                      </Button>
-                      <Link
-                        to={`./edit/${produk?.id_produk}`}
-                        className="btn btn-secondary me-2"
-                      >
-                        <BsPencilSquare className="mb-1" /> Ubah
-                      </Link>
-                      <Button
-                        variant="danger"
-                        style={{ backgroundColor: "#FF5B19" }}
-                        onClick={() => {
-                          setSelectedProduk(produk);
-                          handleShow();
-                        }}
-                      >
-                        <BsFillTrash3Fill className="mb-1" /> Hapus
-                      </Button>
+                    <td>
+                      <Row className="gap-2 gap-lg-2 gap-md-2 gap-xl-0">
+                        <Col xs={12} sm={12} md={12} lg={12} xl={4}>
+                          <Button variant="secondary" className="w-100">
+                            <BsJournalText className="mb-1" /> Resep
+                          </Button>
+                        </Col>
+                        <Col xs={12} sm={12} md={12} lg={12} xl={4}>
+                          <Link
+                            to={`./edit/${produk?.id_produk}`}
+                            className="btn btn-primary w-100"
+                          >
+                            <BsPencilSquare className="mb-1" /> Ubah
+                          </Link>
+                        </Col>
+                        <Col xs={12} sm={12} md={12} lg={12} xl={4}>
+                          <Button
+                            variant="danger"
+                            className="custom-danger-btn w-100"
+                            onClick={() => {
+                              setSelectedProduk(produk);
+                              handleShow();
+                            }}
+                          >
+                            <BsFillTrash3Fill className="mb-1" /> Hapus
+                          </Button>
+                        </Col>
+                      </Row>
                     </td>
                   </tr>
                 ))}
@@ -302,7 +312,6 @@ export default function ProdukPage() {
           onHide={handleClose}
           centered
           size="lg"
-          style={{ border: "none" }}
           keyboard={false}
           backdrop="static"
         >
@@ -319,25 +328,25 @@ export default function ProdukPage() {
                 Semua data yang terkait dengan produk tersebut akan hilang.
               </p>
             </p>
-            <Row className="py-2 pt-3">
-              <Col sm>
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
-                  style={{ backgroundColor: "#FF5B19", border: "none" }}
-                  className="mx-2 w-100 p-1"
-                  onClick={handleClose}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-              <Col sm>
-                <Button
-                  style={{ backgroundColor: "#F48E28", border: "none" }}
-                  className="mx-2 w-100 p-1"
+                  variant="danger"
+                  className="custom-agree-btn w-100 p-1"
                   onClick={onDelete}
                   disabled={del.isPending}
                 >
                   <h5 className="mt-2">Hapus</h5>
+                </Button>
+              </Col>
+              <Col xs={12} sm={12} md={6} lg={6}>
+                <Button
+                  variant="danger"
+                  className="custom-danger-btn w-100 p-1"
+                  onClick={handleClose}
+                  disabled={del.isPending}
+                >
+                  <h5 className="mt-2">Batal</h5>
                 </Button>
               </Col>
             </Row>
