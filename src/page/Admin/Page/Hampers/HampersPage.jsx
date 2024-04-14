@@ -621,18 +621,14 @@ export default function HampersPage() {
                               <>
                                 <td
                                   rowSpan={
-                                    hampers.detail_hampers.length > 2
-                                      ? hampers.detail_hampers.length - 2 + 1
-                                      : 3
+                                    hampers.detail_hampers.length + 1
                                   }
                                 >
                                   {hampers.nama_hampers}
                                 </td>
                                 <td
                                   rowSpan={
-                                    hampers.detail_hampers.length > 2
-                                      ? hampers.detail_hampers.length - 2 + 1
-                                      : 3
+                                    hampers.detail_hampers.length + 1 
                                   }
                                 >
                                   {new Intl.NumberFormat("id-ID", {
@@ -708,7 +704,7 @@ export default function HampersPage() {
                           setImage(hampers.gambar);
                         }}
                       >
-                        {hampers.detail_hampers.length == 2 ? (
+                        {hampers.detail_hampers.length == 0 ? (
                           <>
                             <td>{hampers.nama_hampers}</td>
                             <td>
