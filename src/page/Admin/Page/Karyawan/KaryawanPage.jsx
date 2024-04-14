@@ -534,6 +534,7 @@ import {
                     name="nama"
                     value={formData.nama || selectedKaryawan?.nama || ""}
                     onChange={inputHelper.handleInputChange}
+                    disabled={edit.isPending || add.isPending}
                   />
                 </Form.Group>
                 <Form.Group className="text-start mt-3">
@@ -547,6 +548,7 @@ import {
                     name="no_telp"
                     value={formData.no_telp || selectedKaryawan?.no_telp || ""}
                     onChange={inputHelper.handleInputChange}
+                    disabled={edit.isPending || add.isPending}
                   />
                 </Form.Group>
                 <Form.Group className="text-start mt-3">
@@ -560,6 +562,7 @@ import {
                     name="email"
                     value={formData.email || selectedKaryawan?.karyawan || ""}
                     onChange={inputHelper.handleInputChange}
+                    disabled={edit.isPending || add.isPending}
                   />
                 </Form.Group>
                 <Row className="py-2 pt-3 mt-4">

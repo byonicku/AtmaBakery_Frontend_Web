@@ -307,6 +307,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan nama produk"
                       required
+                      disabled={isLoading}
                     />
                   </Form.Group>
                 </Col>
@@ -323,6 +324,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       defaultValue={formData.deskripsi}
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan deskripsi produk"
+                      disabled={isLoading}
                       required
                     />
                   </Form.Group>
@@ -338,9 +340,9 @@ export default function AddEditProdukPage({ isEdit }) {
                       type="file"
                       accept="image/png, image/jpg, image/jpeg"
                       multiple
-                      disabled={image?.length >= 5 || image_preview?.length > 5}
+                      disabled={image?.length >= 5 || image_preview?.length > 5 || isLoading}
                       onClick={() => {
-                        if (image.length >= 5 || image_preview > 5) {
+                        if (image?.length >= 5 || image_preview?.length) {
                           toast.error("Gambar maksimal 5!");
                           return;
                         }
@@ -385,6 +387,7 @@ export default function AddEditProdukPage({ isEdit }) {
                             <label
                               className={`remove-icon text-white`}
                               onClick={() => {
+                                if (isLoading) return;
                                 const updatedDeleteImage = deleteImage.includes(
                                   img
                                 )
@@ -415,6 +418,8 @@ export default function AddEditProdukPage({ isEdit }) {
                               <label
                                 className="remove-icon text-white"
                                 onClick={() => {
+                                  if (isLoading) return;
+
                                   setImagePreview(
                                     Array.from(image_preview).filter(
                                       (image) => image !== file
@@ -455,6 +460,7 @@ export default function AddEditProdukPage({ isEdit }) {
                         }
                       }}
                       defaultValue={formData.id_kategori}
+                      disabled={isLoading}
                       required
                     >
                       <option value="" disabled selected hidden>
@@ -474,6 +480,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       name="ukuran"
                       defaultValue={formData.ukuran}
                       onChange={inputHelper.handleInputChange}
+                      disabled={isLoading}
                       required
                     >
                       <option value="" disabled selected hidden>
@@ -493,6 +500,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       defaultValue={formData.harga}
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan Harga produk"
+                      disabled={isLoading}
                       required
                     />
                   </Form.Group>
@@ -506,6 +514,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       defaultValue={formData.limit}
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan Limit produk"
+                      disabled={isLoading}
                       required
                     />
                   </Form.Group>
@@ -520,6 +529,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       name="status"
                       defaultValue={formData.status}
                       onChange={inputHelper.handleInputChange}
+                      disabled={isLoading}
                       required
                     >
                       <option value="" disabled selected hidden>
@@ -539,6 +549,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       defaultValue={formData.stok}
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan Stok produk"
+                      disabled={isLoading}
                       required
                     />
                   </Form.Group>
@@ -550,7 +561,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       name="id_penitip"
                       defaultValue={formData.id_penitip}
                       onChange={inputHelper.handleInputChange}
-                      disabled={!isTitipan}
+                      disabled={!isTitipan || isLoading}
                     >
                       <option value="" disabled hidden selected>
                         ---

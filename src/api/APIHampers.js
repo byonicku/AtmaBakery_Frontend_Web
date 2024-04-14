@@ -44,21 +44,25 @@ const searchHampers = async (search) => {
     } 
 };
 
-const createHampers = async (data) => { 
+const createHampers = async (data, uploadImage) => { 
     try { 
       const response = await useAxios.post("/hampers", data, { 
         headers: { 
-          "Content-Type": "multipart/form-data", 
+          "Content-Type": "application/json", 
           // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
         }, 
       }); 
+
+      const id = response.data.data.id_hampers;
+      await uploadImage(id);
+
       return response.data; 
     } catch (error) { 
       throw error.response || error; 
     } 
 };
 
-const updateHampers = async (data, id_hampers) => { 
+const updateHampers = async (data, id_hampers, uploadImage, handleDeleteImage) => { 
     try { 
       const response = await useAxios.put(`/hampers/${id_hampers}`, data, { 
         headers: { 
@@ -66,6 +70,10 @@ const updateHampers = async (data, id_hampers) => {
           // Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
         }, 
       }); 
+
+      await uploadImage(id_hampers);
+      await handleDeleteImage();
+
       return response.data; 
     } catch (error) { 
       throw error.response || error; 
