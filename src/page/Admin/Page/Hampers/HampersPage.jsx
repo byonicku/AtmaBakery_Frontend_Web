@@ -25,7 +25,10 @@ import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import CustomPagination from "@/component/Admin/CustomPagination";
 import { FaTrash } from "react-icons/fa";
+
 import "./css/Hampers.css";
+import "@/page/Admin/Page/css/Admin.css";
+
 import APIProduk from "@/api/APIProduk";
 import APIDetailHampers from "@/api/APIDetailHampers";
 import APIGambar from "@/api/APIGambar";
@@ -482,18 +485,18 @@ export default function HampersPage() {
         breadcrumb="Hampers"
       />
       <section className="content px-3">
-        <Row className="pb-3">
+        <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
           <Col
-            xs="12"
-            sm="6"
-            lg="6"
-            md="6"
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <Button
               variant="success"
               onClick={(e) => handleAddClick(e)}
-              className="me-2"
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
               disabled={isLoading}
             >
               <BsPlusSquare className="mb-1 me-2" />
@@ -502,7 +505,7 @@ export default function HampersPage() {
             <Button
               variant="primary"
               onClick={(e) => handleEditClick(selectedHampers, e)}
-              className="me-2"
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
               disabled={selectedHampers === null || isLoading}
             >
               <BsPencilSquare className="mb-1 me-2" />
@@ -510,11 +513,8 @@ export default function HampersPage() {
             </Button>
             <Button
               variant="danger"
-              style={{
-                backgroundColor: "#FF5B19",
-              }}
               onClick={(e) => handleDeleteClick(selectedHampers, e)}
-              className="me-2"
+              className="custom-danger-btn me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
               disabled={selectedHampers === null || isLoading}
             >
               <BsFillTrash3Fill className="mb-1 me-2" />
@@ -522,16 +522,16 @@ export default function HampersPage() {
             </Button>
           </Col>
           <Col
-            xs="12"
-            sm="6"
-            lg="6"
-            md="6"
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <InputGroup>
               <Form.Control
                 type="text"
-                placeholder="Cari Penitip disini"
+                placeholder="Cari Hampers disini"
                 name="search"
                 value={search || ""}
                 disabled={isLoading}
@@ -591,7 +591,7 @@ export default function HampersPage() {
                   <th style={{ width: "15%" }} className="th-style">
                     Jumlah
                   </th>
-                  <th style={{ width: "25%" }} className="th-style">
+                  <th style={{ width: "30%" }} className="th-style">
                     Aksi
                   </th>
                 </tr>
@@ -651,37 +651,39 @@ export default function HampersPage() {
                                     : detail_hampers.produk?.nama_produk}
                                 </td>
                                 <td>{detail_hampers.jumlah}</td>
-                                <td className="text-center">
-                                  <Button
-                                    variant="primary"
-                                    style={{ width: "45%" }}
-                                    className="mx-2"
-                                    onClick={(event) =>
-                                      handleEditProdClick(
-                                        hampers,
-                                        detail_hampers,
-                                        event
-                                      )
-                                    }
-                                  >
-                                    <BsPencilSquare className="mb-1" /> Ubah
-                                  </Button>
-                                  <Button
-                                    variant="danger"
-                                    style={{
-                                      backgroundColor: "#FF5B19",
-                                      width: "45%",
-                                    }}
-                                    className="mx-2"
-                                    onClick={(event) =>
-                                      handleDeleteProdClick(
-                                        detail_hampers,
-                                        event
-                                      )
-                                    }
-                                  >
-                                    <BsFillTrash3Fill className="mb-1" /> Hapus
-                                  </Button>
+                                <td>
+                                  <Row className="gap-1 gap-lg-0 gap-md-0">
+                                    <Col xs={12} sm={12} md={6} lg={6}>
+                                      <Button
+                                        className="w-100"
+                                        variant="primary"
+                                        onClick={(event) =>
+                                          handleEditProdClick(
+                                            hampers,
+                                            detail_hampers,
+                                            event
+                                          )
+                                        }
+                                      >
+                                        <BsPencilSquare className="mb-1" /> Ubah
+                                      </Button>
+                                    </Col>
+                                    <Col xs={12} sm={12} md={6} lg={6}>
+                                      <Button
+                                        className="custom-danger-btn w-100"
+                                        variant="danger"
+                                        onClick={(event) =>
+                                          handleDeleteProdClick(
+                                            detail_hampers,
+                                            event
+                                          )
+                                        }
+                                      >
+                                        <BsFillTrash3Fill className="mb-1" />{" "}
+                                        Hapus
+                                      </Button>
+                                    </Col>
+                                  </Row>
                                 </td>
                               </>
                             )}
@@ -722,11 +724,10 @@ export default function HampersPage() {
                         <td>
                           <p className="opacity-50">Tambah Produk</p>
                         </td>
-                        <td className="text-center">
+                        <td>
                           <Button
+                            className="w-100"
                             variant="success"
-                            style={{ width: "94%" }}
-                            className="mx-2"
                             onClick={(event) =>
                               handleAddProdClick(hampers, event)
                             }
@@ -767,9 +768,8 @@ export default function HampersPage() {
           }}
           keyboard={false}
           backdrop="static"
-          centered
           size="lg"
-          style={{ border: "none" }}
+          centered
         >
           <Modal.Body className="text-center p-5">
             <h3 style={{ fontWeight: "bold" }}>
@@ -784,27 +784,27 @@ export default function HampersPage() {
                 Semua data yang terkait dengan Hampers tersebut akan hilang.
               </p>
             </p>
-            <Row className="py-2 pt-3">
-              <Col sm>
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
-                  style={{ backgroundColor: "#FF5B19", border: "none" }}
-                  className="mx-2 w-100 p-1"
-                  onClick={handleCloseDelModal}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-              <Col sm>
-                <Button
-                  style={{ backgroundColor: "#F48E28", border: "none" }}
-                  className="mx-2 w-100 p-1"
+                  variant="danger"
+                  className="custom-agree-btn mx-2 w-100 p-1"
                   disabled={del.isPending}
                   onClick={() => onSubmit()}
                 >
                   <h5 className="mt-2">
                     {del.isPending ? "Loading..." : "Hapus"}
                   </h5>
+                </Button>
+              </Col>
+              <Col xs={12} sm={12} md={6} lg={6}>
+                <Button
+                  variant="danger"
+                  className="custom-danger-btn mx-2 w-100 p-1"
+                  onClick={handleCloseDelModal}
+                  disabled={del.isPending}
+                >
+                  <h5 className="mt-2">Batal</h5>
                 </Button>
               </Col>
             </Row>
@@ -823,7 +823,6 @@ export default function HampersPage() {
           keyboard={false}
           backdrop="static"
           centered
-          style={{ border: "none" }}
         >
           <Form onSubmit={inputHelper.handleSubmit}>
             <Modal.Body className="text-center p-4 m-2">
@@ -987,11 +986,21 @@ export default function HampersPage() {
                     </>
                   ))}
               </Row>
-              <Row className="py-2 pt-3 mt-4">
-                <Col sm>
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+                <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
-                    style={{ backgroundColor: "#FF5B19", border: "none" }}
-                    className="w-100"
+                    variant="danger"
+                    className="custom-agree-btn w-100"
+                    type="submit"
+                    disabled={add.isPending || edit.isPending}
+                  >
+                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
+                  </Button>
+                </Col>
+                <Col xs={12} sm={12} md={6} lg={6}>
+                  <Button
+                    variant="danger"
+                    className="custom-danger-btn w-100"
                     onClick={() => {
                       handleCloseAddEditModal();
                       setTimeout(() => {
@@ -1005,16 +1014,6 @@ export default function HampersPage() {
                     Batal
                   </Button>
                 </Col>
-                <Col sm>
-                  <Button
-                    style={{ backgroundColor: "#F48E28", border: "none" }}
-                    className="w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
-                  </Button>
-                </Col>
               </Row>
             </Modal.Body>
           </Form>
@@ -1026,7 +1025,6 @@ export default function HampersPage() {
             await fetchProduk();
           }}
           centered
-          style={{ border: "none" }}
           keyboard={false}
           backdrop="static"
         >
@@ -1098,11 +1096,23 @@ export default function HampersPage() {
                   required
                 />
               </Form.Group>
-              <Row className="py-2 pt-3 mt-4">
-                <Col sm>
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+                <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
-                    style={{ backgroundColor: "#FF5B19", border: "none" }}
-                    className="w-100"
+                    variant="danger"
+                    className="custom-agree-btn w-100"
+                    type="submit"
+                    disabled={add.isPending || edit.isPending || isLoadingModal}
+                  >
+                    {add.isPending || edit.isPending || isLoadingModal
+                      ? "Loading..."
+                      : "Simpan"}
+                  </Button>
+                </Col>
+                <Col xs={12} sm={12} md={6} lg={6}>
+                  <Button
+                    variant="danger"
+                    className="custom-danger-btn w-100"
                     onClick={() => {
                       handleCloseAddEditProdModal();
                       setTimeout(() => {
@@ -1113,18 +1123,6 @@ export default function HampersPage() {
                     disabled={add.isPending || edit.isPending || isLoadingModal}
                   >
                     Batal
-                  </Button>
-                </Col>
-                <Col sm>
-                  <Button
-                    style={{ backgroundColor: "#F48E28", border: "none" }}
-                    className="w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending || isLoadingModal}
-                  >
-                    {add.isPending || edit.isPending || isLoadingModal
-                      ? "Loading..."
-                      : "Simpan"}
                   </Button>
                 </Col>
               </Row>
@@ -1141,7 +1139,6 @@ export default function HampersPage() {
           }}
           centered
           size="lg"
-          style={{ border: "none" }}
           keyboard={false}
           backdrop="static"
         >
@@ -1158,11 +1155,26 @@ export default function HampersPage() {
                 Semua data yang terkait dengan isi hampers tersebut akan hilang.
               </p>
             </p>
-            <Row className="py-2 pt-3">
-              <Col sm>
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Col xs={12} sm={12} md={6} lg={6}>
+                {/* Khusus delete panggil langsng onSubmit()*/}
                 <Button
+                  variant="danger"
+                  style={{ backgroundColor: "#F48E28", border: "none" }}
+                  className="custom-agree-btn w-100 p-1"
+                  onClick={() => onSubmit()}
+                  disabled={del.isPending}
+                >
+                  <h5 className="mt-2">
+                    {del.isPending ? "Loading..." : "Hapus"}
+                  </h5>
+                </Button>
+              </Col>
+              <Col xs={12} sm={12} md={6} lg={6}>
+                <Button
+                  variant="danger"
                   style={{ backgroundColor: "#FF5B19", border: "none" }}
-                  className="mx-2 w-100 p-1"
+                  className="custom-danger-btn w-100 p-1"
                   onClick={() => {
                     handleCloseDelProdModal();
                     setIdDetailHampers(null);
@@ -1171,19 +1183,6 @@ export default function HampersPage() {
                   disabled={del.isPending}
                 >
                   <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-              <Col sm>
-                {/* Khusus delete panggil langsng onSubmit()*/}
-                <Button
-                  style={{ backgroundColor: "#F48E28", border: "none" }}
-                  className="mx-2 w-100 p-1"
-                  onClick={() => onSubmit()}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">
-                    {del.isPending ? "Loading..." : "Hapus"}
-                  </h5>
                 </Button>
               </Col>
             </Row>
