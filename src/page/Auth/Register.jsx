@@ -52,7 +52,7 @@ export default function Register() {
       }, 250);
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
     onMutate: () => {
       setIsLoading(true);
@@ -75,7 +75,7 @@ export default function Register() {
     try {
       await result.mutateAsync(formData);
     } catch (error) {
-      console.error(error);
+      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +118,7 @@ export default function Register() {
                   placeholder="Masukkan alamat email"
                   name="email"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>
@@ -131,6 +132,7 @@ export default function Register() {
                   placeholder="Masukkan nama lengkap"
                   name="nama"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>
@@ -144,6 +146,7 @@ export default function Register() {
                   placeholder="Masukkan nomor telepon"
                   name="no_telp"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>
@@ -158,6 +161,7 @@ export default function Register() {
                   placeholder="Masukkan Tanggal Lahir"
                   name="tanggal_lahir"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>
@@ -171,6 +175,7 @@ export default function Register() {
                   placeholder="Masukkan kata sandi"
                   name="password"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>
@@ -184,6 +189,7 @@ export default function Register() {
                   placeholder="Masukkan kembali kata sandi"
                   name="password_confirmation"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>

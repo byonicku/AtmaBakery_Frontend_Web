@@ -10,11 +10,7 @@ import {
 } from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 
-import {
-  useParams,
-  useSearchParams,
-  Link,
-} from "react-router-dom";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import notVerified from "@/assets/images/notVerified.png";
@@ -63,13 +59,11 @@ export default function ResetPass() {
   const result = useMutation({
     mutationFn: (data) => APIAuth.resetPassword(data),
     onSuccess: () => {
-      toast.success(
-        "Ganti password berhasil!"
-      );
+      toast.success("Ganti password berhasil!");
       setStatus(0);
     },
     onError: (error) => {
-      toast.error(error?.error || error?.message);
+      console.error(error);
     },
     onMutate: () => {
       setIsLoading(true);
@@ -87,7 +81,7 @@ export default function ResetPass() {
     try {
       await result.mutateAsync(formData);
     } catch (error) {
-      console.error(error);
+      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
     } finally {
       setIsLoading(false);
     }
@@ -161,6 +155,7 @@ export default function ResetPass() {
                       placeholder="Masukkan kata sandi baru"
                       name="password"
                       onChange={inputHelper.handleInputChange}
+                      disabled={result.isPending}
                     />
                   </Form.Group>
                   <Form.Group className="mt-4 mb-4">
@@ -176,6 +171,7 @@ export default function ResetPass() {
                       placeholder="Masukkan ulang kata sandi baru"
                       name="password_confirmation"
                       onChange={inputHelper.handleInputChange}
+                      disabled={result.isPending}
                     />
                   </Form.Group>
                   <Container className="text-center">

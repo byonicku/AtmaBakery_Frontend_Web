@@ -123,7 +123,7 @@ import {
         handleMutationSuccess();
       },
       onError: (error) => {
-        toast.error(error.message);
+        console.error(error);
       },
     });
 
@@ -137,7 +137,7 @@ import {
         handleMutationSuccess();
       },
       onError: (error) => {
-        console.error(error.message);
+        console.error(error);
       },
     });
 
@@ -156,7 +156,7 @@ import {
     const onSubmit = async (formData) => {
       if (isLoading) return;
 
-      if (parseInt(formData.stok) < 0) {
+      if (parseInt(formData?.stok) < 0) {
         toast.error("Stok tidak boleh kurang dari 0!");
         return;
       }
@@ -177,7 +177,7 @@ import {
           return;
         }
       } catch (error) {
-        toast.error(error.data.message);
+        toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
       }
     };
 
@@ -236,7 +236,7 @@ import {
                     satuan: ""
                   });
                 }}
-                disabled={isLoading}
+                disabled={isLoading || add.isPending || edit.isPending || del.isPending}
                 className="me-2"
               >
                 <BsPlusSquare className="mb-1 me-2" />
@@ -256,7 +256,7 @@ import {
                   placeholder="Cari Bahan Baku disini" 
                   name="search"
                   value={search || ""}
-                  disabled={isLoading}
+                  disabled={isLoading || add.isPending || edit.isPending || del.isPending}
                   onChange={(e) => {
                     if (e.target.value === "") {
                       if (page !== 1) {
@@ -516,6 +516,7 @@ import {
                     name="nama_bahan_baku"
                     value={formData.nama_bahan_baku || selectedBahanBaku?.nama_bahan_baku || ""}
                     onChange={inputHelper.handleInputChange}
+                    disabled={edit.isPending || add.isPending}
                   />
                 </Form.Group>
                 <Form.Group className="text-start mt-3">
@@ -529,6 +530,7 @@ import {
                     name="stok"
                     value={formData.stok || selectedBahanBaku?.stok || ""}
                     onChange={inputHelper.handleInputChange}
+                    disabled={edit.isPending || add.isPending}
                   />
                 </Form.Group>
                 <Form.Group className="text-start mt-3">
@@ -542,6 +544,7 @@ import {
                     name="satuan"
                     value={formData.satuan || selectedBahanBaku?.satuan || ""}
                     onChange={inputHelper.handleInputChange}
+                    disabled={edit.isPending || add.isPending}
                   />
                 </Form.Group>
                 <Row className="py-2 pt-3 mt-4">

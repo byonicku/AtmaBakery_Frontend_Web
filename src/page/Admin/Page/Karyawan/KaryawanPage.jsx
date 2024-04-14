@@ -174,12 +174,12 @@ import {
     const onSubmit = async (formData) => {
       if (isLoading) return;
 
-      if (parseFloat(formData.gaji) < 0) {
+      if (parseFloat(formData?.gaji) < 0) {
         toast.error("Gaji tidak boleh negatif!");
         return;
       }
 
-      if (parseFloat(formData.bonus) < 0) {
+      if (parseFloat(formData?.bonus) < 0) {
         toast.error("Bonus tidak boleh negatif!");
         return;
       }
@@ -557,7 +557,7 @@ import {
                   </Form.Label>
                   <Form.Control
                     style={{ border: "1px solid #808080" }}
-                    type="text"
+                    type="email"
                     placeholder="Masukkan email"
                     name="email"
                     value={formData.email || selectedKaryawan?.karyawan || ""}

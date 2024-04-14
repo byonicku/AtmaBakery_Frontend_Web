@@ -379,7 +379,7 @@ export default function HampersPage() {
 
     try {
       if (mode === "add") {
-        if (parseInt(formData.harga) <= 0) {
+        if (parseInt(formData?.harga) <= 0) {
           toast.error("Harga harus lebih dari 0!");
           return;
         }
@@ -389,7 +389,7 @@ export default function HampersPage() {
       }
 
       if (mode === "edit") {
-        if (parseInt(formData.harga) <= 0) {
+        if (parseInt(formData?.harga) <= 0) {
           toast.error("Harga harus lebih dari 0!");
           return;
         }
@@ -404,7 +404,7 @@ export default function HampersPage() {
       }
 
       if (mode === "add-produk") {
-        if (parseInt(formDataProd.jumlah) <= 0) {
+        if (parseInt(formDataProd?.jumlah) <= 0) {
           toast.error("Jumlah produk harus lebih dari 0!");
           return;
         }
@@ -414,7 +414,7 @@ export default function HampersPage() {
       }
 
       if (mode === "edit-produk") {
-        if (parseInt(formDataProd.jumlah) <= 0) {
+        if (parseInt(formDataProd?.jumlah) <= 0) {
           toast.error("Jumlah produk harus lebih dari 0!");
           return;
         }
@@ -428,7 +428,7 @@ export default function HampersPage() {
         return;
       }
     } catch (error) {
-      toast.error(error.data.message);
+      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
     }
   };
 
@@ -850,6 +850,7 @@ export default function HampersPage() {
                   onChange={inputHelper.handleInputChange}
                   value={formData.nama_hampers || ""}
                   placeholder="Masukkan nama hampers"
+                  disabled={isLoading || add.isPending || edit.isPending}
                   required
                 />
               </Form.Group>
@@ -864,6 +865,7 @@ export default function HampersPage() {
                   onChange={inputHelper.handleInputChange}
                   value={formData.harga || ""}
                   placeholder="Masukkan harga hampers"
+                  disabled={isLoading || add.isPending || edit.isPending}
                   required
                 />
               </Form.Group>
@@ -877,7 +879,7 @@ export default function HampersPage() {
                     type="file"
                     accept="image/png, image/jpg, image/jpeg"
                     multiple
-                    disabled={image?.length >= 5 || image_preview?.length > 5}
+                    disabled={image?.length >= 5 || image_preview?.length > 5 || isLoading || add.isPending || edit.isPending}
                     onClick={() => {
                       if (image?.length >= 5 || image_preview?.length > 5) {
                         toast.error("Gambar maksimal 5!");
@@ -925,6 +927,9 @@ export default function HampersPage() {
                         <label
                           className={`remove-icon text-white`}
                           onClick={() => {
+                            if (isLoading || add.isPending || edit.isPending)
+                              return;
+
                             const updatedDeleteImage = deleteImage.includes(img)
                               ? deleteImage.filter((image) => image !== img)
                               : [...deleteImage, img];
@@ -953,6 +958,9 @@ export default function HampersPage() {
                           <label
                             className="remove-icon text-white"
                             onClick={() => {
+                              if (isLoading || add.isPending || edit.isPending)
+                                return;
+
                               setImagePreview(
                                 Array.from(image_preview).filter(
                                   (image) => image !== file
@@ -1053,7 +1061,7 @@ export default function HampersPage() {
                     formDataProd?.id_produk || selectedProduk?.id_produk || ""
                   }
                   onChange={inputHelperProd.handleInputChange}
-                  disabled={isLoadingModal}
+                  disabled={isLoadingModal || edit.isPending || add.isPending}
                   required
                 >
                   <option value="" disabled selected hidden>
@@ -1079,7 +1087,7 @@ export default function HampersPage() {
                   name="jumlah"
                   value={formDataProd?.jumlah || selectedProduk?.jumlah || ""}
                   onChange={inputHelperProd.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
+                  disabled={edit.isPending || add.isPending || isLoadingModal}
                   required
                 />
               </Form.Group>

@@ -177,7 +177,7 @@ export default function PenitipPage() {
         return;
       }
     } catch (error) {
-      toast.error(error.data.message);
+      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
     }
   };
 

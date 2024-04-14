@@ -38,7 +38,7 @@ export default function Login() {
       }, 250);
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
     onMutate: () => {
       setIsLoading(true);
@@ -51,7 +51,7 @@ export default function Login() {
     try {
       await result.mutateAsync(formData);
     } catch (error) {
-      console.error(error);
+      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
     } finally {
       setIsLoading(false);
     }
@@ -97,6 +97,7 @@ export default function Login() {
                   placeholder="Masukkan alamat email"
                   name="email"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>
@@ -108,6 +109,7 @@ export default function Login() {
                   placeholder="Masukkan kata sandi"
                   name="password"
                   onChange={inputHelper.handleInputChange}
+                  disabled={result.isPending}
                   required
                 />
               </Form.Group>

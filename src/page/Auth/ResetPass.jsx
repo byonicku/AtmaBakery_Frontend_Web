@@ -31,7 +31,7 @@ export default function ResetPass() {
       toast.success("Email berhasil dikirim ke " + formData.email + " !");
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
     onMutate: () => {
       setIsLoading(true);
@@ -44,7 +44,7 @@ export default function ResetPass() {
     try {
       await result.mutateAsync(formData);
     } catch (error) {
-      console.error(error);
+      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
     } finally {
       setIsLoading(false);
     }
