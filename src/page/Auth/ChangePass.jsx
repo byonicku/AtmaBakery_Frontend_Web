@@ -81,7 +81,11 @@ export default function ResetPass() {
     try {
       await result.mutateAsync(formData);
     } catch (error) {
-      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
+      toast.error(
+        error.data.message ||
+          error.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
     } finally {
       setIsLoading(false);
     }

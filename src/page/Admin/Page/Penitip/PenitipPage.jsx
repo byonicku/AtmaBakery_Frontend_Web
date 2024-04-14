@@ -177,7 +177,11 @@ export default function PenitipPage() {
         return;
       }
     } catch (error) {
-      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
+      toast.error(
+        error.data.message ||
+          error.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
     }
   };
 
@@ -190,7 +194,8 @@ export default function PenitipPage() {
 
   // Search Data
   const fetchPenitipSearch = async () => {
-    if (search.trim() === "") { // Kalo spasi doang bakal gabisa
+    if (search.trim() === "") {
+      // Kalo spasi doang bakal gabisa
       return;
     }
 
@@ -278,7 +283,11 @@ export default function PenitipPage() {
                   }
                 }}
               />
-              <Button variant="secondary" disabled={isLoading} onClick={() => fetchPenitipSearch()}>
+              <Button
+                variant="secondary"
+                disabled={isLoading}
+                onClick={() => fetchPenitipSearch()}
+              >
                 <BsSearch />
               </Button>
             </InputGroup>
@@ -422,7 +431,7 @@ export default function PenitipPage() {
                 </Button>
               </Col>
               <Col sm>
-                {/* Khusus delete panggil langsng onSubmit()*/} 
+                {/* Khusus delete panggil langsng onSubmit()*/}
                 <Button
                   style={{ backgroundColor: "#F48E28", border: "none" }}
                   className="mx-2 w-100 p-1"

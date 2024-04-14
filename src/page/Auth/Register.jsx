@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -43,7 +43,6 @@ export default function Register() {
   };
 
   const result = useMutation({
-
     mutationFn: (data) => APIAuth.register(data),
     onSuccess: () => {
       toast.success("Registrasi berhasil!");
@@ -75,7 +74,11 @@ export default function Register() {
     try {
       await result.mutateAsync(formData);
     } catch (error) {
-      toast.error(error.data.message || error.message || "Sesuatu sedang bermasalah pada server!");
+      toast.error(
+        error.data.message ||
+          error.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +95,11 @@ export default function Register() {
     <div className="bg-half">
       <Container className="container-setting">
         <Row className="no-gutters shadow-lg rounded h-auto">
-          <Col sm className="remove p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
+          <Col
+            sm
+            className="remove p-0 m-0"
+            style={{ backgroundColor: "#FFEDDB" }}
+          >
             <Image src={imageBg} className="p-0 m-0 rounded left-img" />
           </Col>
           <Col sm style={{ backgroundColor: "#FFFFFF" }}>
@@ -219,7 +226,11 @@ export default function Register() {
                 />
               </Container>
               <Container className="text-center">
-                <Button className="button-custom" type="submit" disabled={isLoading}>
+                <Button
+                  className="button-custom"
+                  type="submit"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Loading..." : "Daftar"}
                 </Button>
               </Container>
