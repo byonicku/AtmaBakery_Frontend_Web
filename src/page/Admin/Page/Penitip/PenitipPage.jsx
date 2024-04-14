@@ -21,6 +21,8 @@ import {
   BsPrinterFill,
 } from "react-icons/bs";
 
+import "@/page/Admin/Page/css/Admin.css";
+
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIPenitip from "@/api/APIPenitip";
 import NotFound from "@/component/Admin/NotFound";
