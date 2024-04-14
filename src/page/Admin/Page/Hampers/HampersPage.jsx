@@ -621,18 +621,14 @@ export default function HampersPage() {
                               <>
                                 <td
                                   rowSpan={
-                                    hampers.detail_hampers.length > 2
-                                      ? hampers.detail_hampers.length - 2 + 1
-                                      : 3
+                                    hampers.detail_hampers.length + 1
                                   }
                                 >
                                   {hampers.nama_hampers}
                                 </td>
                                 <td
                                   rowSpan={
-                                    hampers.detail_hampers.length > 2
-                                      ? hampers.detail_hampers.length - 2 + 1
-                                      : 3
+                                    hampers.detail_hampers.length + 1 
                                   }
                                 >
                                   {new Intl.NumberFormat("id-ID", {
@@ -708,7 +704,7 @@ export default function HampersPage() {
                           setImage(hampers.gambar);
                         }}
                       >
-                        {hampers.detail_hampers.length == 2 ? (
+                        {hampers.detail_hampers.length == 0 ? (
                           <>
                             <td>{hampers.nama_hampers}</td>
                             <td>
@@ -854,6 +850,7 @@ export default function HampersPage() {
                   onChange={inputHelper.handleInputChange}
                   value={formData.nama_hampers || ""}
                   placeholder="Masukkan nama hampers"
+                  required
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
@@ -867,6 +864,7 @@ export default function HampersPage() {
                   onChange={inputHelper.handleInputChange}
                   value={formData.harga || ""}
                   placeholder="Masukkan harga hampers"
+                  required
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
@@ -1082,6 +1080,7 @@ export default function HampersPage() {
                   value={formDataProd?.jumlah || selectedProduk?.jumlah || ""}
                   onChange={inputHelperProd.handleInputChange}
                   disabled={edit.isPending || add.isPending}
+                  required
                 />
               </Form.Group>
               <Row className="py-2 pt-3 mt-4">
