@@ -24,19 +24,116 @@ import InputHelper from "@/page/InputHelper";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import CustomPagination from "@/component/Admin/CustomPagination";
+import { FaTrash } from "react-icons/fa";
+import "./css/Hampers.css";
+import APIProduk from "@/api/APIProduk";
+import APIDetailHampers from "@/api/APIDetailHampers";
+import APIGambar from "@/api/APIGambar";
 
 export default function HampersPage() {
   const [showDelModal, setShowDelModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showDelProdModal, setShowDelProdModal] = useState(false);
+  const [showAddEditProdModal, setShowAddEditProdModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [selectedHampers, setSelectedHampers] = useState(null);
+
+  const [image_preview, setImagePreview] = useState(null);
+  const [image, setImage] = useState(null);
+  const [deleteImage, setDeleteImage] = useState([]);
 
   const handleCloseDelModal = () => setShowDelModal(false);
   const handleShowDelModal = () => setShowDelModal(true);
 
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
+
+  const handleCloseDelProdModal = () => setShowDelProdModal(false);
+  const handleShowDelProdModal = () => setShowDelProdModal(true);
+
+  const handleCloseAddEditProdModal = () => setShowAddEditProdModal(false);
+  const handleShowAddEditProdModal = () => setShowAddEditProdModal(true);
+
+  const handleAddClick = (event) => {
+    // Prevent event propagation to the row click handler
+    event.stopPropagation();
+    setMode("add");
+    setFormData({
+      nama_hampers: "",
+      harga: "",
+    });
+    setImage(null);
+    handleShowAddEditModal();
+  };
+
+  const handleAddProdClick = (hampers, event) => {
+    // Prevent event propagation to the row click handler
+    event.stopPropagation();
+    setMode("add-produk");
+    setProduk(null);
+    setFormDataProd({
+      id_hampers: hampers.id_hampers,
+      id_produk: "",
+      jumlah: "",
+    });
+    setNamaHampers(hampers.nama_hampers);
+    handleShowAddEditProdModal();
+  };
+
+  const handleEditClick = (hampers, event) => {
+    // Prevent event propagation to the row click handler
+    event.stopPropagation();
+    setSelectedHampers(hampers);
+    setMode("edit");
+    setFormData({
+      nama_hampers: hampers.nama_hampers,
+      harga: hampers.harga,
+    });
+    setImage(hampers.gambar);
+    setDeleteImage([]);
+    handleShowAddEditModal();
+  };
+
+  const handleEditProdClick = (hampers, detail_hampers, event) => {
+    // Prevent event propagation to the row click handler
+    event.stopPropagation();
+    setNamaHampers(hampers.nama_hampers);
+    setMode("edit-produk");
+    setFormDataProd({
+      id_detail_hampers: detail_hampers.id_detail_hampers,
+      id_produk: detail_hampers.produk.id_produk,
+      jumlah: detail_hampers.jumlah,
+    });
+    setIdDetailHampers(detail_hampers.id_detail_hampers);
+    setSelectedProduk(detail_hampers.produk);
+    handleShowAddEditProdModal();
+  };
+
+  const handleDeleteClick = (hampers, event) => {
+    // Prevent event propagation to the row click handler
+    event.stopPropagation();
+    setSelectedHampers(hampers);
+    setMode("delete");
+    setImage(null);
+    handleShowDelModal();
+  };
+
+  const handleDeleteProdClick = (detail_hampers, event) => {
+    // Prevent event propagation to the row click handler
+    event.stopPropagation();
+    setMode("delete-produk");
+    setIdDetailHampers(detail_hampers.id_detail_hampers);
+    setImage(null);
+    handleShowDelProdModal();
+  };
+
   const [mode, setMode] = useState("add");
+
+  const [produk, setProduk] = useState([]);
+  const [selectedProduk, setSelectedProduk] = useState(null);
+  const [id_detail_hampers, setIdDetailHampers] = useState(null);
+  const [nama_hampers, setNamaHampers] = useState("");
 
   // Fetch hampers with pagination
   const [hampers, setHampers] = useState([]);
@@ -64,6 +161,18 @@ export default function HampersPage() {
     }
   }, [page]);
 
+  const fetchProduk = useCallback(async () => {
+    setIsLoadingModal(true);
+    try {
+      const response = await APIProduk.getAllProduk();
+      setProduk(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingModal(false);
+    }
+  }, []);
+
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
   }, []);
@@ -79,6 +188,12 @@ export default function HampersPage() {
     harga: "",
   });
 
+  const [formDataProd, setFormDataProd] = useState({
+    id_detail_hampers: "",
+    id_produk: "",
+    jumlah: 0,
+  });
+
   // Untuk validasi front-end (sebisa mungkin samain dengan backend ya)
   const validationSchema = {
     nama_hampers: {
@@ -89,6 +204,66 @@ export default function HampersPage() {
       required: true,
       alias: "Harga",
     },
+    foto: {
+      required: mode === "add" ? true : false,
+      alias: "Gambar",
+    }
+  };
+
+  const validationSchemaProd = {
+    id_produk: {
+      required: true,
+      alias: "Produk",
+    },
+    jumlah: {
+      required: true,
+      alias: "Jumlah",
+    },
+  };
+
+  const handleDeleteImage = async () => {
+    try {
+      const result = {};
+
+      if (deleteImage.length === 0) return result;
+
+      for (const image of deleteImage) {
+        await APIGambar.deleteGambar(image.id_gambar);
+        result[image.public_id] = image.public_id;
+      }
+
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const uploadImage = async (id) => {
+    try {
+      const result = {};
+
+      if (image_preview == null) return result;
+
+      for (const image of image_preview) {
+        console.log(image);
+        const formData = new FormData();
+        const filename = new Date().getTime() + "-hampers";
+        formData.append("file", image);
+        const response = await APIGambar.uploadImage(formData, filename);
+        const url = response.secure_url;
+        const public_id = filename;
+        const insertData = await APIGambar.createGambar({
+          id_hampers: id,
+          url,
+          public_id,
+        });
+        result[public_id] = insertData;
+      }
+
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // Wajib dipanggil abis mutation / query
@@ -102,12 +277,27 @@ export default function HampersPage() {
         harga: "",
       });
       setSearch(null);
+      setImage(null);
+      setImagePreview(null);
+    }, 125);
+  };
+
+  const handleMutationSuccessProd = () => {
+    setIsLoadingModal(true);
+    fetchHampers();
+    setTimeout(() => {
+      setSelectedProduk(null);
+      setFormDataProd({
+        id_hampers: "",
+        nama_produk: "",
+        ukuran: "",
+      });
     }, 125);
   };
 
   // Add Data
   const add = useMutation({
-    mutationFn: (data) => APIHampers.createHampers(data),
+    mutationFn: (data) => APIHampers.createHampers(data, uploadImage),
     onSuccess: async () => {
       toast.success("Tambah Hampers berhasil!");
       handleCloseAddEditModal();
@@ -121,7 +311,7 @@ export default function HampersPage() {
   // Edit Data
   const edit = useMutation({
     mutationFn: (data) =>
-      APIHampers.updateHampers(data, selectedHampers.id_hampers),
+      APIHampers.updateHampers(data, selectedHampers.id_hampers, uploadImage, handleDeleteImage),
     onSuccess: async () => {
       toast.success("Edit Hampers berhasil!");
       handleCloseAddEditModal();
@@ -145,22 +335,96 @@ export default function HampersPage() {
     },
   });
 
+  // Add Produk
+  const addProd = useMutation({
+    mutationFn: (data) => APIDetailHampers.createDetailHampers(data),
+    onSuccess: async () => {
+      toast.success("Tambah Produk Hampers berhasil!");
+      handleCloseAddEditProdModal();
+      handleMutationSuccessProd();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  // Edit Produk
+  const editProd = useMutation({
+    mutationFn: (data) =>
+      APIDetailHampers.updateDetailHampers(data, id_detail_hampers),
+    onSuccess: async () => {
+      toast.success("Edit Produk Hampers berhasil!");
+      handleCloseAddEditProdModal();
+      handleMutationSuccessProd();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const delProd = useMutation({
+    mutationFn: (id) => APIDetailHampers.deleteDetailHampers(id),
+    onSuccess: async () => {
+      toast.success("Hapus Produk Hampers berhasil!");
+      handleCloseDelProdModal();
+      handleMutationSuccessProd();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
     try {
       if (mode === "add") {
+        if (parseInt(formData.harga) <= 0) {
+          toast.error("Harga harus lebih dari 0!");
+          return;
+        }
+
         await add.mutateAsync(formData);
         return;
       }
 
       if (mode === "edit") {
+        if (parseInt(formData.harga) <= 0) {
+          toast.error("Harga harus lebih dari 0!");
+          return;
+        }
+
         await edit.mutateAsync(formData);
         return;
       }
 
       if (mode === "delete") {
         await del.mutateAsync(selectedHampers.id_hampers);
+        return;
+      }
+
+      if (mode === "add-produk") {
+        if (parseInt(formDataProd.jumlah) <= 0) {
+          toast.error("Jumlah produk harus lebih dari 0!");
+          return;
+        }
+
+        await addProd.mutateAsync(formDataProd);
+        return;
+      }
+
+      if (mode === "edit-produk") {
+        if (parseInt(formDataProd.jumlah) <= 0) {
+          toast.error("Jumlah produk harus lebih dari 0!");
+          return;
+        }
+
+        await editProd.mutateAsync(formDataProd);
+        return;
+      }
+
+      if (mode === "delete-produk") {
+        await delProd.mutateAsync(id_detail_hampers);
         return;
       }
     } catch (error) {
@@ -172,6 +436,13 @@ export default function HampersPage() {
     formData,
     setFormData,
     validationSchema,
+    onSubmit
+  );
+
+  const inputHelperProd = new InputHelper(
+    formDataProd,
+    setFormDataProd,
+    validationSchemaProd,
     onSubmit
   );
 
@@ -212,11 +483,33 @@ export default function HampersPage() {
           >
             <Button
               variant="success"
-              onClick={handleShowAddEditModal}
+              onClick={(e) => handleAddClick(e)}
               className="me-2"
+              disabled={isLoading}
             >
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
+            </Button>
+            <Button
+              variant="primary"
+              onClick={(e) => handleEditClick(selectedHampers, e)}
+              className="me-2"
+              disabled={selectedHampers === null || isLoading}
+            >
+              <BsPencilSquare className="mb-1 me-2" />
+              Ubah Data
+            </Button>
+            <Button
+              variant="danger"
+              style={{
+                backgroundColor: "#FF5B19",
+              }}
+              onClick={(e) => handleDeleteClick(selectedHampers, e)}
+              className="me-2"
+              disabled={selectedHampers === null || isLoading}
+            >
+              <BsFillTrash3Fill className="mb-1 me-2" />
+              Hapus Data
             </Button>
           </Col>
           <Col
@@ -227,8 +520,33 @@ export default function HampersPage() {
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <InputGroup>
-              <Form.Control type="text" placeholder="Cari Hampers disini" />
-              <Button variant="secondary">
+              <Form.Control
+                type="text"
+                placeholder="Cari Penitip disini"
+                name="search"
+                value={search || ""}
+                disabled={isLoading}
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    if (page !== 1) {
+                      setPage(1);
+                    } else {
+                      fetchHampers();
+                    }
+                  }
+                  setSearch(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    fetchHampersSearch();
+                  }
+                }}
+              />
+              <Button
+                variant="secondary"
+                disabled={isLoading}
+                onClick={() => fetchHampersSearch()}
+              >
                 <BsSearch />
               </Button>
             </InputGroup>
@@ -249,7 +567,7 @@ export default function HampersPage() {
           </div>
         ) : hampers?.length > 0 ? (
           <>
-            <Table bordered responsive>
+            <Table bordered responsive className="prevent-select">
               <thead>
                 <tr>
                   <th style={{ width: "7%" }} className="th-style">
@@ -260,6 +578,9 @@ export default function HampersPage() {
                   </th>
                   <th style={{ width: "25%" }} className="th-style">
                     Produk
+                  </th>
+                  <th style={{ width: "15%" }} className="th-style">
+                    Jumlah
                   </th>
                   <th style={{ width: "25%" }} className="th-style">
                     Aksi
@@ -277,7 +598,24 @@ export default function HampersPage() {
                         if (detail_hampers.produk == null) return null;
 
                         return (
-                          <tr key={`${index}-${idx}`}>
+                          <tr
+                            className={
+                              selectedHampers === hampers
+                                ? "selected-hampers"
+                                : ""
+                            }
+                            key={`${index}-${idx}`}
+                            onClick={() => {
+                              if (selectedHampers === hampers) {
+                                setSelectedHampers(null);
+                                setImage(null);
+                                return;
+                              }
+
+                              setSelectedHampers(hampers);
+                              setImage(hampers.gambar);
+                            }}
+                          >
                             {/* Nama Hampers and Harga */}
                             {idx === 0 && (
                               <>
@@ -308,25 +646,26 @@ export default function HampersPage() {
                             {detail_hampers.produk?.nama_produk && (
                               <>
                                 <td>
-                                  {detail_hampers.produk?.nama_produk +
-                                    " " +
-                                    detail_hampers.produk?.ukuran +
-                                    " Loyang"}
+                                  {detail_hampers.produk?.id_kategori === "CK"
+                                    ? detail_hampers.produk?.nama_produk +
+                                      " " +
+                                      detail_hampers.produk?.ukuran +
+                                      " Loyang"
+                                    : detail_hampers.produk?.nama_produk}
                                 </td>
-                                <td>
+                                <td>{detail_hampers.jumlah}</td>
+                                <td className="text-center">
                                   <Button
                                     variant="primary"
-                                    style={{ width: "40%" }}
+                                    style={{ width: "45%" }}
                                     className="mx-2"
-                                    onClick={() => {
-                                      setSelectedHampers(hampers);
-                                      setMode("edit");
-                                      setFormData({
-                                        nama_hampers: hampers.nama_hampers,
-                                        no_telp: hampers.no_telp,
-                                      });
-                                      handleShowAddEditModal();
-                                    }}
+                                    onClick={(event) =>
+                                      handleEditProdClick(
+                                        hampers,
+                                        detail_hampers,
+                                        event
+                                      )
+                                    }
                                   >
                                     <BsPencilSquare className="mb-1" /> Ubah
                                   </Button>
@@ -334,14 +673,15 @@ export default function HampersPage() {
                                     variant="danger"
                                     style={{
                                       backgroundColor: "#FF5B19",
-                                      width: "40%",
+                                      width: "45%",
                                     }}
                                     className="mx-2"
-                                    onClick={() => {
-                                      setSelectedHampers(hampers);
-                                      setMode("delete");
-                                      handleShowDelModal();
-                                    }}
+                                    onClick={(event) =>
+                                      handleDeleteProdClick(
+                                        detail_hampers,
+                                        event
+                                      )
+                                    }
                                   >
                                     <BsFillTrash3Fill className="mb-1" /> Hapus
                                   </Button>
@@ -352,8 +692,23 @@ export default function HampersPage() {
                         );
                       })}
                       {/* "Tambah Isi" button */}
-                      <tr key={`${index}-add`}>
-                        {hampers.detail_hampers.length == 0 ? (
+                      <tr
+                        className={
+                          selectedHampers === hampers ? "selected-hampers" : ""
+                        }
+                        key={`${index}-add`}
+                        onClick={() => {
+                          if (selectedHampers === hampers) {
+                            setSelectedHampers(null);
+                            setImage(null);
+                            return;
+                          }
+
+                          setSelectedHampers(hampers);
+                          setImage(hampers.gambar);
+                        }}
+                      >
+                        {hampers.detail_hampers.length == 2 ? (
                           <>
                             <td>{hampers.nama_hampers}</td>
                             <td>
@@ -367,22 +722,19 @@ export default function HampersPage() {
                         <td>
                           <p className="opacity-50">Tambah Produk</p>
                         </td>
+                        <td>
+                          <p className="opacity-50">Tambah Produk</p>
+                        </td>
                         <td className="text-center">
                           <Button
                             variant="success"
-                            style={{ width: "50%" }}
+                            style={{ width: "94%" }}
                             className="mx-2"
-                            onClick={() => {
-                              setSelectedHampers(hampers);
-                              setMode("edit");
-                              setFormData({
-                                nama_hampers: hampers.nama_hampers,
-                                no_telp: hampers.no_telp,
-                              });
-                              handleShowAddEditModal();
-                            }}
+                            onClick={(event) =>
+                              handleAddProdClick(hampers, event)
+                            }
                           >
-                            <BsPencilSquare className="mb-1" /> Tambah Produk
+                            <BsPlusSquare className="mb-1" /> Tambah Produk
                           </Button>
                         </td>
                       </tr>
@@ -410,8 +762,14 @@ export default function HampersPage() {
         {/* ini modal modalnya */}
         <Modal
           show={showDelModal}
-          onHide={handleCloseDelModal}
-          animation={false}
+          onHide={() => {
+            handleCloseDelModal();
+            setSelectedHampers(null);
+            setImage(null);
+            setMode("add");
+          }}
+          keyboard={false}
+          backdrop="static"
           centered
           size="lg"
           style={{ border: "none" }}
@@ -435,6 +793,7 @@ export default function HampersPage() {
                   style={{ backgroundColor: "#FF5B19", border: "none" }}
                   className="mx-2 w-100 p-1"
                   onClick={handleCloseDelModal}
+                  disabled={del.isPending}
                 >
                   <h5 className="mt-2">Batal</h5>
                 </Button>
@@ -443,8 +802,12 @@ export default function HampersPage() {
                 <Button
                   style={{ backgroundColor: "#F48E28", border: "none" }}
                   className="mx-2 w-100 p-1"
+                  disabled={del.isPending}
+                  onClick={() => onSubmit()}
                 >
-                  <h5 className="mt-2">Hapus</h5>
+                  <h5 className="mt-2">
+                    {del.isPending ? "Loading..." : "Hapus"}
+                  </h5>
                 </Button>
               </Col>
             </Row>
@@ -453,56 +816,178 @@ export default function HampersPage() {
 
         <Modal
           show={showAddEditModal}
-          onHide={handleCloseAddEditModal}
-          animation={false}
+          onHide={() => {
+            handleCloseDelModal();
+            setSelectedHampers(null);
+            setImage(null);
+            setImagePreview(null);
+            setMode("add");
+          }}
+          keyboard={false}
+          backdrop="static"
           centered
           style={{ border: "none" }}
         >
-          <Form>
+          <Form onSubmit={inputHelper.handleSubmit}>
             <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>Tambah Data Bahan Baku</h4>
+              <h4 style={{ fontWeight: "bold" }}>
+                {mode === "add"
+                  ? "Tambah Data Hampers"
+                  : mode === "edit"
+                  ? "Ubah Data Hampers"
+                  : "Hapus Data Hampers"}
+              </h4>
               <p
                 style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
                 className="mt-1"
               >
-                Pastikan data Bahan Baku yang Anda tambahkan benar
+                Pastikan data Hampers yang Anda tambahkan benar
               </p>
               <Form.Group className="text-start mt-3">
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama
+                  Nama Hampers
                 </Form.Label>
                 <Form.Control
                   style={{ border: "1px solid #808080" }}
                   type="text"
-                  placeholder="Masukkan nama bahan baku"
+                  name="nama_hampers"
+                  onChange={inputHelper.handleInputChange}
+                  value={formData.nama_hampers || ""}
+                  placeholder="Masukkan nama hampers"
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Stok
+                  Harga
                 </Form.Label>
                 <Form.Control
                   style={{ border: "1px solid #808080" }}
                   type="number"
-                  placeholder="Masukkan stok bahan baku"
+                  name="harga"
+                  onChange={inputHelper.handleInputChange}
+                  value={formData.harga || ""}
+                  placeholder="Masukkan harga hampers"
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Satuan
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  placeholder="Masukkan satuan bahan baku"
-                />
+                <Form.Group>
+                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    Gambar (Max 5 Gambar, Max 1MB/Gambar)
+                  </Form.Label>
+                  <Form.Control
+                    name="foto"
+                    type="file"
+                    accept="image/png, image/jpg, image/jpeg"
+                    multiple
+                    disabled={image?.length >= 5 || image_preview?.length > 5}
+                    onClick={() => {
+                      if (image?.length >= 5 || image_preview?.length > 5) {
+                        toast.error("Gambar maksimal 5!");
+                        return;
+                      }
+                    }}
+                    onChange={(e) => {
+                      if (
+                        e.target.files.length > 5 ||
+                        image?.length + e.target.files.length > 5 ||
+                        image_preview?.length > 5
+                      ) {
+                        toast.error("Gambar maksimal 5!");
+                        return;
+                      }
+
+                      for (const image of e.target.files) {
+                        if (image.size > 1000000) {
+                          toast.error("Ukuran gambar maksimal 1MB!");
+                          return;
+                        }
+                      }
+
+                      inputHelper.handleFileChange(e);
+                      setImagePreview(e.target.files);
+                    }}
+                  />
+                </Form.Group>
               </Form.Group>
+              <Row>
+                {image != null &&
+                  image.map((img, index) => (
+                    <div key={index} className="image-container">
+                      <img
+                        draggable="false"
+                        src={img.url}
+                        alt="preview"
+                        width="200"
+                        height="200"
+                        className={`img-thumbnail my-2 mx-1 ${
+                          deleteImage.includes(img) && "selected-delete"
+                        }`}
+                      />
+                      <div className="action-icons">
+                        <label
+                          className={`remove-icon text-white`}
+                          onClick={() => {
+                            const updatedDeleteImage = deleteImage.includes(img)
+                              ? deleteImage.filter((image) => image !== img)
+                              : [...deleteImage, img];
+                            setDeleteImage(updatedDeleteImage);
+                          }}
+                        >
+                          <FaTrash />
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+
+                {image_preview != null &&
+                  Array.from(image_preview).map((file, index) => (
+                    <>
+                      <div className="image-container">
+                        <img
+                          key={index}
+                          src={URL.createObjectURL(file)}
+                          alt="preview"
+                          width="200"
+                          height="200"
+                          className="img-thumbnail my-2 mx-1 selected-new"
+                        />
+                        <div className="action-icons">
+                          <label
+                            className="remove-icon text-white"
+                            onClick={() => {
+                              setImagePreview(
+                                Array.from(image_preview).filter(
+                                  (image) => image !== file
+                                )
+                              );
+
+                              if (image_preview?.length === 1) {
+                                document.getElementsByName("foto")[0].value =
+                                  "";
+                              }
+                            }}
+                          >
+                            <FaTrash />
+                          </label>
+                        </div>
+                      </div>
+                    </>
+                  ))}
+              </Row>
               <Row className="py-2 pt-3 mt-4">
                 <Col sm>
                   <Button
                     style={{ backgroundColor: "#FF5B19", border: "none" }}
                     className="w-100"
-                    onClick={handleCloseAddEditModal}
+                    onClick={() => {
+                      handleCloseAddEditModal();
+                      setTimeout(() => {
+                        setSelectedHampers(null);
+                        setImage(null);
+                        setImagePreview(null);
+                      }, 125);
+                    }}
+                    disabled={add.isPending || edit.isPending}
                   >
                     Batal
                   </Button>
@@ -512,13 +997,183 @@ export default function HampersPage() {
                     style={{ backgroundColor: "#F48E28", border: "none" }}
                     className="w-100"
                     type="submit"
+                    disabled={add.isPending || edit.isPending}
                   >
-                    Simpan
+                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
                   </Button>
                 </Col>
               </Row>
             </Modal.Body>
           </Form>
+        </Modal>
+
+        <Modal
+          show={showAddEditProdModal}
+          onEnter={async () => {
+            await fetchProduk();
+          }}
+          centered
+          style={{ border: "none" }}
+          keyboard={false}
+          backdrop="static"
+        >
+          <Form onSubmit={inputHelperProd.handleSubmit}>
+            <Modal.Body className="text-center p-4 m-2">
+              <h4 style={{ fontWeight: "bold" }}>
+                {selectedProduk
+                  ? "Edit Data Isi Hampers"
+                  : "Tambah Data Isi Hampers"}
+              </h4>
+              <p
+                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
+                className="mt-1"
+              >
+                {selectedProduk
+                  ? "Pastikan data isi hampers yang Anda tambahkan benar"
+                  : "Pastikan data isi hampers yang Anda ubahkan benar"}
+              </p>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Nama Hampers
+                </Form.Label>
+                <Form.Control
+                  style={{ border: "1px solid #808080" }}
+                  type="text"
+                  name="nama_hampers"
+                  value={nama_hampers}
+                  disabled
+                />
+              </Form.Group>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Nama Produk
+                </Form.Label>
+                <Form.Select
+                  style={{ border: "1px solid #808080" }}
+                  name="id_produk"
+                  value={
+                    formDataProd?.id_produk || selectedProduk?.id_produk || ""
+                  }
+                  onChange={inputHelperProd.handleInputChange}
+                  disabled={isLoadingModal}
+                  required
+                >
+                  <option value="" disabled selected hidden>
+                    ---
+                  </option>
+                  {produk?.map((produk, index) => (
+                    <option key={index} value={produk.id_produk}>
+                      {produk.id_kategori === "CK"
+                        ? produk.nama_produk + " " + produk?.ukuran + " Loyang"
+                        : produk.nama_produk}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Jumlah
+                </Form.Label>
+                <Form.Control
+                  style={{ border: "1px solid #808080" }}
+                  type="number"
+                  placeholder="Masukkan jumlah produk"
+                  name="jumlah"
+                  value={formDataProd?.jumlah || selectedProduk?.jumlah || ""}
+                  onChange={inputHelperProd.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
+                />
+              </Form.Group>
+              <Row className="py-2 pt-3 mt-4">
+                <Col sm>
+                  <Button
+                    style={{ backgroundColor: "#FF5B19", border: "none" }}
+                    className="w-100"
+                    onClick={() => {
+                      handleCloseAddEditProdModal();
+                      setTimeout(() => {
+                        setProduk(null);
+                        setSelectedProduk(null);
+                      }, 125);
+                    }}
+                    disabled={add.isPending || edit.isPending || isLoadingModal}
+                  >
+                    Batal
+                  </Button>
+                </Col>
+                <Col sm>
+                  <Button
+                    style={{ backgroundColor: "#F48E28", border: "none" }}
+                    className="w-100"
+                    type="submit"
+                    disabled={add.isPending || edit.isPending || isLoadingModal}
+                  >
+                    {add.isPending || edit.isPending || isLoadingModal
+                      ? "Loading..."
+                      : "Simpan"}
+                  </Button>
+                </Col>
+              </Row>
+            </Modal.Body>
+          </Form>
+        </Modal>
+
+        <Modal
+          show={showDelProdModal}
+          onHide={() => {
+            handleCloseDelProdModal();
+            setIdDetailHampers(null);
+            setMode("add");
+          }}
+          centered
+          size="lg"
+          style={{ border: "none" }}
+          keyboard={false}
+          backdrop="static"
+        >
+          <Modal.Body className="text-center p-5">
+            <h3 style={{ fontWeight: "bold" }}>
+              Anda Yakin Ingin Menghapus Data Isi Hampers Ini?
+            </h3>
+            <p
+              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
+              className="mt-3"
+            >
+              <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
+              <p className="m-0 p-0">
+                Semua data yang terkait dengan isi hampers tersebut akan hilang.
+              </p>
+            </p>
+            <Row className="py-2 pt-3">
+              <Col sm>
+                <Button
+                  style={{ backgroundColor: "#FF5B19", border: "none" }}
+                  className="mx-2 w-100 p-1"
+                  onClick={() => {
+                    handleCloseDelProdModal();
+                    setIdDetailHampers(null);
+                    setProduk(null);
+                  }}
+                  disabled={del.isPending}
+                >
+                  <h5 className="mt-2">Batal</h5>
+                </Button>
+              </Col>
+              <Col sm>
+                {/* Khusus delete panggil langsng onSubmit()*/}
+                <Button
+                  style={{ backgroundColor: "#F48E28", border: "none" }}
+                  className="mx-2 w-100 p-1"
+                  onClick={() => onSubmit()}
+                  disabled={del.isPending}
+                >
+                  <h5 className="mt-2">
+                    {del.isPending ? "Loading..." : "Hapus"}
+                  </h5>
+                </Button>
+              </Col>
+            </Row>
+          </Modal.Body>
         </Modal>
       </section>
     </>

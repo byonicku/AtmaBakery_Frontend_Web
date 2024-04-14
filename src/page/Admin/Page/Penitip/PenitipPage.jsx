@@ -522,6 +522,7 @@ export default function PenitipPage() {
                   name="nama"
                   value={formData.nama || selectedPenitip?.nama || ""}
                   onChange={inputHelper.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
@@ -535,6 +536,7 @@ export default function PenitipPage() {
                   name="no_telp"
                   value={formData.no_telp || selectedPenitip?.no_telp || ""}
                   onChange={inputHelper.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
                 />
               </Form.Group>
               <Row className="py-2 pt-3 mt-4">
