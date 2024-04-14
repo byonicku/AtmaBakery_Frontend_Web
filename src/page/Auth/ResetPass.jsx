@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -31,7 +31,7 @@ export default function ResetPass() {
       toast.success("Email berhasil dikirim ke " + formData.email + " !");
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error(error);
     },
     onMutate: () => {
       setIsLoading(true);
@@ -44,11 +44,15 @@ export default function ResetPass() {
     try {
       await result.mutateAsync(formData);
     } catch (error) {
-      console.error(error);
+      toast.error(
+        error.data.message ||
+          error.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const inputHelper = new InputHelper(
     formData,
@@ -56,16 +60,17 @@ export default function ResetPass() {
     validationSchema,
     onSubmit
   );
-  
+
   return (
     <div className="bg-half">
       <Container className="container-setting">
         <Row className="no-gutters shadow-lg rounded h-auto">
-          <Col sm className="remove p-0 m-0" style={{ backgroundColor: "#FFEDDB" }}>
-            <Image
-              src={imageBg}
-              className="p-0 m-0 rounded left-img"
-            />
+          <Col
+            sm
+            className="remove p-0 m-0"
+            style={{ backgroundColor: "#FFEDDB" }}
+          >
+            <Image src={imageBg} className="p-0 m-0 rounded left-img" />
           </Col>
           <Col sm style={{ backgroundColor: "#FFFFFF" }}>
             <div className="pt-5 px-5" style={{ color: "black" }}>
@@ -100,7 +105,7 @@ export default function ResetPass() {
                   type="submit"
                   disabled={isLoading}
                 >
-                  { isLoading ? "Loading..." : "Kirim Email" }
+                  {isLoading ? "Loading..." : "Kirim Email"}
                 </Button>
               </Container>
             </Form>

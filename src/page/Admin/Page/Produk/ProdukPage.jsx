@@ -95,7 +95,7 @@ export default function ProdukPage() {
       handleMutationSuccess();
     },
     onError: (error) => {
-      console.error(error.message);
+      console.error(error);
     },
   });
 
@@ -105,7 +105,11 @@ export default function ProdukPage() {
     try {
       await del.mutateAsync(selectedProduk.id_bahan_baku);
     } catch (error) {
-      toast.error("Hapus Produk gagal!");
+      toast.error(
+        error.data.message ||
+          error.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
     }
   };
 
@@ -258,7 +262,10 @@ export default function ProdukPage() {
                       <Button variant="primary" className="me-2">
                         <BsJournalText className="mb-1" /> Resep
                       </Button>
-                      <Link to={`./edit/${produk?.id_produk}`} className="btn btn-secondary me-2">
+                      <Link
+                        to={`./edit/${produk?.id_produk}`}
+                        className="btn btn-secondary me-2"
+                      >
                         <BsPencilSquare className="mb-1" /> Ubah
                       </Link>
                       <Button
@@ -285,9 +292,9 @@ export default function ProdukPage() {
             )}
           </>
         ) : (
-          <NotFound  text={
-            search ? "Produk Tidak Ditemukan" : "Belum Ada Produk Disini"
-          }/>
+          <NotFound
+            text={search ? "Produk Tidak Ditemukan" : "Belum Ada Produk Disini"}
+          />
         )}
 
         <Modal
