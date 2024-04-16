@@ -483,8 +483,24 @@ export default function HampersPage() {
         title="Kelola Data Hampers"
         desc="Lakukan pengelolaan data hampers Atma Bakery"
         breadcrumb="Hampers"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (selectedHampers) {
+            setSelectedHampers(null);
+            setImage(null);
+          }
+        }}
       />
-      <section className="content px-3">
+      <section
+        className="content px-3"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (selectedHampers) {
+            setSelectedHampers(null);
+            setImage(null);
+          }
+        }}
+      >
         <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
           <Col
             xs={12}
@@ -614,7 +630,8 @@ export default function HampersPage() {
                                 : ""
                             }
                             key={`${index}-${idx}`}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               if (selectedHampers === hampers) {
                                 setSelectedHampers(null);
                                 setImage(null);
@@ -696,7 +713,8 @@ export default function HampersPage() {
                           selectedHampers === hampers ? "selected-hampers" : ""
                         }
                         key={`${index}-add`}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           if (selectedHampers === hampers) {
                             setSelectedHampers(null);
                             setImage(null);

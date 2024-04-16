@@ -250,7 +250,12 @@ export default function ProdukPage() {
                     <td>{produk.deskripsi}</td>
                     <td>{category[produk.id_kategori]}</td>
                     <td>{produk.ukuran}</td>
-                    <td>{produk.harga}</td>
+                    <td>
+                      {new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      }).format(produk.harga)}
+                    </td>
                     <td>{produk.limit}</td>
                     <td>
                       {produk.status == "PO" ? (
