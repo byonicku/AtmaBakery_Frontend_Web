@@ -7,6 +7,12 @@ const login = async (data) => {
         "Content-Type": "application/json",
       },
     });
+
+    sessionStorage.setItem("token", response.data.token);
+    sessionStorage.setItem("role", response.data.data.id_role);
+    sessionStorage.setItem("foto_profil", response.data.data.foto_profil);
+    sessionStorage.setItem("nama", response.data.data.nama);
+
     return response.data;
   } catch (error) {
     throw error.response || error;
@@ -21,9 +27,16 @@ const logout = async () => {
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
       }
     );
+
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role");
+    sessionStorage.removeItem("foto_profil");
+    sessionStorage.removeItem("nama");
+
     return response.data;
   } catch (error) {
     throw error.response || error;

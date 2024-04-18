@@ -1,8 +1,8 @@
-import useAxios from "./APIConstant";
+import useAxios from "./APIConstant.js";
 
-const getAllProduk = async () => {
+const getSelf = async () => {
   try {
-    const response = await useAxios.get("/produk", {
+    const response = await useAxios.get("/users/self", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -14,9 +14,23 @@ const getAllProduk = async () => {
   }
 };
 
-const getProdukByPage = async (page = 0) => {
+const getAllUser = async () => {
   try {
-    const response = await useAxios.get("/paginate/produk", {
+    const response = await useAxios.get("/users", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const getUserByPage = async (page = 0) => {
+  try {
+    const response = await useAxios.get("/paginate/users", {
       params: {
         page: page,
       },
@@ -31,9 +45,9 @@ const getProdukByPage = async (page = 0) => {
   }
 };
 
-const searchProduk = async (search) => {
+const searchUser = async (search) => {
   try {
-    const response = await useAxios.get(`/produk/search/${search}`, {
+    const response = await useAxios.get(`/users/search/${search}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -45,59 +59,23 @@ const searchProduk = async (search) => {
   }
 };
 
-const showProduk = async (id) => {
+const createUser = async (data) => {
   try {
-    const response = await useAxios.get(`/produk/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-      },
-    });
-    return response.data.data;
-  } catch (error) {
-    throw error.response || error;
-  }
-};
-
-const createProduk = async (data, uploadImage) => {
-  try {
-    const response = await useAxios.post("/produk", data, {
+    const response = await useAxios.post("/users", data, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
-
-    const id = response.data.data.id_produk;
-    await uploadImage(id);
-
     return response.data;
   } catch (error) {
     throw error.response || error;
   }
 };
 
-const updateProduk = async (data, id_produk, uploadImage, deleteImage) => {
+const updateUser = async (data, id_User) => {
   try {
-    const response = await useAxios.put(`/produk/${id_produk}`, data, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-      },
-    });
-
-    await uploadImage(id_produk);
-    await deleteImage();
-
-    return response.data;
-  } catch (error) {
-    throw error.response || error;
-  }
-};
-
-const deleteProduk = async (id) => {
-  try {
-    const response = await useAxios.delete(`/produk/${id}`, {
+    const response = await useAxios.put(`/users/${id_User}`, data, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -109,14 +87,28 @@ const deleteProduk = async (id) => {
   }
 };
 
-const APIProduk = {
-  getAllProduk,
-  getProdukByPage,
-  showProduk,
-  searchProduk,
-  createProduk,
-  updateProduk,
-  deleteProduk,
+const deleteUser = async (id) => {
+  try {
+    const response = await useAxios.delete(`/users/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
 };
 
-export default APIProduk;
+const APIUser = {
+  getSelf,
+  getAllUser,
+  getUserByPage,
+  searchUser,
+  createUser,
+  updateUser,
+  deleteUser,
+};
+
+export default APIUser;

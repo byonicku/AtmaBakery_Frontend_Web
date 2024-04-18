@@ -5,7 +5,7 @@ const getAllBahanBaku = async () => {
     const response = await useAxios.get("/bahan_baku", {
       headers: {
         "Content-Type": "application/json",
-        //   Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data.data;
@@ -22,7 +22,7 @@ const getBahanBakuByPage = async (page = 0) => {
       },
       headers: {
         "Content-Type": "application/json",
-        //   Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data.data;
@@ -36,7 +36,7 @@ const searchBahanBaku = async (search) => {
     const response = await useAxios.get(`/bahan_baku/search/${search}`, {
       headers: {
         "Content-Type": "application/json",
-        //   Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data.data;
@@ -50,7 +50,7 @@ const createBahanBaku = async (data) => {
     const response = await useAxios.post("/bahan_baku", data, {
       headers: {
         "Content-Type": "multipart/form-data",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;
@@ -64,7 +64,7 @@ const updateBahanBaku = async (data, id_bahan_baku) => {
     const response = await useAxios.put(`/bahan_baku/${id_bahan_baku}`, data, {
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;
@@ -78,7 +78,7 @@ const deleteBahanBaku = async (id) => {
     const response = await useAxios.delete(`/bahan_baku/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;

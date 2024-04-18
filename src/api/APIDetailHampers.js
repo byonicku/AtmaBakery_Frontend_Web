@@ -18,7 +18,7 @@ const createDetailHampers = async (data) => {
     const response = await useAxios.post("/detail_hampers", data, {
       headers: {
         "Content-Type": "multipart/form-data",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;
@@ -35,7 +35,7 @@ const updateDetailHampers = async (data, id_detail_hampers) => {
       {
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
       }
     );
@@ -50,7 +50,7 @@ const deleteDetailHampers = async (id) => {
     const response = await useAxios.delete(`/detail_hampers/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;

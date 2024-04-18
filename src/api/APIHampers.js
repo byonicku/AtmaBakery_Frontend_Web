@@ -21,7 +21,7 @@ const getHampersByPage = async (page = 0) => {
       },
       headers: {
         "Content-Type": "application/json",
-        //   Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data.data;
@@ -35,7 +35,7 @@ const searchHampers = async (search) => {
     const response = await useAxios.get(`/hampers/search/${search}`, {
       headers: {
         "Content-Type": "application/json",
-        //   Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data.data;
@@ -49,7 +49,7 @@ const createHampers = async (data, uploadImage) => {
     const response = await useAxios.post("/hampers", data, {
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
 
@@ -72,7 +72,7 @@ const updateHampers = async (
     const response = await useAxios.put(`/hampers/${id_hampers}`, data, {
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
 
@@ -90,7 +90,7 @@ const deleteHampers = async (id) => {
     const response = await useAxios.delete(`/hampers/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;
