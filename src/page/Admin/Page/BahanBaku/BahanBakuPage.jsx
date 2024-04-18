@@ -287,11 +287,11 @@ export default function BahanBakuPage() {
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    fetchBahanBakuSearch(search);
+                    fetchBahanBakuSearch();
                   }
                 }}
               />
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={fetchBahanBaku}>
                 <BsSearch />
               </Button>
             </InputGroup>

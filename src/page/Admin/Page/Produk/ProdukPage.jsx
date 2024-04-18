@@ -191,7 +191,7 @@ export default function ProdukPage() {
                   }
                 }}
               />
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={fetchProdukSearch}>
                 <BsSearch />
               </Button>
             </InputGroup>
