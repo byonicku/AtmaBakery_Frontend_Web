@@ -12,6 +12,7 @@ import { toast } from "sonner";
 export default function Header() {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const role = sessionStorage.getItem("role");
   const token = sessionStorage.getItem("token");
 
@@ -25,14 +26,26 @@ export default function Header() {
     onSuccess: () => {
       toast.success("Logout success");
       navigate("/");
+      setIsLoading(false);
     },
     onError: (error) => {
       console.error(error);
+      setIsLoading(false);
     },
   });
 
   const handleLogout = async () => {
-    await mutation.mutateAsync();
+    try {
+      setIsLoading(true);
+      toast.warning("Logout in progress...");
+      await mutation.mutateAsync();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Something went wrong with the server!"
+      );
+    }
   };
 
   return (
@@ -111,11 +124,12 @@ export default function Header() {
             ) : (
               <Nav.Link
                 onClick={() => {
+                  if (isLoading) return;
                   scrollToTop();
                   handleLogout();
                 }}
               >
-                Logout
+                {isLoading ? "Loading..." : "Logout"}
               </Nav.Link>
             )}
           </Nav>

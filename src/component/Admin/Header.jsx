@@ -6,23 +6,36 @@ import { useMutation } from "@tanstack/react-query";
 import APIAuth from "@/api/APIAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export default function Header() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const mutation = useMutation({
     mutationFn: APIAuth.logout,
     onSuccess: () => {
       toast.success("Logout success");
       navigate("/");
+      setIsLoading(false);
     },
     onError: (error) => {
       console.error(error);
+      setIsLoading(false);
     },
   });
 
   const handleLogout = async () => {
-    await mutation.mutateAsync();
+    try {
+      setIsLoading(true);
+      await mutation.mutateAsync();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Something went wrong with the server!"
+      );
+    }
   };
 
   return (
@@ -44,10 +57,10 @@ export default function Header() {
       <ul className="navbar-nav ml-auto">
         {/* Navbar Search */}
         <li className="nav-item">
-          <Button variant="danger" onClick={handleLogout}>
+          <Button variant="danger" onClick={handleLogout} disabled={isLoading}>
             <FaSignOutAlt />
             &nbsp;
-            <span>Logout</span>
+            <span>{isLoading ? "Loading..." : "Logout"}</span>
           </Button>
         </li>
       </ul>
