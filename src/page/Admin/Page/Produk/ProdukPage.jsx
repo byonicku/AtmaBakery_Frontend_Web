@@ -108,8 +108,8 @@ export default function ProdukPage() {
       await del.mutateAsync(selectedProduk.id_bahan_baku);
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }

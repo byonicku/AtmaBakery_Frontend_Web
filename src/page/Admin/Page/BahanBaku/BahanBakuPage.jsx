@@ -180,8 +180,8 @@ export default function BahanBakuPage() {
       }
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }

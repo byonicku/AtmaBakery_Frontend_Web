@@ -8,7 +8,7 @@ import {
   InputGroup,
   Spinner,
   // Container,
-} from "react-bootstrap"; 
+} from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
 import {
   BsSearch,
@@ -437,8 +437,8 @@ export default function HampersPage() {
       }
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }

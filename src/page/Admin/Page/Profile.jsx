@@ -2,6 +2,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIUser from "@/api/APIUser";
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
+import { toast } from "sonner";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -15,6 +16,11 @@ export default function Profile() {
         setUser(data);
       } catch (error) {
         console.error(error);
+        toast.error(
+          error?.data?.message ||
+            error?.message ||
+            "Sesuatu sedang bermasalah pada server!"
+        );
       } finally {
         setIsLoading(false);
       }

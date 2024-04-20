@@ -75,8 +75,8 @@ export default function Register() {
       await result.mutateAsync(formData);
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     } finally {

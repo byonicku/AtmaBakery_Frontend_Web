@@ -203,8 +203,8 @@ export default function KaryawanPage() {
       }
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }

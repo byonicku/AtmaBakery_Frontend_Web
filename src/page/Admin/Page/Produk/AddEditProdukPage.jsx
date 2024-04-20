@@ -265,8 +265,8 @@ export default function AddEditProdukPage({ isEdit }) {
       }
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }
@@ -491,7 +491,7 @@ export default function AddEditProdukPage({ isEdit }) {
                         ---
                       </option>
                       <option value={"CK"}>Cake</option>
-                      <option value={"MNM"}>Roti</option>
+                      <option value={"MNM"}>Minuman</option>
                       <option value={"RT"}>Roti</option>
                       <option value={"TP"}>Titipan</option>
                     </Form.Select>
@@ -551,9 +551,19 @@ export default function AddEditProdukPage({ isEdit }) {
                     </Form.Label>
                     <Form.Select
                       name="status"
-                      defaultValue={formData.status}
+                      defaultValue={
+                        formData.id_kategori === "TP"
+                          ? "READY"
+                          : formData.status
+                      }
+                      value={formData.id_kategori === "TP" ? "READY" : ""}
                       onChange={inputHelper.handleInputChange}
-                      disabled={isLoading || add.isPending || edit.isPending}
+                      disabled={
+                        isLoading ||
+                        add.isPending ||
+                        edit.isPending ||
+                        formData.id_kategori === "TP"
+                      }
                       required
                     >
                       <option value="" disabled selected hidden>
