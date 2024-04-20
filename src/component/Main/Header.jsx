@@ -35,6 +35,8 @@ export default function Header() {
   });
 
   const handleLogout = async () => {
+    if (isLoading) return;
+
     try {
       setIsLoading(true);
       toast.warning("Logout in progress...");
@@ -124,7 +126,6 @@ export default function Header() {
             ) : (
               <Nav.Link
                 onClick={() => {
-                  if (isLoading) return;
                   scrollToTop();
                   handleLogout();
                 }}

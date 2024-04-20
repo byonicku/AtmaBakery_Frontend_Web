@@ -26,6 +26,8 @@ export default function Header() {
   });
 
   const handleLogout = async () => {
+    if (isLoading) return;
+
     try {
       setIsLoading(true);
       await mutation.mutateAsync();
