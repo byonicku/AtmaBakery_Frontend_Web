@@ -14,11 +14,13 @@ const role = {
   ADM: "Admin",
   MO: "MO",
   OWN: "Owner",
+  EMP: "",
 };
 
 export default function SideNav() {
   const location = useLocation();
-  const roleName = role[sessionStorage.getItem("role")];
+  const roleId = sessionStorage.getItem("role") || "EMP";
+  const roleName = role[roleId];
   const foto_profil = sessionStorage.getItem("foto_profil");
   const nama = sessionStorage.getItem("nama");
 
@@ -89,7 +91,7 @@ export default function SideNav() {
             role="menu"
             data-accordion="false"
           >
-            {RouteData["MO"].map((item, index) => (
+            {RouteData[roleId]?.map((item, index) => (
               <NavItem
                 key={index}
                 to={item.to}
