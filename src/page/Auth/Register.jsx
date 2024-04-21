@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Row,
+  Form,
+  Image,
+  Col,
+  InputGroup,
+} from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 
 import { useNavigate, Link } from "react-router-dom";
@@ -10,6 +18,7 @@ import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
 import imageBg from "@/assets/images/bg.png";
+import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -22,6 +31,8 @@ export default function Register() {
     no_telp: "",
     tanggal_lahir: "",
   });
+  const [eyeToggle1, setEyeToggle1] = useState(true);
+  const [eyeToggle2, setEyeToggle2] = useState(true);
 
   const validationSchema = {
     nama: { required: true, alias: "Nama Lengkap" },
@@ -176,29 +187,60 @@ export default function Register() {
                 <Form.Label style={{ fontWeight: "bold" }}>
                   Kata Sandi
                 </Form.Label>
-                <Form.Control
-                  type="password"
-                  style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
-                  placeholder="Masukkan kata sandi"
-                  name="password"
-                  onChange={inputHelper.handleInputChange}
-                  disabled={result.isPending}
-                  required
-                />
+                <InputGroup>
+                  <Form.Control
+                    type={eyeToggle1 ? "password" : "text"}
+                    style={{
+                      border: "1px #E5E5E5",
+                      backgroundColor: "#F2F2F2",
+                    }}
+                    placeholder="Masukkan kata sandi"
+                    name="password"
+                    onChange={inputHelper.handleInputChange}
+                    disabled={result.isPending}
+                    required
+                  />
+                  <InputGroup.Text
+                    style={{
+                      border: "1px #E5E5E5",
+                      backgroundColor: "#F2F2F2",
+                      userSelect: "none",
+                    }}
+                    onClick={() => setEyeToggle1(!eyeToggle1)}
+                  >
+                    {eyeToggle1 ? <BsEyeFill /> : <BsEyeSlashFill />}
+                  </InputGroup.Text>
+                </InputGroup>
               </Form.Group>
+
               <Form.Group className="mt-3">
                 <Form.Label style={{ fontWeight: "bold" }}>
                   Konfirmasi Kata Sandi
                 </Form.Label>
-                <Form.Control
-                  type="password"
-                  style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
-                  placeholder="Masukkan kembali kata sandi"
-                  name="password_confirmation"
-                  onChange={inputHelper.handleInputChange}
-                  disabled={result.isPending}
-                  required
-                />
+                <InputGroup>
+                  <Form.Control
+                    type={eyeToggle2 ? "password" : "text"}
+                    style={{
+                      border: "1px #E5E5E5",
+                      backgroundColor: "#F2F2F2",
+                    }}
+                    placeholder="Masukkan kembali kata sandi"
+                    name="password_confirmation"
+                    onChange={inputHelper.handleInputChange}
+                    disabled={result.isPending}
+                    required
+                  />
+                  <InputGroup.Text
+                    style={{
+                      border: "1px #E5E5E5",
+                      backgroundColor: "#F2F2F2",
+                      userSelect: "none",
+                    }}
+                    onClick={() => setEyeToggle2(!eyeToggle2)}
+                  >
+                    {eyeToggle2 ? <BsEyeFill /> : <BsEyeSlashFill />}
+                  </InputGroup.Text>
+                </InputGroup>
               </Form.Group>
               <Container className="mt-3 d-flex justify-content-start">
                 <Form.Check

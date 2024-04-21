@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Button, Container, Row, Form, Image, Col } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Row,
+  Form,
+  Image,
+  Col,
+  InputGroup,
+} from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -10,10 +18,14 @@ import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
 import imageBg from "@/assets/images/bg.png";
+import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 
 export default function Login() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [eyeToggle, setEyeToggle] = useState(true);
+  const handleToggle = () => setEyeToggle(!eyeToggle);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -107,15 +119,30 @@ export default function Login() {
               </Form.Group>
               <Form.Group className="mt-4">
                 <Form.Label style={{ fontWeight: "bold" }}>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
-                  placeholder="Masukkan kata sandi"
-                  name="password"
-                  onChange={inputHelper.handleInputChange}
-                  disabled={result.isPending}
-                  required
-                />
+                <InputGroup>
+                  <Form.Control
+                    type={eyeToggle ? "password" : "text"}
+                    style={{
+                      border: "1px #E5E5E5",
+                      backgroundColor: "#F2F2F2",
+                    }}
+                    placeholder="Masukkan kata sandi"
+                    name="password"
+                    onChange={inputHelper.handleInputChange}
+                    disabled={result.isPending}
+                    required
+                  />
+                  <InputGroup.Text
+                    style={{
+                      border: "1px #E5E5E5",
+                      backgroundColor: "#F2F2F2",
+                      userSelect: "none",
+                    }}
+                    onClick={handleToggle}
+                  >
+                    {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
+                  </InputGroup.Text>
+                </InputGroup>
               </Form.Group>
               <Container className="my-3 d-flex justify-content-end">
                 <Link to="/reset" style={{ textDecoration: "none" }}>

@@ -7,6 +7,7 @@ import {
   Image,
   Col,
   Spinner,
+  InputGroup,
 } from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 
@@ -20,6 +21,7 @@ import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
 import imageBg from "@/assets/images/bg.png";
+import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 
 export default function ResetPass() {
   const { key } = useParams();
@@ -35,6 +37,8 @@ export default function ResetPass() {
     email: email,
   });
   const [status, setStatus] = useState(0);
+  const [eyeToggle1, setEyeToggle1] = useState(true);
+  const [eyeToggle2, setEyeToggle2] = useState(true);
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -155,33 +159,57 @@ export default function ResetPass() {
                     <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                       Kata Sandi Baru
                     </Form.Label>
-                    <Form.Control
-                      style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
-                      }}
-                      type="password"
-                      placeholder="Masukkan kata sandi baru"
-                      name="password"
-                      onChange={inputHelper.handleInputChange}
-                      disabled={result.isPending}
-                    />
+                    <InputGroup>
+                      <Form.Control
+                        style={{
+                          border: "1px #E5E5E5",
+                          backgroundColor: "#F2F2F2",
+                        }}
+                        type={eyeToggle1 ? "password" : "text"}
+                        placeholder="Masukkan kata sandi baru"
+                        name="password"
+                        onChange={inputHelper.handleInputChange}
+                        disabled={result.isPending}
+                      />
+                      <InputGroup.Text
+                        style={{
+                          border: "1px #E5E5E5",
+                          backgroundColor: "#F2F2F2",
+                          userSelect: "none",
+                        }}
+                        onClick={() => setEyeToggle1(!eyeToggle1)}
+                      >
+                        {eyeToggle1 ? <BsEyeFill /> : <BsEyeSlashFill />}
+                      </InputGroup.Text>
+                    </InputGroup>
                   </Form.Group>
                   <Form.Group className="mt-4 mb-4">
                     <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                       Konfirmasi Kata Sandi Baru
                     </Form.Label>
-                    <Form.Control
-                      style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
-                      }}
-                      type="password"
-                      placeholder="Masukkan ulang kata sandi baru"
-                      name="password_confirmation"
-                      onChange={inputHelper.handleInputChange}
-                      disabled={result.isPending}
-                    />
+                    <InputGroup>
+                      <Form.Control
+                        style={{
+                          border: "1px #E5E5E5",
+                          backgroundColor: "#F2F2F2",
+                        }}
+                        type={eyeToggle2 ? "password" : "text"}
+                        placeholder="Masukkan ulang kata sandi baru"
+                        name="password_confirmation"
+                        onChange={inputHelper.handleInputChange}
+                        disabled={result.isPending}
+                      />
+                      <InputGroup.Text
+                        style={{
+                          border: "1px #E5E5E5",
+                          backgroundColor: "#F2F2F2",
+                          userSelect: "none",
+                        }}
+                        onClick={() => setEyeToggle2(!eyeToggle2)}
+                      >
+                        {eyeToggle2 ? <BsEyeFill /> : <BsEyeSlashFill />}
+                      </InputGroup.Text>
+                    </InputGroup>
                   </Form.Group>
                   <Container className="text-center">
                     <Button
