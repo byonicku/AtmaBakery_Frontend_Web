@@ -556,7 +556,11 @@ export default function AddEditProdukPage({ isEdit }) {
                           ? "READY"
                           : formData.status
                       }
-                      value={formData.id_kategori === "TP" ? "READY" : ""}
+                      value={
+                        formData.id_kategori === "TP"
+                          ? "READY"
+                          : formData.status
+                      }
                       onChange={inputHelper.handleInputChange}
                       disabled={
                         isLoading ||
