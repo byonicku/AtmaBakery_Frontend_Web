@@ -10,6 +10,7 @@ import ResetPass from "@/page/Auth/ResetPass";
 import ChangePass from "@/page/Auth/ChangePass";
 import Produk from "@/page/Admin/Page/Produk/ProdukPage";
 import AddEditProdukPage from "@/page/Admin/Page/Produk/AddEditProdukPage";
+import Resep from "@/page/Admin/Page/Resep/ResepPage";
 import BahanBaku from "@/page/Admin/Page/BahanBaku/BahanBakuPage";
 import Karyawan from "@/page/Admin/Page/Karyawan/KaryawanPage";
 import Penitip from "@/page/Admin/Page/Penitip/PenitipPage";
@@ -45,6 +46,7 @@ export default function App() {
               <Route path="profile" element={<AdminProfile />} />
               <Route path="produk" element={<Produk />} />
               <Route path="hampers" element={<HampersPage />} />
+              <Route path="resep" element={<Resep />} />
               <Route path="bahan_baku" element={<BahanBaku />} />
               <Route path="karyawan" element={<Karyawan />} />
               <Route path="penitip" element={<Penitip />} />
