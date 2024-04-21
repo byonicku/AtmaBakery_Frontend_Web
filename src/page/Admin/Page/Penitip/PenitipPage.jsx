@@ -422,7 +422,7 @@ export default function PenitipPage() {
                 Semua data yang terkait dengan penitip tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
                   variant="danger"
@@ -481,7 +481,7 @@ export default function PenitipPage() {
                   placeholder="Month YYYY"
                 />
               </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"
@@ -552,7 +552,7 @@ export default function PenitipPage() {
                   disabled={edit.isPending || add.isPending}
                 />
               </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"

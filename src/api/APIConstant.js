@@ -4,8 +4,8 @@ import axios from "axios";
 // const BASE_URL = '127.0.0.1:8000';
 
 // Production
-// export const BASE_URL = "api-atma-bakery.vercel.app"; // Vercel
-export const BASE_URL = "api-atma-bakery.azurewebsites.net"; // Azure
+export const BASE_URL = "api-atma-bakery.vercel.app"; // Vercel
+// export const BASE_URL = "api-atma-bakery.azurewebsites.net"; // Azure
 
 // Local use HTTP
 // export const API_URL = `http://${BASE_URL}/`;
