@@ -18,7 +18,8 @@ import Dashboard from "@/page/Admin/Dashboard";
 import Verify from "@/page/Auth/Verify";
 import HampersPage from "@/page/Admin/Page/Hampers/HampersPage";
 import AdminProfile from "@/page/Admin/Page/Profile";
-import AdminRoute from "./page/Routes/AdminRoute";
+import DashboardRoute from "./page/Routes/DashboardRoute";
+import RoleRoute from "./page/Routes/RoleRoute";
 
 const queryClient = new QueryClient();
 
@@ -38,25 +39,82 @@ export default function App() {
             <Route
               path="/admin"
               element={
-                <AdminRoute>
+                <DashboardRoute>
                   <Dashboard />
-                </AdminRoute>
+                </DashboardRoute>
               }
             >
-              <Route path="profile" element={<AdminProfile />} />
-              <Route path="produk" element={<Produk />} />
-              <Route path="hampers" element={<HampersPage />} />
-              <Route path="resep" element={<Resep />} />
-              <Route path="bahan_baku" element={<BahanBaku />} />
-              <Route path="karyawan" element={<Karyawan />} />
-              <Route path="penitip" element={<Penitip />} />
+              <Route
+                path="profile"
+                element={
+                  <RoleRoute roles={["ADM", "MO", "OWN"]}>
+                    <AdminProfile />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="produk"
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <Produk />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="hampers"
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <HampersPage />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="resep"
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <Resep />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="bahan_baku"
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <BahanBaku />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="karyawan"
+                element={
+                  <RoleRoute roles={["OWN", "MO"]}>
+                    <Karyawan />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="penitip"
+                element={
+                  <RoleRoute roles={["MO"]}>
+                    <Penitip />
+                  </RoleRoute>
+                }
+              />
               <Route
                 path="produk/tambah"
-                element={<AddEditProdukPage isEdit={false} />}
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <AddEditProdukPage isEdit={false} />
+                  </RoleRoute>
+                }
               />
               <Route
                 path="produk/edit/:id"
-                element={<AddEditProdukPage isEdit={true} />}
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <AddEditProdukPage isEdit={true} />
+                  </RoleRoute>
+                }
               />
               <Route index element={<HomeAdmin />} />
             </Route>

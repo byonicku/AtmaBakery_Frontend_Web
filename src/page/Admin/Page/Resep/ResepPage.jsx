@@ -70,7 +70,7 @@ export default function ResepPage() {
     } catch (error) {
       // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
       // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 && error.response.status === 404) {
+      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
         setResep([]);
       } else {
         setPage(page - 1);

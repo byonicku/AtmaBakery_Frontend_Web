@@ -26,6 +26,7 @@ const createGambar = async (data) => {
     const response = await useAxios.post("/gambar", data, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;
@@ -39,13 +40,14 @@ const deleteGambar = async (id) => {
     const response = await useAxios.delete(`/gambar/${id}`, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
     return response.data;
   } catch (error) {
     throw error.response || error;
   }
-}
+};
 
 const APIGambar = {
   uploadImage,
