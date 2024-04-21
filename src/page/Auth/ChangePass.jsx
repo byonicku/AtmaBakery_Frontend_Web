@@ -44,6 +44,11 @@ export default function ResetPass() {
         setStatus(response.state);
       } catch (error) {
         console.error(error);
+        toast.error(
+          error?.data?.message ||
+            error?.message ||
+            "Sesuatu sedang bermasalah pada server!"
+        );
       } finally {
         setIsLoadingVerify(false);
       }
@@ -82,8 +87,8 @@ export default function ResetPass() {
       await result.mutateAsync(formData);
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     } finally {

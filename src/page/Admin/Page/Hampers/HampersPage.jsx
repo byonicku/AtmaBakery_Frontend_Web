@@ -40,11 +40,15 @@ export default function HampersPage() {
   const [showAddEditProdModal, setShowAddEditProdModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
+
+  const [selectedAllHampers, setSelectedAllHampers] = useState(null);
   const [selectedHampers, setSelectedHampers] = useState(null);
 
   const [image_preview, setImagePreview] = useState(null);
   const [image, setImage] = useState(null);
   const [deleteImage, setDeleteImage] = useState([]);
+
+  const [inModal, setInModal] = useState(false);
 
   const handleCloseDelModal = () => setShowDelModal(false);
   const handleShowDelModal = () => setShowDelModal(true);
@@ -62,6 +66,7 @@ export default function HampersPage() {
     // Prevent event propagation to the row click handler
     event.stopPropagation();
     setMode("add");
+    setInModal(true);
     setFormData({
       nama_hampers: "",
       harga: "",
@@ -74,6 +79,8 @@ export default function HampersPage() {
     // Prevent event propagation to the row click handler
     event.stopPropagation();
     setMode("add-produk");
+    setSelectedAllHampers(hampers.detail_hampers);
+    setInModal(true);
     setProduk(null);
     setFormDataProd({
       id_hampers: hampers.id_hampers,
@@ -89,6 +96,7 @@ export default function HampersPage() {
     event.stopPropagation();
     setSelectedHampers(hampers);
     setMode("edit");
+    setInModal(true);
     setFormData({
       nama_hampers: hampers.nama_hampers,
       harga: hampers.harga,
@@ -101,8 +109,10 @@ export default function HampersPage() {
   const handleEditProdClick = (hampers, detail_hampers, event) => {
     // Prevent event propagation to the row click handler
     event.stopPropagation();
+    setSelectedAllHampers(hampers.detail_hampers);
     setNamaHampers(hampers.nama_hampers);
     setMode("edit-produk");
+    setInModal(true);
     setFormDataProd({
       id_detail_hampers: detail_hampers.id_detail_hampers,
       id_produk: detail_hampers.produk.id_produk,
@@ -116,6 +126,7 @@ export default function HampersPage() {
   const handleDeleteClick = (hampers, event) => {
     // Prevent event propagation to the row click handler
     event.stopPropagation();
+    setInModal(true);
     setSelectedHampers(hampers);
     setMode("delete");
     setImage(null);
@@ -125,6 +136,7 @@ export default function HampersPage() {
   const handleDeleteProdClick = (detail_hampers, event) => {
     // Prevent event propagation to the row click handler
     event.stopPropagation();
+    setInModal(true);
     setMode("delete-produk");
     setIdDetailHampers(detail_hampers.id_detail_hampers);
     setImage(null);
@@ -153,7 +165,7 @@ export default function HampersPage() {
     } catch (error) {
       // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
       // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 && error.response.status === 404) {
+      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
         setHampers([]);
       } else {
         setPage(page - 1);
@@ -164,17 +176,34 @@ export default function HampersPage() {
     }
   }, [page]);
 
-  const fetchProduk = useCallback(async () => {
-    setIsLoadingModal(true);
-    try {
-      const response = await APIProduk.getAllProduk();
-      setProduk(response);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoadingModal(false);
-    }
-  }, []);
+  const fetchProduk = useCallback(
+    async (selectedAllProduk, selectedProdukEdit) => {
+      setIsLoadingModal(true);
+      try {
+        const response = await APIProduk.getAllProduk();
+        if (selectedAllProduk) {
+          const selected = selectedAllProduk.map((item) => item.id_produk);
+
+          const filter = response.filter(
+            (item) => !selected.includes(item.id_produk)
+          );
+
+          if (selectedProdukEdit) {
+            filter.unshift(selectedProdukEdit);
+          }
+
+          setProduk(filter);
+        } else {
+          setProduk(response);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoadingModal(false);
+      }
+    },
+    []
+  );
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -275,6 +304,7 @@ export default function HampersPage() {
     fetchHampers();
     setTimeout(() => {
       setSelectedHampers(null);
+      setSelectedAllHampers(null);
       setFormData({
         nama_hampers: "",
         harga: "",
@@ -290,6 +320,8 @@ export default function HampersPage() {
     fetchHampers();
     setTimeout(() => {
       setSelectedProduk(null);
+      setSelectedAllHampers(null);
+      setSelectedHampers(null);
       setFormDataProd({
         id_hampers: "",
         nama_produk: "",
@@ -437,8 +469,8 @@ export default function HampersPage() {
       }
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }
@@ -483,8 +515,24 @@ export default function HampersPage() {
         title="Kelola Data Hampers"
         desc="Lakukan pengelolaan data hampers Atma Bakery"
         breadcrumb="Hampers"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (selectedHampers) {
+            setSelectedHampers(null);
+            setImage(null);
+          }
+        }}
       />
-      <section className="content px-3">
+      <section
+        className="content px-3"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (selectedHampers && !inModal) {
+            setSelectedHampers(null);
+            setImage(null);
+          }
+        }}
+      >
         <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
           <Col
             xs={12}
@@ -614,7 +662,8 @@ export default function HampersPage() {
                                 : ""
                             }
                             key={`${index}-${idx}`}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               if (selectedHampers === hampers) {
                                 setSelectedHampers(null);
                                 setImage(null);
@@ -696,7 +745,8 @@ export default function HampersPage() {
                           selectedHampers === hampers ? "selected-hampers" : ""
                         }
                         key={`${index}-add`}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           if (selectedHampers === hampers) {
                             setSelectedHampers(null);
                             setImage(null);
@@ -760,12 +810,7 @@ export default function HampersPage() {
         {/* ini modal modalnya */}
         <Modal
           show={showDelModal}
-          onHide={() => {
-            handleCloseDelModal();
-            setSelectedHampers(null);
-            setImage(null);
-            setMode("add");
-          }}
+          onClick={(e) => e.stopPropagation()}
           keyboard={false}
           backdrop="static"
           size="lg"
@@ -784,7 +829,7 @@ export default function HampersPage() {
                 Semua data yang terkait dengan Hampers tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
                   variant="danger"
@@ -801,7 +846,11 @@ export default function HampersPage() {
                 <Button
                   variant="danger"
                   className="custom-danger-btn mx-2 w-100 p-1"
-                  onClick={handleCloseDelModal}
+                  onClick={() => {
+                    handleCloseDelModal();
+                    setSelectedHampers(null);
+                    setInModal(false);
+                  }}
                   disabled={del.isPending}
                 >
                   <h5 className="mt-2">Batal</h5>
@@ -813,13 +862,7 @@ export default function HampersPage() {
 
         <Modal
           show={showAddEditModal}
-          onHide={() => {
-            handleCloseDelModal();
-            setSelectedHampers(null);
-            setImage(null);
-            setImagePreview(null);
-            setMode("add");
-          }}
+          onClick={(e) => e.stopPropagation()}
           keyboard={false}
           backdrop="static"
           centered
@@ -848,7 +891,7 @@ export default function HampersPage() {
                   type="text"
                   name="nama_hampers"
                   onChange={inputHelper.handleInputChange}
-                  value={formData.nama_hampers || ""}
+                  value={formData.nama_hampers}
                   placeholder="Masukkan nama hampers"
                   disabled={isLoading || add.isPending || edit.isPending}
                   required
@@ -863,7 +906,7 @@ export default function HampersPage() {
                   type="number"
                   name="harga"
                   onChange={inputHelper.handleInputChange}
-                  value={formData.harga || ""}
+                  value={formData.harga}
                   placeholder="Masukkan harga hampers"
                   disabled={isLoading || add.isPending || edit.isPending}
                   required
@@ -986,7 +1029,7 @@ export default function HampersPage() {
                     </>
                   ))}
               </Row>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"
@@ -1007,6 +1050,7 @@ export default function HampersPage() {
                         setSelectedHampers(null);
                         setImage(null);
                         setImagePreview(null);
+                        setInModal(false);
                       }, 125);
                     }}
                     disabled={add.isPending || edit.isPending}
@@ -1022,8 +1066,9 @@ export default function HampersPage() {
         <Modal
           show={showAddEditProdModal}
           onEnter={async () => {
-            await fetchProduk();
+            await fetchProduk(selectedAllHampers || [], selectedProduk || "");
           }}
+          onClick={(e) => e.stopPropagation()}
           centered
           keyboard={false}
           backdrop="static"
@@ -1062,9 +1107,7 @@ export default function HampersPage() {
                 <Form.Select
                   style={{ border: "1px solid #808080" }}
                   name="id_produk"
-                  value={
-                    formDataProd?.id_produk || selectedProduk?.id_produk || ""
-                  }
+                  value={formDataProd?.id_produk}
                   onChange={inputHelperProd.handleInputChange}
                   disabled={isLoadingModal || edit.isPending || add.isPending}
                   required
@@ -1090,13 +1133,13 @@ export default function HampersPage() {
                   type="number"
                   placeholder="Masukkan jumlah produk"
                   name="jumlah"
-                  value={formDataProd?.jumlah || selectedProduk?.jumlah || ""}
+                  value={formDataProd?.jumlah}
                   onChange={inputHelperProd.handleInputChange}
                   disabled={edit.isPending || add.isPending || isLoadingModal}
                   required
                 />
               </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"
@@ -1118,6 +1161,7 @@ export default function HampersPage() {
                       setTimeout(() => {
                         setProduk(null);
                         setSelectedProduk(null);
+                        setInModal(false);
                       }, 125);
                     }}
                     disabled={add.isPending || edit.isPending || isLoadingModal}
@@ -1132,11 +1176,7 @@ export default function HampersPage() {
 
         <Modal
           show={showDelProdModal}
-          onHide={() => {
-            handleCloseDelProdModal();
-            setIdDetailHampers(null);
-            setMode("add");
-          }}
+          onClick={(e) => e.stopPropagation()}
           centered
           size="lg"
           keyboard={false}
@@ -1155,7 +1195,7 @@ export default function HampersPage() {
                 Semua data yang terkait dengan isi hampers tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
               <Col xs={12} sm={12} md={6} lg={6}>
                 {/* Khusus delete panggil langsng onSubmit()*/}
                 <Button
@@ -1179,6 +1219,7 @@ export default function HampersPage() {
                     handleCloseDelProdModal();
                     setIdDetailHampers(null);
                     setProduk(null);
+                    setInModal(false);
                   }}
                   disabled={del.isPending}
                 >

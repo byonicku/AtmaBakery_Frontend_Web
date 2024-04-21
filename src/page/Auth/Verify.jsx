@@ -10,6 +10,7 @@ import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
 import imageBg from "@/assets/images/bg.png";
+import { toast } from "sonner";
 
 export default function Verify() {
   const { key } = useParams();
@@ -24,6 +25,11 @@ export default function Verify() {
         setStatus(response.state);
       } catch (error) {
         console.error(error);
+        toast.error(
+          error?.data?.message ||
+            error?.message ||
+            "Sesuatu sedang bermasalah pada server!"
+        );
       } finally {
         setIsLoadingVerify(false);
       }

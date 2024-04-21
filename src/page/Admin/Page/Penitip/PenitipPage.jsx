@@ -65,7 +65,7 @@ export default function PenitipPage() {
     } catch (error) {
       // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
       // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 && error.response.status === 404) {
+      if (page - 1 === 0 && error.code === "ERR_NETWORK") {
         setPenitip([]);
       } else {
         setPage(page - 1);
@@ -180,8 +180,8 @@ export default function PenitipPage() {
       }
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }
@@ -422,7 +422,7 @@ export default function PenitipPage() {
                 Semua data yang terkait dengan penitip tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
                   variant="danger"
@@ -481,7 +481,7 @@ export default function PenitipPage() {
                   placeholder="Month YYYY"
                 />
               </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"
@@ -533,7 +533,7 @@ export default function PenitipPage() {
                   type="text"
                   placeholder="Masukkan nama penitip"
                   name="nama"
-                  value={formData.nama || selectedPenitip?.nama || ""}
+                  value={formData.nama}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
@@ -547,12 +547,12 @@ export default function PenitipPage() {
                   type="text"
                   placeholder="Masukkan nomor telepon"
                   name="no_telp"
-                  value={formData.no_telp || selectedPenitip?.no_telp || ""}
+                  value={formData.no_telp}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
               </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"

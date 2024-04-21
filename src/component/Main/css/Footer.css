@@ -1,0 +1,32 @@
+.footer-title {
+  color: black;
+  font-size: 24px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.desc {
+  text-align: justify;
+  color: black;
+}
+
+.icon {
+  color: white;
+  margin-right: 10px;
+  transition: 0.3s;
+}
+
+.footer-main {
+  width: 100%;
+  position: relative;
+  left: 0;
+  bottom: 0;
+  clear: both;
+  font-size: 1rem;
+  background-color: #f8f9fa;
+}
+
+.footer-logo {
+  display: flex;
+  margin: auto;
+}

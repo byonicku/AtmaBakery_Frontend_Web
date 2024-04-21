@@ -62,7 +62,7 @@ export default function BahanBakuPage() {
     } catch (error) {
       // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
       // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 && error.response.status === 404) {
+      if (page - 1 === 0 && error.code === "ERR_NETWORK") {
         setBahanBaku([]);
       } else {
         setPage(page - 1);
@@ -180,8 +180,8 @@ export default function BahanBakuPage() {
       }
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }
@@ -287,11 +287,11 @@ export default function BahanBakuPage() {
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    fetchBahanBakuSearch(search);
+                    fetchBahanBakuSearch();
                   }
                 }}
               />
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={fetchBahanBaku}>
                 <BsSearch />
               </Button>
             </InputGroup>
@@ -418,7 +418,7 @@ export default function BahanBakuPage() {
                 Semua data yang terkait dengan Bahan Baku tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
                   variant="danger"
@@ -489,7 +489,7 @@ export default function BahanBakuPage() {
                 />
               </Form.Group>
 
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"
@@ -543,11 +543,7 @@ export default function BahanBakuPage() {
                   type="text"
                   placeholder="Masukkan nama bahan baku"
                   name="nama_bahan_baku"
-                  value={
-                    formData.nama_bahan_baku ||
-                    selectedBahanBaku?.nama_bahan_baku ||
-                    ""
-                  }
+                  value={formData?.nama_bahan_baku}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
@@ -561,7 +557,7 @@ export default function BahanBakuPage() {
                   type="number"
                   placeholder="Masukkan stok bahan baku"
                   name="stok"
-                  value={formData.stok || selectedBahanBaku?.stok || ""}
+                  value={formData?.stok}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
@@ -575,12 +571,12 @@ export default function BahanBakuPage() {
                   type="text"
                   placeholder="Masukkan satuan bahan baku"
                   name="satuan"
-                  value={formData.satuan || selectedBahanBaku?.satuan || ""}
+                  value={formData?.satuan}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
               </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"

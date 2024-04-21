@@ -3,33 +3,43 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 import RouteData from "@/assets/AdminConstant";
-import AdminLTELogo from  "/dist/img/AdminLTELogo.png";
+import AdminLTELogo from "/dist/img/AdminLTELogo.png";
 import DefaultUser from "/dist/img/user2-160x160.jpg";
 
 import "./css/SideNav.css";
 import { useEffect } from "react";
 import NavItem from "./component/NavItem";
 
+const role = {
+  ADM: "Admin",
+  MO: "MO",
+  OWN: "Owner",
+  EMP: "",
+};
+
 export default function SideNav() {
-    const location = useLocation();
-    
-    useEffect(() => {
-        const currentPath = location.pathname;
-        const menuItems = document.querySelectorAll('.nav-link');
+  const location = useLocation();
+  const roleId = sessionStorage.getItem("role") || "EMP";
+  const roleName = role[roleId];
+  const foto_profil = sessionStorage.getItem("foto_profil");
+  const nama = sessionStorage.getItem("nama");
 
-        menuItems.forEach(item => {
-          item.classList.remove('active');
-          const itemPath = item.getAttribute('href');
-          if (currentPath.startsWith(itemPath) && itemPath !== '/admin') {
-            item.classList.add('active');
-          }
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const menuItems = document.querySelectorAll(".nav-link");
 
-          if (currentPath === '/admin' && itemPath === '/admin') {
-            item.classList.add('active');
-          }
-        });
+    menuItems.forEach((item) => {
+      item.classList.remove("active");
+      const itemPath = item.getAttribute("href");
+      if (currentPath.startsWith(itemPath) && itemPath !== "/admin") {
+        item.classList.add("active");
+      }
 
-      }, [location]);
+      if (currentPath === "/admin" && itemPath === "/admin") {
+        item.classList.add("active");
+      }
+    });
+  }, [location]);
 
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
@@ -49,18 +59,27 @@ export default function SideNav() {
         <div className="user-panel mt-1 pb-2 mb-3 d-flex">
           <div className="image pt-2">
             <Image
-              src={DefaultUser}
+              src={
+                foto_profil == "null" || foto_profil == null
+                  ? DefaultUser
+                  : sessionStorage.getItem("foto_profil")
+              }
               className="img-circle elevation-2"
               alt="User Image"
               style={{
                 width: "3rem",
+                height: "3rem",
               }}
             />
           </div>
           <div className="info mt-1">
             <Link to="./profile" className="d-block">
-              <span className="text-bold">Alexander Pierce</span>
-              <p className="p-0 m-0">Admin Atma Bakery</p>
+              <span className="text-bold">
+                {nama == "null" || nama == null
+                  ? "User"
+                  : sessionStorage.getItem("nama")}
+              </span>
+              <p className="p-0 m-0">{roleName} Atma Bakery</p>
             </Link>
           </div>
         </div>
@@ -72,15 +91,19 @@ export default function SideNav() {
             role="menu"
             data-accordion="false"
           >
-            {RouteData['MO'].map((item, index) => (
-              <NavItem key={index} to={item.to} icon={item.icon} label={item.label} isActive={false} />
+            {RouteData[roleId]?.map((item, index) => (
+              <NavItem
+                key={index}
+                to={item.to}
+                icon={item.icon}
+                label={item.label}
+                isActive={false}
+              />
             ))}
-            {
-                /* 
+            {/* 
                     Nanti bakal ada beberapa route disini tambahin aja ke AdminConstant
-                */
-            }
-            </ul>
+                */}
+          </ul>
         </nav>
       </div>
       {/* /.sidebar */}

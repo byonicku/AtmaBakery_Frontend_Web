@@ -2,9 +2,14 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Col, Row, Container } from "react-bootstrap";
 
-export default function OutlerHeader({ title, desc = "", breadcrumb }) {
+export default function OutlerHeader({
+  title,
+  desc = "",
+  breadcrumb,
+  onClick,
+}) {
   return (
-    <div className="content-header">
+    <div className="content-header" onClick={onClick}>
       <Container fluid>
         <Row className="mb-0">
           <Col sm="6" md="6" lg="6">
@@ -14,7 +19,7 @@ export default function OutlerHeader({ title, desc = "", breadcrumb }) {
           <Col sm="6" md="6" lg="6">
             <ol className="breadcrumb float-sm-right">
               <li className="breadcrumb-item">
-                <Link to='/admin'>Beranda</Link>
+                <Link to="/admin">Beranda</Link>
               </li>
               <li className="breadcrumb-item active">{breadcrumb}</li>
             </ol>
@@ -29,4 +34,5 @@ OutlerHeader.propTypes = {
   title: PropTypes.string.isRequired,
   desc: PropTypes.string,
   breadcrumb: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
 };

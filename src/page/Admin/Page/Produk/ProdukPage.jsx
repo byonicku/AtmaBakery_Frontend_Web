@@ -18,7 +18,6 @@ import {
   BsPlusSquare,
   BsPencilSquare,
   BsFillTrash3Fill,
-  BsJournalText,
 } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
@@ -64,7 +63,7 @@ export default function ProdukPage() {
     } catch (error) {
       // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
       // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 && error.response.status === 404) {
+      if (page - 1 === 0 && error.code === "ERR_NETWORK") {
         setProduk([]);
       } else {
         setPage(page - 1);
@@ -108,8 +107,8 @@ export default function ProdukPage() {
       await del.mutateAsync(selectedProduk.id_bahan_baku);
     } catch (error) {
       toast.error(
-        error.data.message ||
-          error.message ||
+        error?.data?.message ||
+          error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
     }
@@ -191,7 +190,7 @@ export default function ProdukPage() {
                   }
                 }}
               />
-              <Button variant="secondary">
+              <Button variant="secondary" onClick={fetchProdukSearch}>
                 <BsSearch />
               </Button>
             </InputGroup>
@@ -250,7 +249,12 @@ export default function ProdukPage() {
                     <td>{produk.deskripsi}</td>
                     <td>{category[produk.id_kategori]}</td>
                     <td>{produk.ukuran}</td>
-                    <td>{produk.harga}</td>
+                    <td>
+                      {new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      }).format(produk.harga)}
+                    </td>
                     <td>{produk.limit}</td>
                     <td>
                       {produk.status == "PO" ? (
@@ -262,12 +266,7 @@ export default function ProdukPage() {
                     <td>{produk.stok}</td>
                     <td>
                       <Row className="gap-2 gap-lg-2 gap-md-2 gap-xl-0">
-                        <Col xs={12} sm={12} md={12} lg={12} xl={4}>
-                          <Button variant="secondary" className="w-100">
-                            <BsJournalText className="mb-1" /> Resep
-                          </Button>
-                        </Col>
-                        <Col xs={12} sm={12} md={12} lg={12} xl={4}>
+                        <Col xs={12} sm={12} md={12} lg={12} xl={6}>
                           <Link
                             to={`./edit/${produk?.id_produk}`}
                             className="btn btn-primary w-100"
@@ -275,7 +274,7 @@ export default function ProdukPage() {
                             <BsPencilSquare className="mb-1" /> Ubah
                           </Link>
                         </Col>
-                        <Col xs={12} sm={12} md={12} lg={12} xl={4}>
+                        <Col xs={12} sm={12} md={12} lg={12} xl={6}>
                           <Button
                             variant="danger"
                             className="custom-danger-btn w-100"
@@ -328,7 +327,7 @@ export default function ProdukPage() {
                 Semua data yang terkait dengan produk tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
                   variant="danger"
