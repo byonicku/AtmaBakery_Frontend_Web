@@ -1,19 +1,34 @@
 import axios from "axios";
 
-// Local Development
-// const BASE_URL = '127.0.0.1:8000';
+const productionBaseUrl = "https://api-atma-bakery.vercel.app/";
+const fallbackBaseUrl = "https://api-atma-bakery.azurewebsites.net/";
 
-// Production
-export const BASE_URL = "api-atma-bakery.vercel.app"; // Vercel
-// export const BASE_URL = "api-atma-bakery.azurewebsites.net"; // Azure
+const useAxios = axios.create({ baseURL: productionBaseUrl });
 
-// Local use HTTP
-// export const API_URL = `http://${BASE_URL}/`;
+async function retryWithFallback(axiosInstance, originalRequest, error) {
+  console.error("Primary base URL failed:", error.message);
 
-// Production use HTTPS
-// export const API_URL = `https://${BASE_URL}/api/`;
-export const API_URL = `https://${BASE_URL}/`; // Azure ndak usah pake /api/
+  axiosInstance.defaults.baseURL = fallbackBaseUrl;
 
-const useAxios = axios.create({ baseURL: API_URL });
+  try {
+    const response = await axiosInstance(originalRequest);
+    return response;
+  } catch (error) {
+    console.error("Fallback base URL also failed:", error.message);
+    throw error;
+  }
+}
+
+useAxios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (!originalRequest._retry) {
+      originalRequest._retry = true;
+      return retryWithFallback(useAxios, originalRequest, error);
+    }
+    throw error;
+  }
+);
 
 export default useAxios;
