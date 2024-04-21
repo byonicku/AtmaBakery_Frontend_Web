@@ -18,6 +18,7 @@ import {
   BsPlusSquare,
   BsPencilSquare,
   BsFillTrash3Fill,
+  BsCash,
   // BsPrinterFill,
 } from "react-icons/bs";
 
@@ -260,27 +261,27 @@ export default function KaryawanPage() {
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             {userRole === "MO" && (
-            <Button
-              variant="success"
-              onClick={() => {
-                handleShowAddEditModal();
-                setMode("add");
-                setFormData({
-                  nama: "",
-                  no_telp: "",
-                  email: "",
-                  hire_date: new Date().toISOString().split("T")[0],
-                  gaji: 0,
-                  bonus: 0,
-                });
-              }}
-              disabled={isLoading}
-              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
-            >
-              <BsPlusSquare className="mb-1 me-2" />
-              Tambah Data
-            </Button>
-             )}
+              <Button
+                variant="success"
+                onClick={() => {
+                  handleShowAddEditModal();
+                  setMode("add");
+                  setFormData({
+                    nama: "",
+                    no_telp: "",
+                    email: "",
+                    hire_date: new Date().toISOString().split("T")[0],
+                    gaji: 0,
+                    bonus: 0,
+                  });
+                }}
+                disabled={isLoading}
+                className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+              >
+                <BsPlusSquare className="mb-1 me-2" />
+                Tambah Data
+              </Button>
+            )}
           </Col>
           <Col
             xs={12}
@@ -380,67 +381,67 @@ export default function KaryawanPage() {
                     </td>
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-1">
-                        <Col xs={12} sm={12} md={12} lg={6}>
                         {userRole === "MO" && (
-                          <Button
-                            variant="primary"
-                            className="w-100"
-                            onClick={() => {
-                              setSelectedKaryawan(karyawan);
-                              setMode("edit");
-                              setFormData({
-                                nama: karyawan.nama,
-                                no_telp: karyawan.no_telp,
-                                email: karyawan.email,
-                                hire_date: karyawan.hire_date,
-                                gaji: karyawan.gaji,
-                                bonus: karyawan.bonus,
-                              });
-                              handleShowAddEditModal();
-                            }}
-                          >
-                            <BsPencilSquare className="mb-1" /> Ubah
-                          </Button>
-                           )}
-                        </Col>
-                        <Col xs={12} sm={12} md={12} lg={6}>
-                        {userRole === "MO" && (
-                          <Button
-                            variant="danger"
-                            className="custom-danger-btn w-100"
-                            onClick={() => {
-                              setSelectedKaryawan(karyawan);
-                              setMode("delete");
-                              handleShowDelModal();
-                            }}
-                          >
-                            <BsFillTrash3Fill className="mb-1" /> Hapus
-                          </Button>
-                             )}
-                        </Col>
-                        <Col xs={12} sm={12} md={12} lg={6}>
-                        {userRole === "OWN" && (
-                          <Button
-                            variant="primary"
-                            className="w-100"
-                            onClick={() => {
-                              setSelectedKaryawan(karyawan);
-                              setMode("edit");
-                              setFormData({
-                                nama: karyawan.nama,
-                                no_telp: karyawan.no_telp,
-                                email: karyawan.email,
-                                hire_date: karyawan.hire_date,
-                                gaji: karyawan.gaji,
-                                bonus: karyawan.bonus,
-                              });
-                              handleShowAddEditModal();
-                            }}
-                          >
-                            Ubah Gaji dan Bonus
-                          </Button>
+                          <>
+                            <Col xs={12} sm={12} md={12} lg={6}>
+                              <Button
+                                variant="primary"
+                                className="w-100"
+                                onClick={() => {
+                                  setSelectedKaryawan(karyawan);
+                                  setMode("edit");
+                                  setFormData({
+                                    nama: karyawan.nama,
+                                    no_telp: karyawan.no_telp,
+                                    email: karyawan.email,
+                                    hire_date: karyawan.hire_date,
+                                    gaji: karyawan.gaji,
+                                    bonus: karyawan.bonus,
+                                  });
+                                  handleShowAddEditModal();
+                                }}
+                              >
+                                <BsPencilSquare className="mb-1" /> Ubah
+                              </Button>
+                            </Col>
+                            <Col xs={12} sm={12} md={12} lg={6}>
+                              <Button
+                                variant="danger"
+                                className="custom-danger-btn w-100"
+                                onClick={() => {
+                                  setSelectedKaryawan(karyawan);
+                                  setMode("delete");
+                                  handleShowDelModal();
+                                }}
+                              >
+                                <BsFillTrash3Fill className="mb-1" /> Hapus
+                              </Button>
+                            </Col>
+                          </>
                         )}
-                        </Col>
+                        {userRole === "OWN" && (
+                          <Col xs={12} sm={12} md={12} lg={12}>
+                            <Button
+                              variant="success"
+                              className="w-100"
+                              onClick={() => {
+                                setSelectedKaryawan(karyawan);
+                                setMode("edit");
+                                setFormData({
+                                  nama: karyawan.nama,
+                                  no_telp: karyawan.no_telp,
+                                  email: karyawan.email,
+                                  hire_date: karyawan.hire_date,
+                                  gaji: karyawan.gaji,
+                                  bonus: karyawan.bonus,
+                                });
+                                handleShowAddEditModal();
+                              }}
+                            >
+                              <BsCash className="mb-1" /> Ubah Gaji / Bonus
+                            </Button>
+                          </Col>
+                        )}
                       </Row>
                     </td>
                   </tr>
@@ -497,7 +498,7 @@ export default function KaryawanPage() {
                 Semua data yang terkait dengan karyawan tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
                   variant="danger"
@@ -569,82 +570,83 @@ export default function KaryawanPage() {
         >
           <Form onSubmit={inputHelper.handleSubmit}>
             <Modal.Body className="text-center p-4 m-2">
-            {userRole === "MO" && (
-              <>
-                <h4 style={{ fontWeight: "bold" }}>
-                  {selectedKaryawan
-                    ? "Edit Data Karyawan"
-                    : "Tambah Data Karyawan"}
-                </h4>
-                <p
-                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                  className="mt-1"
-                >
-                  {selectedKaryawan
-                    ? "Pastikan data karyawan yang Anda tambahkan benar"
-                    : "Pastikan data karyawan yang Anda ubahkan benar"}
-                </p>
-              </>
-            )}
-            {userRole === "OWN" && (
-              <>
-                <h4 style={{ fontWeight: "bold" }}>
-                  Edit Data Gaji dan Bonus Karyawan
-                </h4>
-                <p
-                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                  className="mt-1"
-                >
-                  Pastikan data gaji dan bonus karyawan yang Anda ubahkan benar
-                </p>
-              </>
-            )}
               {userRole === "MO" && (
                 <>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  placeholder="Masukkan nama karyawan"
-                  name="nama"
-                  value={formData.nama || selectedKaryawan?.nama || ""}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nomor Telepon
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  placeholder="Masukkan nomor telepon"
-                  name="no_telp"
-                  value={formData.no_telp || selectedKaryawan?.no_telp || ""}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Email
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="email"
-                  placeholder="Masukkan email"
-                  name="email"
-                  value={formData.email || selectedKaryawan?.email || ""}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              </>
-               )}
+                  <h4 style={{ fontWeight: "bold" }}>
+                    {selectedKaryawan
+                      ? "Edit Data Karyawan"
+                      : "Tambah Data Karyawan"}
+                  </h4>
+                  <p
+                    style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
+                    className="mt-1"
+                  >
+                    {selectedKaryawan
+                      ? "Pastikan data karyawan yang Anda tambahkan benar"
+                      : "Pastikan data karyawan yang Anda ubahkan benar"}
+                  </p>
+                </>
+              )}
+              {userRole === "OWN" && (
+                <>
+                  <h4 style={{ fontWeight: "bold" }}>
+                    Edit Data Gaji dan Bonus Karyawan
+                  </h4>
+                  <p
+                    style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
+                    className="mt-1"
+                  >
+                    Pastikan data gaji dan bonus karyawan yang Anda ubahkan
+                    benar
+                  </p>
+                </>
+              )}
+              {userRole === "MO" && (
+                <>
+                  <Form.Group className="text-start mt-3">
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                      Nama
+                    </Form.Label>
+                    <Form.Control
+                      style={{ border: "1px solid #808080" }}
+                      type="text"
+                      placeholder="Masukkan nama karyawan"
+                      name="nama"
+                      value={formData.nama}
+                      onChange={inputHelper.handleInputChange}
+                      disabled={edit.isPending || add.isPending}
+                    />
+                  </Form.Group>
+                  <Form.Group className="text-start mt-3">
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                      Nomor Telepon
+                    </Form.Label>
+                    <Form.Control
+                      style={{ border: "1px solid #808080" }}
+                      type="text"
+                      placeholder="Masukkan nomor telepon"
+                      name="no_telp"
+                      value={formData.no_telp}
+                      onChange={inputHelper.handleInputChange}
+                      disabled={edit.isPending || add.isPending}
+                    />
+                  </Form.Group>
+                  <Form.Group className="text-start mt-3">
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                      Email
+                    </Form.Label>
+                    <Form.Control
+                      style={{ border: "1px solid #808080" }}
+                      type="email"
+                      placeholder="Masukkan email"
+                      name="email"
+                      value={formData.email}
+                      onChange={inputHelper.handleInputChange}
+                      disabled={edit.isPending || add.isPending}
+                    />
+                  </Form.Group>
+                </>
+              )}
               {userRole === "OWN" && (
                 <>
                   <Form.Group className="text-start mt-3">
@@ -656,7 +658,7 @@ export default function KaryawanPage() {
                       type="number"
                       placeholder="Masukkan gaji"
                       name="gaji"
-                      value={formData.gaji || selectedKaryawan?.gaji || 0}
+                      value={formData.gaji}
                       onChange={inputHelper.handleInputChange}
                       disabled={edit.isPending || add.isPending}
                     />
@@ -670,14 +672,14 @@ export default function KaryawanPage() {
                       type="number"
                       placeholder="Masukkan bonus"
                       name="bonus"
-                      value={formData.bonus || selectedKaryawan?.bonus || 0}
+                      value={formData.bonus}
                       onChange={inputHelper.handleInputChange}
                       disabled={edit.isPending || add.isPending}
                     />
                   </Form.Group>
                 </>
               )}
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"

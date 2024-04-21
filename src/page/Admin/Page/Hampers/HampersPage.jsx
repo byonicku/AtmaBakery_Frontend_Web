@@ -891,7 +891,7 @@ export default function HampersPage() {
                   type="text"
                   name="nama_hampers"
                   onChange={inputHelper.handleInputChange}
-                  value={formData.nama_hampers || ""}
+                  value={formData.nama_hampers}
                   placeholder="Masukkan nama hampers"
                   disabled={isLoading || add.isPending || edit.isPending}
                   required
@@ -906,7 +906,7 @@ export default function HampersPage() {
                   type="number"
                   name="harga"
                   onChange={inputHelper.handleInputChange}
-                  value={formData.harga || ""}
+                  value={formData.harga}
                   placeholder="Masukkan harga hampers"
                   disabled={isLoading || add.isPending || edit.isPending}
                   required
@@ -1107,9 +1107,7 @@ export default function HampersPage() {
                 <Form.Select
                   style={{ border: "1px solid #808080" }}
                   name="id_produk"
-                  value={
-                    formDataProd?.id_produk || selectedProduk?.id_produk || ""
-                  }
+                  value={formDataProd?.id_produk}
                   onChange={inputHelperProd.handleInputChange}
                   disabled={isLoadingModal || edit.isPending || add.isPending}
                   required
@@ -1135,7 +1133,7 @@ export default function HampersPage() {
                   type="number"
                   placeholder="Masukkan jumlah produk"
                   name="jumlah"
-                  value={formDataProd?.jumlah || selectedProduk?.jumlah || ""}
+                  value={formDataProd?.jumlah}
                   onChange={inputHelperProd.handleInputChange}
                   disabled={edit.isPending || add.isPending || isLoadingModal}
                   required

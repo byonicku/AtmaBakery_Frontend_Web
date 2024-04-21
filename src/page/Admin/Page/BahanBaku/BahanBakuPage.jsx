@@ -543,11 +543,7 @@ export default function BahanBakuPage() {
                   type="text"
                   placeholder="Masukkan nama bahan baku"
                   name="nama_bahan_baku"
-                  value={
-                    formData.nama_bahan_baku ||
-                    selectedBahanBaku?.nama_bahan_baku ||
-                    ""
-                  }
+                  value={formData?.nama_bahan_baku}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
@@ -561,7 +557,7 @@ export default function BahanBakuPage() {
                   type="number"
                   placeholder="Masukkan stok bahan baku"
                   name="stok"
-                  value={formData.stok || selectedBahanBaku?.stok || ""}
+                  value={formData?.stok}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
@@ -575,7 +571,7 @@ export default function BahanBakuPage() {
                   type="text"
                   placeholder="Masukkan satuan bahan baku"
                   name="satuan"
-                  value={formData.satuan || selectedBahanBaku?.satuan || ""}
+                  value={formData?.satuan}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />

@@ -533,7 +533,7 @@ export default function PenitipPage() {
                   type="text"
                   placeholder="Masukkan nama penitip"
                   name="nama"
-                  value={formData.nama || selectedPenitip?.nama || ""}
+                  value={formData.nama}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
@@ -547,7 +547,7 @@ export default function PenitipPage() {
                   type="text"
                   placeholder="Masukkan nomor telepon"
                   name="no_telp"
-                  value={formData.no_telp || selectedPenitip?.no_telp || ""}
+                  value={formData.no_telp}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />

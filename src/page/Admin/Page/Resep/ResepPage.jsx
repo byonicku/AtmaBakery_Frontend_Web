@@ -607,6 +607,7 @@ export default function ResepPage() {
                   style={{ border: "1px solid #808080" }}
                   type="number"
                   name="kuantitas"
+                  placeholder="Masukkan Kuantitas"
                   value={formData.kuantitas}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending || isLoadingModal}
@@ -620,6 +621,7 @@ export default function ResepPage() {
                   style={{ border: "1px solid #808080" }}
                   type="text"
                   name="satuan"
+                  placeholder="Pilih Bahan Baku terlebih dahulu"
                   value={selectedSatuan?.satuan}
                   disabled={edit.isPending || add.isPending || isLoadingModal}
                   readOnly

@@ -635,7 +635,7 @@ export default function AddEditProdukPage({ isEdit }) {
                           : "btn btn-danger custom-danger-btn w-50"
                       }
                     >
-                      Batal Simpan Produk
+                      Batal
                     </Link>
                   </Col>
                 </Row>
