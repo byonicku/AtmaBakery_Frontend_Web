@@ -29,6 +29,7 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/CustomPagination";
 
 export default function KaryawanPage() {
+  const [userRole, setUserRole] = useState("");
   const [showDelModal, setShowDelModal] = useState(false);
   const [showPrintModal, setshowPrintModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
@@ -55,6 +56,11 @@ export default function KaryawanPage() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
+
+  useEffect(() => {
+    const role = sessionStorage.getItem("role") || "";
+    setUserRole(role);
+  }, []);
 
   const fetchKaryawan = useCallback(async () => {
     setIsLoading(true);
@@ -253,6 +259,7 @@ export default function KaryawanPage() {
             md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
+            {userRole === "MO" && (
             <Button
               variant="success"
               onClick={() => {
@@ -273,6 +280,7 @@ export default function KaryawanPage() {
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
             </Button>
+             )}
           </Col>
           <Col
             xs={12}
@@ -373,6 +381,7 @@ export default function KaryawanPage() {
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-1">
                         <Col xs={12} sm={12} md={12} lg={6}>
+                        {userRole === "MO" && (
                           <Button
                             variant="primary"
                             className="w-100"
@@ -392,8 +401,10 @@ export default function KaryawanPage() {
                           >
                             <BsPencilSquare className="mb-1" /> Ubah
                           </Button>
+                           )}
                         </Col>
                         <Col xs={12} sm={12} md={12} lg={6}>
+                        {userRole === "MO" && (
                           <Button
                             variant="danger"
                             className="custom-danger-btn w-100"
@@ -405,6 +416,30 @@ export default function KaryawanPage() {
                           >
                             <BsFillTrash3Fill className="mb-1" /> Hapus
                           </Button>
+                             )}
+                        </Col>
+                        <Col xs={12} sm={12} md={12} lg={6}>
+                        {userRole === "OWN" && (
+                          <Button
+                            variant="primary"
+                            className="w-100"
+                            onClick={() => {
+                              setSelectedKaryawan(karyawan);
+                              setMode("edit");
+                              setFormData({
+                                nama: karyawan.nama,
+                                no_telp: karyawan.no_telp,
+                                email: karyawan.email,
+                                hire_date: karyawan.hire_date,
+                                gaji: karyawan.gaji,
+                                bonus: karyawan.bonus,
+                              });
+                              handleShowAddEditModal();
+                            }}
+                          >
+                            Ubah Gaji dan Bonus
+                          </Button>
+                        )}
                         </Col>
                       </Row>
                     </td>
@@ -462,7 +497,7 @@ export default function KaryawanPage() {
                 Semua data yang terkait dengan karyawan tersebut akan hilang.
               </p>
             </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
+            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
               <Col xs={12} sm={12} md={6} lg={6}>
                 <Button
                   variant="danger"
@@ -502,7 +537,7 @@ export default function KaryawanPage() {
         >
           <Form>
             <Modal.Body className="text-center p-4 m-2">
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"
@@ -534,19 +569,38 @@ export default function KaryawanPage() {
         >
           <Form onSubmit={inputHelper.handleSubmit}>
             <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>
-                {selectedKaryawan
-                  ? "Edit Data Karyawan"
-                  : "Tambah Data Karyawan"}
-              </h4>
-              <p
-                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                className="mt-1"
-              >
-                {selectedKaryawan
-                  ? "Pastikan data karyawan yang Anda tambahkan benar"
-                  : "Pastikan data karyawan yang Anda ubahkan benar"}
-              </p>
+            {userRole === "MO" && (
+              <>
+                <h4 style={{ fontWeight: "bold" }}>
+                  {selectedKaryawan
+                    ? "Edit Data Karyawan"
+                    : "Tambah Data Karyawan"}
+                </h4>
+                <p
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
+                  className="mt-1"
+                >
+                  {selectedKaryawan
+                    ? "Pastikan data karyawan yang Anda tambahkan benar"
+                    : "Pastikan data karyawan yang Anda ubahkan benar"}
+                </p>
+              </>
+            )}
+            {userRole === "OWN" && (
+              <>
+                <h4 style={{ fontWeight: "bold" }}>
+                  Edit Data Gaji dan Bonus Karyawan
+                </h4>
+                <p
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
+                  className="mt-1"
+                >
+                  Pastikan data gaji dan bonus karyawan yang Anda ubahkan benar
+                </p>
+              </>
+            )}
+              {userRole === "MO" && (
+                <>
               <Form.Group className="text-start mt-3">
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                   Nama
@@ -584,12 +638,46 @@ export default function KaryawanPage() {
                   type="email"
                   placeholder="Masukkan email"
                   name="email"
-                  value={formData.email || selectedKaryawan?.karyawan || ""}
+                  value={formData.email || selectedKaryawan?.email || ""}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
                 />
               </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
+              </>
+               )}
+              {userRole === "OWN" && (
+                <>
+                  <Form.Group className="text-start mt-3">
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                      Gaji
+                    </Form.Label>
+                    <Form.Control
+                      style={{ border: "1px solid #808080" }}
+                      type="number"
+                      placeholder="Masukkan gaji"
+                      name="gaji"
+                      value={formData.gaji || selectedKaryawan?.gaji || 0}
+                      onChange={inputHelper.handleInputChange}
+                      disabled={edit.isPending || add.isPending}
+                    />
+                  </Form.Group>
+                  <Form.Group className="text-start mt-3">
+                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                      Bonus
+                    </Form.Label>
+                    <Form.Control
+                      style={{ border: "1px solid #808080" }}
+                      type="number"
+                      placeholder="Masukkan bonus"
+                      name="bonus"
+                      value={formData.bonus || selectedKaryawan?.bonus || 0}
+                      onChange={inputHelper.handleInputChange}
+                      disabled={edit.isPending || add.isPending}
+                    />
+                  </Form.Group>
+                </>
+              )}
+              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0">
                 <Col xs={12} sm={12} md={6} lg={6}>
                   <Button
                     variant="danger"
