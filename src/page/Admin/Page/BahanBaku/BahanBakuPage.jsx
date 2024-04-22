@@ -4,9 +4,7 @@ import {
   Row,
   Form,
   Table,
-  Modal,
   InputGroup,
-  // Container,
   Spinner,
 } from "react-bootstrap";
 import { useState, useEffect, useCallback } from "react";
@@ -30,6 +28,7 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/CustomPagination";
 import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
 import PrintModal from "@/component/Admin/PrintModal";
+import AddEditModal from "@/component/Admin/AddEditModal";
 
 export default function BahanBakuPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -293,7 +292,7 @@ export default function BahanBakuPage() {
                   }
                 }}
               />
-              <Button variant="secondary" onClick={fetchBahanBaku}>
+              <Button variant="secondary" onClick={fetchBahanBakuSearch}>
                 <BsSearch />
               </Button>
             </InputGroup>
@@ -428,99 +427,71 @@ export default function BahanBakuPage() {
           </Form.Group>
         </PrintModal>
 
-        <Modal
+        <AddEditModal
           show={showAddEditModal}
-          centered
-          keyboard={false}
-          backdrop="static"
+          onHide={() => {
+            handleCloseAddEditModal();
+            setTimeout(() => {
+              setSelectedBahanBaku(null);
+            }, 125);
+          }}
+          title={
+            selectedBahanBaku
+              ? "Edit Data Bahan Baku"
+              : "Tambah Data Bahan Baku"
+          }
+          text={
+            selectedBahanBaku
+              ? "Pastikan data bahan baku yang Anda ubah benar"
+              : "Pastikan data bahan baku yang Anda tambahkan benar"
+          }
+          onSubmit={inputHelper.handleSubmit}
+          add={add}
+          edit={edit}
         >
-          <Form onSubmit={inputHelper.handleSubmit}>
-            <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>
-                {selectedBahanBaku
-                  ? "Edit Data Bahan Baku"
-                  : "Tambah Data Bahan Baku"}
-              </h4>
-              <p
-                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                className="mt-1"
-              >
-                {selectedBahanBaku
-                  ? "Pastikan data bahan baku yang Anda tambahkan benar"
-                  : "Pastikan data bahan baku yang Anda ubahkan benar"}
-              </p>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  placeholder="Masukkan nama bahan baku"
-                  name="nama_bahan_baku"
-                  value={formData?.nama_bahan_baku}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Stok
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="number"
-                  placeholder="Masukkan stok bahan baku"
-                  name="stok"
-                  value={formData?.stok}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Satuan
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  placeholder="Masukkan satuan bahan baku"
-                  name="satuan"
-                  value={formData?.satuan}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-agree-btn w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
-                  </Button>
-                </Col>
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-danger-btn w-100"
-                    onClick={() => {
-                      handleCloseAddEditModal();
-                      setTimeout(() => {
-                        setSelectedBahanBaku(null);
-                      }, 125);
-                    }}
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    Batal
-                  </Button>
-                </Col>
-              </Row>
-            </Modal.Body>
-          </Form>
-        </Modal>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              placeholder="Masukkan nama bahan baku"
+              name="nama_bahan_baku"
+              value={formData?.nama_bahan_baku}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Stok
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="number"
+              placeholder="Masukkan stok bahan baku"
+              name="stok"
+              value={formData?.stok}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Satuan
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              placeholder="Masukkan satuan bahan baku"
+              name="satuan"
+              value={formData?.satuan}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+            />
+          </Form.Group>
+        </AddEditModal>
 
         <DeleteConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Bahan Baku Ini?"

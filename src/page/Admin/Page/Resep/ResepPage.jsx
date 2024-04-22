@@ -4,7 +4,6 @@ import {
   Row,
   Form,
   Table,
-  Modal,
   InputGroup,
   Spinner,
 } from "react-bootstrap";
@@ -30,6 +29,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIResep from "@/api/APIResep";
 import APIBahanBaku from "@/api/APIBahanBaku";
 import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
+import AddEditModal from "@/component/Admin/AddEditModal";
 
 export default function ResepPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -161,6 +161,7 @@ export default function ResepPage() {
     setIsLoading(true);
     fetchResep();
     setSelectedResep(null);
+    setSelectedSatuan(null);
     setTimeout(() => {
       setSelectedProduk(null);
       setFormData({
@@ -353,6 +354,7 @@ export default function ResepPage() {
                       fetchResep();
                     }
                   }
+
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
@@ -521,154 +523,114 @@ export default function ResepPage() {
         )}
 
         {/* Modal */}
-        <Modal
+        <AddEditModal
           show={showAddEditModal}
+          onHide={() => {
+            setShowAddEditModal(false);
+
+            setTimeout(() => {
+              setSelectedResep(null);
+              setBahanBakuOptions([]);
+              setSelectedAllBahanBaku(null);
+              setFormData({
+                id_resep: "",
+                id_produk: "",
+                id_bahan_baku: "",
+                kuantitas: "",
+                satuan: "",
+              });
+              setSelectedSatuan(null);
+            }, 125);
+          }}
+          title={selectedResep ? "Edit Data Resep" : "Tambah Data Resep"}
+          text={
+            selectedResep
+              ? "Pastikan data resep yang Anda ubah benar"
+              : "Pastikan data resep yang Anda tambahkan benar"
+          }
+          add={add}
+          edit={edit}
+          isLoadingModal={isLoadingModal}
+          onSubmit={inputHelper.handleSubmit}
           onEnter={async () => {
             await fetchDataBahanBaku(
               selectedAllBahanBaku || [],
               selectedResep || ""
             );
           }}
-          keyboard={false}
-          backdrop="static"
-          centered
-          size="lg"
-          style={{ border: "none" }}
         >
-          <Form onSubmit={inputHelper.handleSubmit}>
-            <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>
-                {selectedResep ? "Edit Data Resep" : "Tambah Data Resep"}
-              </h4>
-              <p
-                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                className="mt-1"
-              >
-                {selectedResep
-                  ? "Pastikan data resep yang Anda tambahkan benar"
-                  : "Pastikan data resep yang Anda ubahkan benar"}
-              </p>
-              <Form.Group
-                className="text-start mt-3"
-                controlId="formNamaProduk"
-              >
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama Produk
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  name="nama_produk"
-                  value={formData.nama_produk || ""}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={true}
-                  readOnly
-                />
-              </Form.Group>
-              <Form.Group
-                className="text-start mt-3"
-                controlId="formNamaBahanBaku"
-              >
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama Bahan Baku
-                </Form.Label>
-                <Form.Select
-                  style={{ border: "1px solid #808080" }}
-                  name="id_bahan_baku"
-                  value={formData.id_bahan_baku}
-                  onChange={(e) => {
-                    inputHelper.handleInputChange(e);
-                    setSelectedSatuan(
-                      bahanBakuOptions.find(
-                        (option) => option.id_bahan_baku == e.target.value
-                      )
-                    );
-                  }}
-                  disabled={edit.isPending || add.isPending || isLoadingModal}
-                  required
-                >
-                  <option value="" disabled selected hidden>
-                    Pilih Bahan Baku
-                  </option>
-                  {bahanBakuOptions?.map((option) => (
-                    <option
-                      key={option.id_bahan_baku}
-                      value={option.id_bahan_baku}
-                    >
-                      {option.nama_bahan_baku}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="text-start mt-3" controlId="formKuantitas">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Kuantitas
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="number"
-                  name="kuantitas"
-                  placeholder="Masukkan Kuantitas"
-                  value={formData.kuantitas}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending || isLoadingModal}
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3" controlId="formSatuan">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Satuan
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  name="satuan"
-                  placeholder="Pilih Bahan Baku terlebih dahulu"
-                  value={selectedSatuan?.satuan}
-                  disabled={edit.isPending || add.isPending || isLoadingModal}
-                  readOnly
-                />
-              </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-agree-btn w-100"
-                    onClick={inputHelper.handleSubmit}
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
-                  </Button>
-                </Col>
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-danger-btn w-100"
-                    onClick={() => {
-                      setShowAddEditModal(false);
-
-                      setTimeout(() => {
-                        setSelectedResep(null);
-                        setBahanBakuOptions([]);
-                        setSelectedAllBahanBaku(null);
-                        setFormData({
-                          id_resep: "",
-                          id_produk: "",
-                          id_bahan_baku: "",
-                          kuantitas: "",
-                          satuan: "",
-                        });
-                        setSelectedSatuan(null);
-                      }, 125);
-                    }}
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    Batal
-                  </Button>
-                </Col>
-              </Row>
-            </Modal.Body>
-          </Form>
-        </Modal>
+          <Form.Group className="text-start mt-3" controlId="formNamaProduk">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Produk
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              name="nama_produk"
+              value={formData.nama_produk || ""}
+              onChange={inputHelper.handleInputChange}
+              disabled={true}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Bahan Baku
+            </Form.Label>
+            <Form.Select
+              style={{ border: "1px solid #808080" }}
+              name="id_bahan_baku"
+              value={formData.id_bahan_baku}
+              onChange={(e) => {
+                inputHelper.handleInputChange(e);
+                setSelectedSatuan(
+                  bahanBakuOptions.find(
+                    (option) => option.id_bahan_baku == e.target.value
+                  )
+                );
+              }}
+              disabled={edit.isPending || add.isPending || isLoadingModal}
+              required
+            >
+              <option value="" disabled selected hidden>
+                Pilih Bahan Baku
+              </option>
+              {bahanBakuOptions?.map((option) => (
+                <option key={option.id_bahan_baku} value={option.id_bahan_baku}>
+                  {option.nama_bahan_baku}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="text-start mt-3" controlId="formKuantitas">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Kuantitas
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="number"
+              name="kuantitas"
+              placeholder="Masukkan Kuantitas"
+              value={formData.kuantitas}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending || isLoadingModal}
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3" controlId="formSatuan">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Satuan
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              name="satuan"
+              placeholder="Pilih Bahan Baku terlebih dahulu"
+              value={selectedSatuan?.satuan}
+              disabled={edit.isPending || add.isPending || isLoadingModal}
+              readOnly
+            />
+          </Form.Group>
+        </AddEditModal>
 
         <DeleteConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Resep Ini?"

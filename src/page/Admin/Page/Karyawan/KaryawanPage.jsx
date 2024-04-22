@@ -4,7 +4,6 @@ import {
   Row,
   Form,
   Table,
-  Modal,
   InputGroup,
   Spinner,
 } from "react-bootstrap";
@@ -30,6 +29,7 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/CustomPagination";
 import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
 import PrintModal from "@/component/Admin/PrintModal";
+import AddEditModal from "@/component/Admin/AddEditModal";
 
 export default function KaryawanPage() {
   const [userRole, setUserRole] = useState("");
@@ -483,153 +483,112 @@ export default function KaryawanPage() {
           onSubmit={onSubmit}
         ></PrintModal>
 
-        <Modal
+        <AddEditModal
           show={showAddEditModal}
-          centered
-          keyboard={false}
-          backdrop="static"
+          onHide={() => {
+            handleCloseAddEditModal();
+            setTimeout(() => {
+              setSelectedKaryawan(null);
+            }, 125);
+          }}
+          title={
+            userRole === "MO" && selectedKaryawan
+              ? "Edit Data Karyawan"
+              : userRole === "OWN" && selectedKaryawan
+              ? "Edit Data Gaji atau Bonus Karyawan"
+              : "Tambah Data Karyawan"
+          }
+          text={
+            userRole === "MO" && selectedKaryawan
+              ? "Pastikan data karyawan yang Anda ubah benar"
+              : userRole === "OWN" && selectedKaryawan
+              ? "Pastikan data gaji atau bonus karyawan yang Anda ubah benar"
+              : "Pastikan data karyawan yang Anda tambah benar"
+          }
+          onSubmit={inputHelper.handleSubmit}
+          add={add}
+          edit={edit}
+          isLoadingModal={isLoading}
         >
-          <Form onSubmit={inputHelper.handleSubmit}>
-            <Modal.Body className="text-center p-4 m-2">
-              {userRole === "MO" && (
-                <>
-                  <h4 style={{ fontWeight: "bold" }}>
-                    {selectedKaryawan
-                      ? "Edit Data Karyawan"
-                      : "Tambah Data Karyawan"}
-                  </h4>
-                  <p
-                    style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                    className="mt-1"
-                  >
-                    {selectedKaryawan
-                      ? "Pastikan data karyawan yang Anda tambahkan benar"
-                      : "Pastikan data karyawan yang Anda ubahkan benar"}
-                  </p>
-                </>
-              )}
-              {userRole === "OWN" && (
-                <>
-                  <h4 style={{ fontWeight: "bold" }}>
-                    Edit Data Gaji dan Bonus Karyawan
-                  </h4>
-                  <p
-                    style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                    className="mt-1"
-                  >
-                    Pastikan data gaji dan bonus karyawan yang Anda ubahkan
-                    benar
-                  </p>
-                </>
-              )}
-              {userRole === "MO" && (
-                <>
-                  <Form.Group className="text-start mt-3">
-                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      Nama
-                    </Form.Label>
-                    <Form.Control
-                      style={{ border: "1px solid #808080" }}
-                      type="text"
-                      placeholder="Masukkan nama karyawan"
-                      name="nama"
-                      value={formData.nama}
-                      onChange={inputHelper.handleInputChange}
-                      disabled={edit.isPending || add.isPending}
-                    />
-                  </Form.Group>
-                  <Form.Group className="text-start mt-3">
-                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      Nomor Telepon
-                    </Form.Label>
-                    <Form.Control
-                      style={{ border: "1px solid #808080" }}
-                      type="text"
-                      placeholder="Masukkan nomor telepon"
-                      name="no_telp"
-                      value={formData.no_telp}
-                      onChange={inputHelper.handleInputChange}
-                      disabled={edit.isPending || add.isPending}
-                    />
-                  </Form.Group>
-                  <Form.Group className="text-start mt-3">
-                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      Email
-                    </Form.Label>
-                    <Form.Control
-                      style={{ border: "1px solid #808080" }}
-                      type="email"
-                      placeholder="Masukkan email"
-                      name="email"
-                      value={formData.email}
-                      onChange={inputHelper.handleInputChange}
-                      disabled={edit.isPending || add.isPending}
-                    />
-                  </Form.Group>
-                </>
-              )}
-              {userRole === "OWN" && (
-                <>
-                  <Form.Group className="text-start mt-3">
-                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      Gaji
-                    </Form.Label>
-                    <Form.Control
-                      style={{ border: "1px solid #808080" }}
-                      type="number"
-                      placeholder="Masukkan gaji"
-                      name="gaji"
-                      value={formData.gaji}
-                      onChange={inputHelper.handleInputChange}
-                      disabled={edit.isPending || add.isPending}
-                    />
-                  </Form.Group>
-                  <Form.Group className="text-start mt-3">
-                    <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      Bonus
-                    </Form.Label>
-                    <Form.Control
-                      style={{ border: "1px solid #808080" }}
-                      type="number"
-                      placeholder="Masukkan bonus"
-                      name="bonus"
-                      value={formData.bonus}
-                      onChange={inputHelper.handleInputChange}
-                      disabled={edit.isPending || add.isPending}
-                    />
-                  </Form.Group>
-                </>
-              )}
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-agree-btn w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
-                  </Button>
-                </Col>
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-danger-btn w-100"
-                    onClick={() => {
-                      handleCloseAddEditModal();
-                      setTimeout(() => {
-                        setSelectedKaryawan(null);
-                      }, 125);
-                    }}
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    Batal
-                  </Button>
-                </Col>
-              </Row>
-            </Modal.Body>
-          </Form>
-        </Modal>
+          {userRole === "MO" && (
+            <>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Nama
+                </Form.Label>
+                <Form.Control
+                  style={{ border: "1px solid #808080" }}
+                  type="text"
+                  placeholder="Masukkan nama karyawan"
+                  name="nama"
+                  value={formData.nama}
+                  onChange={inputHelper.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
+                />
+              </Form.Group>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Nomor Telepon
+                </Form.Label>
+                <Form.Control
+                  style={{ border: "1px solid #808080" }}
+                  type="text"
+                  placeholder="Masukkan nomor telepon"
+                  name="no_telp"
+                  value={formData.no_telp}
+                  onChange={inputHelper.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
+                />
+              </Form.Group>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Email
+                </Form.Label>
+                <Form.Control
+                  style={{ border: "1px solid #808080" }}
+                  type="email"
+                  placeholder="Masukkan email"
+                  name="email"
+                  value={formData.email}
+                  onChange={inputHelper.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
+                />
+              </Form.Group>
+            </>
+          )}
+          {userRole === "OWN" && (
+            <>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Gaji
+                </Form.Label>
+                <Form.Control
+                  style={{ border: "1px solid #808080" }}
+                  type="number"
+                  placeholder="Masukkan gaji"
+                  name="gaji"
+                  value={formData.gaji}
+                  onChange={inputHelper.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
+                />
+              </Form.Group>
+              <Form.Group className="text-start mt-3">
+                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  Bonus
+                </Form.Label>
+                <Form.Control
+                  style={{ border: "1px solid #808080" }}
+                  type="number"
+                  placeholder="Masukkan bonus"
+                  name="bonus"
+                  value={formData.bonus}
+                  onChange={inputHelper.handleInputChange}
+                  disabled={edit.isPending || add.isPending}
+                />
+              </Form.Group>
+            </>
+          )}
+        </AddEditModal>
 
         <DeleteConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Karyawan Ini?"

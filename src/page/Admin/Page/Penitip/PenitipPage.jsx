@@ -4,7 +4,6 @@ import {
   Row,
   Form,
   Table,
-  Modal,
   InputGroup,
   Spinner,
 } from "react-bootstrap";
@@ -29,6 +28,7 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/CustomPagination";
 import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
 import PrintModal from "@/component/Admin/PrintModal";
+import AddEditModal from "@/component/Admin/AddEditModal";
 
 export default function PenitipPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -418,83 +418,55 @@ export default function PenitipPage() {
           </Form.Group>
         </PrintModal>
 
-        <Modal
+        <AddEditModal
           show={showAddEditModal}
-          centered
-          keyboard={false}
-          backdrop="static"
+          onHide={() => {
+            handleCloseAddEditModal();
+            setTimeout(() => {
+              setSelectedPenitip(null);
+            }, 125);
+          }}
+          size="md"
+          title={selectedPenitip ? "Edit Data Penitip" : "Tambah Data Penitip"}
+          text={
+            selectedPenitip
+              ? "Pastikan data penitip yang Anda ubahkan benar"
+              : "Pastikan data penitip yang Anda tambahkan benar"
+          }
+          onSubmit={inputHelper.handleSubmit}
+          add={add}
+          edit={edit}
+          isLoadingModal={isLoading}
         >
-          <Form onSubmit={inputHelper.handleSubmit}>
-            <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>
-                {selectedPenitip ? "Edit Data Penitip" : "Tambah Data Penitip"}
-              </h4>
-              <p
-                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                className="mt-1"
-              >
-                {selectedPenitip
-                  ? "Pastikan data penitip yang Anda tambahkan benar"
-                  : "Pastikan data penitip yang Anda ubahkan benar"}
-              </p>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  placeholder="Masukkan nama penitip"
-                  name="nama"
-                  value={formData.nama}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nomor Telepon
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  placeholder="Masukkan nomor telepon"
-                  name="no_telp"
-                  value={formData.no_telp}
-                  onChange={inputHelper.handleInputChange}
-                  disabled={edit.isPending || add.isPending}
-                />
-              </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-agree-btn w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
-                  </Button>
-                </Col>
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-danger-btn w-100"
-                    onClick={() => {
-                      handleCloseAddEditModal();
-                      setTimeout(() => {
-                        setSelectedPenitip(null);
-                      }, 125);
-                    }}
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    Batal
-                  </Button>
-                </Col>
-              </Row>
-            </Modal.Body>
-          </Form>
-        </Modal>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              placeholder="Masukkan nama penitip"
+              name="nama"
+              value={formData.nama}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nomor Telepon
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              placeholder="Masukkan nomor telepon"
+              name="no_telp"
+              value={formData.no_telp}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+            />
+          </Form.Group>
+        </AddEditModal>
 
         <DeleteConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Penitip Ini?"
