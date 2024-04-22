@@ -24,12 +24,12 @@ import {
 import "@/page/Admin/Page/css/Admin.css";
 
 import NotFound from "@/component/Admin/NotFound";
-import CustomPagination from "@/component/Admin/CustomPagination";
+import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIResep from "@/api/APIResep";
 import APIBahanBaku from "@/api/APIBahanBaku";
-import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
-import AddEditModal from "@/component/Admin/AddEditModal";
+import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function ResepPage() {
   const [showDelModal, setShowDelModal] = useState(false);

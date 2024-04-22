@@ -20,7 +20,7 @@ import APIHampers from "@/api/APIHampers";
 import InputHelper from "@/page/InputHelper";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
-import CustomPagination from "@/component/Admin/CustomPagination";
+import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import { FaTrash } from "react-icons/fa";
 
 import "./css/Hampers.css";
@@ -29,8 +29,8 @@ import "@/page/Admin/Page/css/Admin.css";
 import APIProduk from "@/api/APIProduk";
 import APIDetailHampers from "@/api/APIDetailHampers";
 import APIGambar from "@/api/APIGambar";
-import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
-import AddEditModal from "@/component/Admin/AddEditModal";
+import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function HampersPage() {
   const [showDelModal, setShowDelModal] = useState(false);

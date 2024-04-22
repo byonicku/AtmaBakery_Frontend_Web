@@ -23,10 +23,10 @@ import "@/page/Admin/Page/css/Admin.css";
 
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import NotFound from "@/component/Admin/NotFound";
-import CustomPagination from "@/component/Admin/CustomPagination";
+import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import APIProduk from "@/api/APIProduk";
 import { Link } from "react-router-dom";
-import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
+import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
 
 const category = {
   CK: "Cake",
