@@ -114,7 +114,7 @@ export default function AddEditProdukPage({ isEdit }) {
       alias: "Limit",
     },
     status: {
-      required: true,
+      required: formData.id_kategori === "TP" ? false : true,
       alias: "Status",
     },
     foto: {
@@ -222,7 +222,7 @@ export default function AddEditProdukPage({ isEdit }) {
 
     if (
       formData.gambar?.length > 5 ||
-      image.length + formData.gambar?.length > 5
+      image?.length + formData.gambar?.length > 5
     ) {
       toast.error("Gambar maksimal 5!");
       return;
@@ -259,6 +259,10 @@ export default function AddEditProdukPage({ isEdit }) {
       } else {
         if (formData.id_penitip === "") {
           delete formData.id_penitip;
+        }
+
+        if (isTitipan) {
+          formData.status = "READY";
         }
 
         await add.mutateAsync(formData);
