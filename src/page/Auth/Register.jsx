@@ -107,14 +107,13 @@ export default function Register() {
       <Container className="container-setting">
         <Row className="no-gutters shadow-lg rounded h-auto">
           <Col
-            sm
             className="remove p-0 m-0"
             style={{ backgroundColor: "#FFEDDB" }}
           >
             <Image src={imageBg} className="p-0 m-0 rounded left-img" />
           </Col>
-          <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-            <div className="pt-5 px-5" style={{ color: "black" }}>
+          <Col className="py-4 px-5" style={{ backgroundColor: "#FFFFFF" }}>
+            <div style={{ color: "black" }}>
               <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
                 <span>Daftarkan</span>
                 <span style={{ color: "#F48E28" }}> Diri</span>
@@ -125,7 +124,7 @@ export default function Register() {
               </p>
             </div>
 
-            <Form className="px-5 py-2" onSubmit={inputHelper.handleSubmit}>
+            <Form onSubmit={inputHelper.handleSubmit}>
               <Form.Group>
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                   Email
@@ -267,7 +266,7 @@ export default function Register() {
                   }
                 />
               </Container>
-              <Container className="text-center">
+              <Container className="text-center pb-2">
                 <Button
                   className="button-custom"
                   type="submit"
@@ -277,9 +276,9 @@ export default function Register() {
                 </Button>
               </Container>
             </Form>
-            <Container className="text-center py-3">
-              <div className="px-5" style={{ color: "black" }}>
-                <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
+            <Container className="text-center">
+              <div style={{ color: "black" }}>
+                <p style={{ fontWeight: "bold", fontSize: "1em" }}>
                   <span>Sudah memiliki akun?</span>
                   <span>
                     {" "}

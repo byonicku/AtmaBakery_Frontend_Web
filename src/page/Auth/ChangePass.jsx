@@ -36,7 +36,7 @@ export default function ResetPass() {
     token: key,
     email: email,
   });
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(-1);
   const [eyeToggle1, setEyeToggle1] = useState(true);
   const [eyeToggle2, setEyeToggle2] = useState(true);
 
@@ -112,7 +112,6 @@ export default function ResetPass() {
       <Container className="container-setting">
         <Row className="no-gutters shadow-lg rounded h-auto">
           <Col
-            sm
             className="remove p-0 m-0"
             style={{ backgroundColor: "#FFEDDB" }}
           >
@@ -120,12 +119,11 @@ export default function ResetPass() {
           </Col>
 
           <Col
-            sm
             style={{ backgroundColor: "#FFFFFF" }}
             className={
               isLoadingVerify
-                ? "d-flex align-items-center justify-content-center loading"
-                : "loading"
+                ? "d-flex align-items-center justify-content-center px-5 py-5 loading"
+                : "loading px-5 py-5"
             }
           >
             {isLoadingVerify ? (
@@ -142,19 +140,19 @@ export default function ResetPass() {
               </div>
             ) : status == 1 ? (
               <>
-                <div className="pt-5 px-5" style={{ color: "black" }}>
+                <div style={{ color: "black" }}>
                   <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
                     <span style={{ color: "#F48E28" }}>Kata Sandi</span>
                     <span> Baru Anda</span>
                   </h1>
-                  <p className="py-2" style={{ fontSize: "1em" }}>
+                  <p className="py-1" style={{ fontSize: "1em" }}>
                     Mohon masukkan kata sandi baru Anda dan harap simpan dengan
                     baik data tersebut. Setelah berhasil masuk ke akun kembali
                     dengan kata sandi baru!
                   </p>
                 </div>
 
-                <Form className="px-5 py-2" onSubmit={inputHelper.handleSubmit}>
+                <Form onSubmit={inputHelper.handleSubmit}>
                   <Form.Group>
                     <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                       Kata Sandi Baru
@@ -223,71 +221,59 @@ export default function ResetPass() {
                 </Form>
               </>
             ) : status == 0 ? (
-              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-                <div
-                  className="pt-5 px-5 text-center"
-                  style={{ color: "black" }}
-                >
-                  <Image
-                    src={verified}
-                    style={{ width: "45%", height: "45%" }}
-                    className="mt-3"
-                  />
-                  <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                    <span style={{ color: "#F48E28" }}>Berhasil</span>
-                    <span> Ubah Kata Sandi</span>
-                  </h1>
+              <div className="text-center" style={{ color: "black" }}>
+                <Image
+                  src={verified}
+                  style={{ width: "45%", height: "45%" }}
+                  className="mt-3"
+                />
+                <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                  <span style={{ color: "#F48E28" }}>Berhasil</span>
+                  <span> Ubah Kata Sandi</span>
+                </h1>
+
+                <div style={{ color: "black" }}>
+                  <p style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    <span>Masuk kembali dengan kata sandi terbaru!</span>
+                    <span>
+                      {" "}
+                      <Link to="/login" style={{ textDecoration: "none" }}>
+                        Masuk ke Akun
+                      </Link>
+                    </span>
+                  </p>
                 </div>
-                <Container className="text-center">
-                  <div className="px-5" style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
-                      <span>Masuk kembali dengan kata sandi terbaru!</span>
-                      <span>
-                        {" "}
-                        <Link to="/login" style={{ textDecoration: "none" }}>
-                          Masuk ke Akun
-                        </Link>
-                      </span>
-                    </p>
-                  </div>
-                </Container>
-              </Col>
+              </div>
             ) : (
-              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-                <div
-                  className="pt-5 px-5 text-center"
-                  style={{ color: "black" }}
-                >
-                  <Image
-                    src={notVerified}
-                    style={{ width: "45%", height: "45%" }}
-                    className="mt-3"
-                  />
-                  <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                    <span style={{ color: "#F48E28" }}>Gagal</span>
-                    <span> Untuk Verifikasi</span>
-                  </h1>
-                  <div className="py-2" style={{ fontSize: "1em" }}>
-                    <p className="mb-1">
-                      Tidak dapat melakukan penggantian password
-                    </p>
-                    <p className="mt-0 pt-0">Token tidak sah atau kadaluarsa</p>
-                  </div>
+              <div className="text-center" style={{ color: "black" }}>
+                <Image
+                  src={notVerified}
+                  style={{ width: "45%", height: "45%" }}
+                  className="mt-3"
+                />
+                <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                  <span style={{ color: "#F48E28" }}>Gagal</span>
+                  <span> Untuk Verifikasi</span>
+                </h1>
+                <div className="py-2" style={{ fontSize: "1.25em" }}>
+                  <p className="mb-1">
+                    Tidak dapat melakukan penggantian password
+                  </p>
+                  <p className="mt-0 pt-0">Token tidak sah atau kadaluarsa</p>
                 </div>
-                <Container className="text-center">
-                  <div className="px-5" style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
-                      <span>Masuk kembali ke akun?</span>
-                      <span>
-                        {" "}
-                        <Link to="/login" style={{ textDecoration: "none" }}>
-                          Masuk ke Akun
-                        </Link>
-                      </span>
-                    </p>
-                  </div>
-                </Container>
-              </Col>
+
+                <div style={{ color: "black" }}>
+                  <p style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    <span>Masuk kembali ke akun?</span>
+                    <span>
+                      {" "}
+                      <Link to="/login" style={{ textDecoration: "none" }}>
+                        Masuk ke Akun
+                      </Link>
+                    </span>
+                  </p>
+                </div>
+              </div>
             )}
           </Col>
         </Row>

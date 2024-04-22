@@ -66,14 +66,13 @@ export default function ResetPass() {
       <Container className="container-setting">
         <Row className="no-gutters shadow-lg rounded h-auto">
           <Col
-            sm
             className="remove p-0 m-0"
             style={{ backgroundColor: "#FFEDDB" }}
           >
             <Image src={imageBg} className="p-0 m-0 rounded left-img" />
           </Col>
-          <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-            <div className="pt-5 px-5" style={{ color: "black" }}>
+          <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
+            <div style={{ color: "black" }}>
               <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
                 <span style={{ color: "#F48E28" }}>Lupa</span>
                 <span> Kata Sandi</span>
@@ -85,7 +84,7 @@ export default function ResetPass() {
               </p>
             </div>
 
-            <Form className="px-5 py-4" onSubmit={inputHelper.handleSubmit}>
+            <Form onSubmit={inputHelper.handleSubmit}>
               <Form.Group className="pb-3">
                 <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
                   Email
@@ -99,19 +98,19 @@ export default function ResetPass() {
                   required
                 />
               </Form.Group>
-              <Container className="text-center">
+              <Container className="text-center pb-2">
                 <Button
                   className="button-custom"
                   type="submit"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Loading..." : "Kirim Email"}
+                  {isLoading ? "Loading..." : "Kirim"}
                 </Button>
               </Container>
             </Form>
             <Container className="text-center">
-              <div className="px-4">
-                <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
+              <div style={{ color: "black" }}>
+                <p style={{ fontWeight: "bold", fontSize: "1em" }}>
                   <span>Batalkan permintaan lupa kata sandi?</span>
                   <span>
                     {" "}
