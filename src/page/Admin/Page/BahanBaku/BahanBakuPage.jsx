@@ -25,10 +25,10 @@ import "@/page/Admin/Page/css/Admin.css";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIBahanBaku from "@/api/APIBahanBaku";
 import NotFound from "@/component/Admin/NotFound";
-import CustomPagination from "@/component/Admin/CustomPagination";
-import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
-import PrintModal from "@/component/Admin/PrintModal";
-import AddEditModal from "@/component/Admin/AddEditModal";
+import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
+import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import PrintModal from "@/component/Admin/Modal/PrintModal";
+import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function BahanBakuPage() {
   const [showDelModal, setShowDelModal] = useState(false);
