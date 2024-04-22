@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 export default function Verify() {
   const { key } = useParams();
-  const [isLoadingVerify, setIsLoadingVerify] = useState(true);
+  const [isLoadingVerify, setIsLoadingVerify] = useState(false);
   const [status, setStatus] = useState(-1);
 
   useEffect(() => {
@@ -42,7 +42,6 @@ export default function Verify() {
       <Container className="container-setting">
         <Row className="no-gutters shadow-lg rounded h-auto">
           <Col
-            sm
             className="remove p-0 m-0"
             style={{ backgroundColor: "#FFEDDB" }}
           >
@@ -50,32 +49,28 @@ export default function Verify() {
           </Col>
 
           <Col
-            sm
             style={{ backgroundColor: "#FFFFFF" }}
             className={
               isLoadingVerify
-                ? "d-flex align-items-center justify-content-center loading"
-                : "loading"
+                ? "d-flex align-items-center justify-content-center py-5 px-5 loading"
+                : "loading py-5 px-5"
             }
           >
-            {isLoadingVerify ? (
-              <div className="text-center">
-                <Spinner
-                  as="span"
-                  animation="border"
-                  variant="primary"
-                  size="lg"
-                  role="status"
-                  aria-hidden="true"
-                />
-                <h6 className="mt-2 mb-0">Loading...</h6>
-              </div>
-            ) : status == 1 ? (
-              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-                <div
-                  className="pt-5 px-5 text-center"
-                  style={{ color: "black" }}
-                >
+            <div className="text-center" style={{ color: "black" }}>
+              {isLoadingVerify ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    variant="primary"
+                    size="lg"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                  <h6 className="mt-2 mb-0">Loading...</h6>
+                </>
+              ) : status == 1 ? (
+                <>
                   <Image
                     src={verified}
                     style={{ width: "45%", height: "45%" }}
@@ -85,15 +80,14 @@ export default function Verify() {
                     <span style={{ color: "#F48E28" }}>Berhasil</span>
                     <span> Verifikasi Akun</span>
                   </h1>
-                  <div className="py-2" style={{ fontSize: "1em" }}>
+                  <div className="py-2" style={{ fontSize: "1.25em" }}>
                     <p className="mb-1">
                       Akun Anda Telah berhasil diverifikasi
                     </p>
                   </div>
-                </div>
-                <Container className="text-center">
-                  <div className="px-5" style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
+
+                  <div style={{ color: "black" }}>
+                    <p style={{ fontWeight: "bold", fontSize: "1em" }}>
                       <span>Anda sudah dapat mengakses akun Anda!</span>
                       <span>
                         {" "}
@@ -103,14 +97,9 @@ export default function Verify() {
                       </span>
                     </p>
                   </div>
-                </Container>
-              </Col>
-            ) : status == 0 ? (
-              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-                <div
-                  className="pt-5 px-5 text-center"
-                  style={{ color: "black" }}
-                >
+                </>
+              ) : status == 0 ? (
+                <>
                   <Image
                     src={invalid}
                     style={{ width: "45%", height: "45%" }}
@@ -120,32 +109,28 @@ export default function Verify() {
                     <span style={{ color: "#F48E28" }}>Peringatan</span>
                     <span> Akun Telah Terverifikasi</span>
                   </h1>
-                  <div className="py-2" style={{ fontSize: "1em" }}>
+                  <div className="py-2" style={{ fontSize: "1.25em" }}>
                     <p className="mb-1">
                       Akun Anda Telah terverifikasi sebelumnya
                     </p>
                   </div>
-                </div>
-                <Container className="text-center">
-                  <div className="px-5" style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
-                      <span>Anda sudah dapat mengakses akun Anda!</span>
-                      <span>
-                        {" "}
-                        <Link to="/login" style={{ textDecoration: "none" }}>
-                          Masuk ke Akun
-                        </Link>
-                      </span>
-                    </p>
-                  </div>
-                </Container>
-              </Col>
-            ) : (
-              <Col sm style={{ backgroundColor: "#FFFFFF" }}>
-                <div
-                  className="pt-5 px-5 text-center"
-                  style={{ color: "black" }}
-                >
+
+                  <Container className="text-center">
+                    <div style={{ color: "black" }}>
+                      <p style={{ fontWeight: "bold", fontSize: "1em" }}>
+                        <span>Anda sudah dapat mengakses akun Anda!</span>
+                        <span>
+                          {" "}
+                          <Link to="/login" style={{ textDecoration: "none" }}>
+                            Masuk ke Akun
+                          </Link>
+                        </span>
+                      </p>
+                    </div>
+                  </Container>
+                </>
+              ) : (
+                <>
                   <Image
                     src={notVerified}
                     style={{ width: "45%", height: "45%" }}
@@ -155,26 +140,27 @@ export default function Verify() {
                     <span style={{ color: "#FF5B19" }}>Gagal</span>
                     <span> Verifikasi Akun</span>
                   </h1>
-                  <div className="py-2" style={{ fontSize: "1em" }}>
+                  <div className="py-2" style={{ fontSize: "1.25em" }}>
                     <p className="mb-1">Akun Anda Gagal terverifikasi</p>
                     <p className="mt-0 pt-0">Token tidak sah atau kadaluarsa</p>
                   </div>
-                </div>
-                <Container className="text-center">
-                  <div className="px-5" style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "0.85em" }}>
-                      <span>Kembali ke halaman login!</span>
-                      <span>
-                        {" "}
-                        <Link to="/login" style={{ textDecoration: "none" }}>
-                          Masuk ke Akun
-                        </Link>
-                      </span>
-                    </p>
-                  </div>
-                </Container>
-              </Col>
-            )}
+
+                  <Container className="text-center">
+                    <div style={{ color: "black" }}>
+                      <p style={{ fontWeight: "bold", fontSize: "1em" }}>
+                        <span>Kembali ke halaman login!</span>
+                        <span>
+                          {" "}
+                          <Link to="/login" style={{ textDecoration: "none" }}>
+                            Masuk ke Akun
+                          </Link>
+                        </span>
+                      </p>
+                    </div>
+                  </Container>
+                </>
+              )}
+            </div>
           </Col>
         </Row>
       </Container>

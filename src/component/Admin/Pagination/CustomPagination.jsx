@@ -58,13 +58,16 @@ export default function CustomPagination({
         </Pagination.Item>
       );
     }
-    
+
     if (endPage < totalPage) {
       if (endPage < totalPage - 1) {
         renderEllipsis();
       }
       items.push(
-        <Pagination.Item key={totalPage} onClick={() => onChangePage(totalPage)}>
+        <Pagination.Item
+          key={totalPage}
+          onClick={() => onChangePage(totalPage)}
+        >
           {totalPage}
         </Pagination.Item>
       );
