@@ -36,7 +36,7 @@ export default function ResetPass() {
     token: key,
     email: email,
   });
-  const [status, setStatus] = useState(1);
+  const [status, setStatus] = useState(-1);
   const [eyeToggle1, setEyeToggle1] = useState(true);
   const [eyeToggle2, setEyeToggle2] = useState(true);
 
