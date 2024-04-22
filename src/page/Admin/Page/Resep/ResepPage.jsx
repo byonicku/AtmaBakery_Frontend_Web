@@ -29,6 +29,7 @@ import CustomPagination from "@/component/Admin/CustomPagination";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIResep from "@/api/APIResep";
 import APIBahanBaku from "@/api/APIBahanBaku";
+import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
 
 export default function ResepPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -668,52 +669,15 @@ export default function ResepPage() {
             </Modal.Body>
           </Form>
         </Modal>
-        <Modal
+
+        <DeleteConfirmationModal
+          header="Anda Yakin Ingin Menghapus Data Resep Ini?"
+          secondP="Semua data yang terkait dengan resep tersebut akan hilang."
           show={showDelModal}
-          keyboard={false}
-          backdrop="static"
-          centered
-          size="lg"
-          style={{ border: "none" }}
-        >
-          <Modal.Body className="text-center p-5">
-            <h3 style={{ fontWeight: "bold" }}>
-              {" "}
-              Anda Yakin Ingin Menghapus Data Resep Ini?
-            </h3>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
-              className="mt-3"
-            >
-              <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
-              <p className="m-0 p-0">
-                Semua data yang terkait dengan resep tersebut akan hilang.
-              </p>
-            </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-agree-btn w-100 p-1"
-                  onClick={onSubmit}
-                  disabled={del.isLoading}
-                >
-                  <h5 className="mt-2">Hapus</h5>
-                </Button>
-              </Col>
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-danger-btn w-100 p-1"
-                  onClick={handleCloseDeleteModal}
-                  disabled={del.isLoading}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Body>
-        </Modal>
+          onHapus={handleCloseDeleteModal}
+          onSubmit={onSubmit}
+          del={del}
+        />
       </section>
     </>
   );

@@ -32,6 +32,7 @@ import "@/page/Admin/Page/css/Admin.css";
 import APIProduk from "@/api/APIProduk";
 import APIDetailHampers from "@/api/APIDetailHampers";
 import APIGambar from "@/api/APIGambar";
+import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
 
 export default function HampersPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -809,58 +810,6 @@ export default function HampersPage() {
 
         {/* ini modal modalnya */}
         <Modal
-          show={showDelModal}
-          onClick={(e) => e.stopPropagation()}
-          keyboard={false}
-          backdrop="static"
-          size="lg"
-          centered
-        >
-          <Modal.Body className="text-center p-5">
-            <h3 style={{ fontWeight: "bold" }}>
-              Anda Yakin Ingin Menghapus Data Hampers Ini?
-            </h3>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
-              className="mt-3"
-            >
-              <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
-              <p className="m-0 p-0">
-                Semua data yang terkait dengan Hampers tersebut akan hilang.
-              </p>
-            </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-agree-btn mx-2 w-100 p-1"
-                  disabled={del.isPending}
-                  onClick={() => onSubmit()}
-                >
-                  <h5 className="mt-2">
-                    {del.isPending ? "Loading..." : "Hapus"}
-                  </h5>
-                </Button>
-              </Col>
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-danger-btn mx-2 w-100 p-1"
-                  onClick={() => {
-                    handleCloseDelModal();
-                    setSelectedHampers(null);
-                    setInModal(false);
-                  }}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Body>
-        </Modal>
-
-        <Modal
           show={showAddEditModal}
           onClick={(e) => e.stopPropagation()}
           keyboard={false}
@@ -1063,6 +1012,20 @@ export default function HampersPage() {
           </Form>
         </Modal>
 
+        <DeleteConfirmationModal
+          header="Anda Yakin Ingin Menghapus Data Hampers Ini?"
+          secondP="Semua data yang terkait dengan Hampers tersebut akan hilang."
+          show={showDelModal}
+          onClick={(e) => e.stopPropagation()}
+          onHapus={() => {
+            handleCloseDelModal();
+            setSelectedHampers(null);
+            setInModal(false);
+          }}
+          onSubmit={onSubmit}
+          del={del}
+        />
+
         <Modal
           show={showAddEditProdModal}
           onEnter={async () => {
@@ -1174,61 +1137,20 @@ export default function HampersPage() {
           </Form>
         </Modal>
 
-        <Modal
+        <DeleteConfirmationModal
+          header="Anda Yakin Ingin Menghapus Data Isi Hampers Ini?"
+          secondP="Semua data yang terkait dengan isi hampers tersebut akan hilang."
           show={showDelProdModal}
           onClick={(e) => e.stopPropagation()}
-          centered
-          size="lg"
-          keyboard={false}
-          backdrop="static"
-        >
-          <Modal.Body className="text-center p-5">
-            <h3 style={{ fontWeight: "bold" }}>
-              Anda Yakin Ingin Menghapus Data Isi Hampers Ini?
-            </h3>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
-              className="mt-3"
-            >
-              <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
-              <p className="m-0 p-0">
-                Semua data yang terkait dengan isi hampers tersebut akan hilang.
-              </p>
-            </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-              <Col xs={12} sm={12} md={6} lg={6}>
-                {/* Khusus delete panggil langsng onSubmit()*/}
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#F48E28", border: "none" }}
-                  className="custom-agree-btn w-100 p-1"
-                  onClick={() => onSubmit()}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">
-                    {del.isPending ? "Loading..." : "Hapus"}
-                  </h5>
-                </Button>
-              </Col>
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#FF5B19", border: "none" }}
-                  className="custom-danger-btn w-100 p-1"
-                  onClick={() => {
-                    handleCloseDelProdModal();
-                    setIdDetailHampers(null);
-                    setProduk(null);
-                    setInModal(false);
-                  }}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Body>
-        </Modal>
+          onHapus={() => {
+            handleCloseDelProdModal();
+            setIdDetailHampers(null);
+            setProduk(null);
+            setInModal(false);
+          }}
+          onSubmit={onSubmit}
+          del={delProd}
+        />
       </section>
     </>
   );
