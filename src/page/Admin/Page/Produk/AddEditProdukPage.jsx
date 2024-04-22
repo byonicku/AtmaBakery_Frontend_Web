@@ -254,17 +254,20 @@ export default function AddEditProdukPage({ isEdit }) {
     }
 
     try {
+      if (isTitipan) {
+        formData.status = "READY";
+      }
+
       if (isEdit) {
+        if (formData.id_kategori !== "TP") {
+          formData.id_penitip = "";
+        }
+
         await edit.mutateAsync(formData, id_produk);
       } else {
         if (formData.id_penitip === "") {
           delete formData.id_penitip;
         }
-
-        if (isTitipan) {
-          formData.status = "READY";
-        }
-
         await add.mutateAsync(formData);
       }
     } catch (error) {
