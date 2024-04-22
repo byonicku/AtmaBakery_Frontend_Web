@@ -101,6 +101,20 @@ const deleteUser = async (id) => {
   }
 };
 
+const updateSelfPassword = async (data) => {
+  try {
+    const response = await useAxios.post("/users/self/password", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APIUser = {
   getSelf,
   getAllUser,
@@ -109,6 +123,7 @@ const APIUser = {
   createUser,
   updateUser,
   deleteUser,
+  updateSelfPassword,
 };
 
 export default APIUser;
