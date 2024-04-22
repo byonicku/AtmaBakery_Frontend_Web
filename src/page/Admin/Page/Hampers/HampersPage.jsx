@@ -4,10 +4,8 @@ import {
   Row,
   Form,
   Table,
-  Modal,
   InputGroup,
   Spinner,
-  // Container,
 } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -15,7 +13,6 @@ import {
   BsPlusSquare,
   BsPencilSquare,
   BsFillTrash3Fill,
-  // BsPrinterFill,
 } from "react-icons/bs";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import NotFound from "@/component/Admin/NotFound";
@@ -32,6 +29,8 @@ import "@/page/Admin/Page/css/Admin.css";
 import APIProduk from "@/api/APIProduk";
 import APIDetailHampers from "@/api/APIDetailHampers";
 import APIGambar from "@/api/APIGambar";
+import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
+import AddEditModal from "@/component/Admin/AddEditModal";
 
 export default function HampersPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -808,427 +807,293 @@ export default function HampersPage() {
         )}
 
         {/* ini modal modalnya */}
-        <Modal
-          show={showDelModal}
-          onClick={(e) => e.stopPropagation()}
-          keyboard={false}
-          backdrop="static"
-          size="lg"
-          centered
-        >
-          <Modal.Body className="text-center p-5">
-            <h3 style={{ fontWeight: "bold" }}>
-              Anda Yakin Ingin Menghapus Data Hampers Ini?
-            </h3>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
-              className="mt-3"
-            >
-              <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
-              <p className="m-0 p-0">
-                Semua data yang terkait dengan Hampers tersebut akan hilang.
-              </p>
-            </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-agree-btn mx-2 w-100 p-1"
-                  disabled={del.isPending}
-                  onClick={() => onSubmit()}
-                >
-                  <h5 className="mt-2">
-                    {del.isPending ? "Loading..." : "Hapus"}
-                  </h5>
-                </Button>
-              </Col>
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-danger-btn mx-2 w-100 p-1"
-                  onClick={() => {
-                    handleCloseDelModal();
-                    setSelectedHampers(null);
-                    setInModal(false);
-                  }}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Body>
-        </Modal>
-
-        <Modal
+        <AddEditModal
           show={showAddEditModal}
           onClick={(e) => e.stopPropagation()}
-          keyboard={false}
-          backdrop="static"
-          centered
+          onHide={() => {
+            handleCloseAddEditModal();
+            setTimeout(() => {
+              setSelectedHampers(null);
+              setImage(null);
+              setImagePreview(null);
+              setInModal(false);
+            }, 125);
+          }}
+          add={add}
+          edit={edit}
+          title={
+            mode === "add"
+              ? "Tambah Data Hampers"
+              : mode === "edit"
+              ? "Ubah Data Hampers"
+              : "Hapus Data Hampers"
+          }
+          text={
+            mode === "add"
+              ? "Pastikan data Hampers yang Anda tambahkan benar"
+              : mode === "edit"
+              ? "Pastikan data Hampers yang Anda ubah benar"
+              : "Pastikan data Hampers yang Anda hapus benar"
+          }
+          onSubmit={inputHelper.handleSubmit}
         >
-          <Form onSubmit={inputHelper.handleSubmit}>
-            <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>
-                {mode === "add"
-                  ? "Tambah Data Hampers"
-                  : mode === "edit"
-                  ? "Ubah Data Hampers"
-                  : "Hapus Data Hampers"}
-              </h4>
-              <p
-                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                className="mt-1"
-              >
-                Pastikan data Hampers yang Anda tambahkan benar
-              </p>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama Hampers
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  name="nama_hampers"
-                  onChange={inputHelper.handleInputChange}
-                  value={formData.nama_hampers}
-                  placeholder="Masukkan nama hampers"
-                  disabled={isLoading || add.isPending || edit.isPending}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Harga
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="number"
-                  name="harga"
-                  onChange={inputHelper.handleInputChange}
-                  value={formData.harga}
-                  placeholder="Masukkan harga hampers"
-                  disabled={isLoading || add.isPending || edit.isPending}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Group>
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Gambar (Max 5 Gambar, Max 1MB/Gambar)
-                  </Form.Label>
-                  <Form.Control
-                    name="foto"
-                    type="file"
-                    accept="image/png, image/jpg, image/jpeg"
-                    multiple
-                    disabled={
-                      image?.length >= 5 ||
-                      image_preview?.length > 5 ||
-                      isLoading ||
-                      add.isPending ||
-                      edit.isPending
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Hampers
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              name="nama_hampers"
+              onChange={inputHelper.handleInputChange}
+              value={formData.nama_hampers}
+              placeholder="Masukkan nama hampers"
+              disabled={isLoading || add.isPending || edit.isPending}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Harga
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="number"
+              name="harga"
+              onChange={inputHelper.handleInputChange}
+              value={formData.harga}
+              placeholder="Masukkan harga hampers"
+              disabled={isLoading || add.isPending || edit.isPending}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Group>
+              <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                Gambar (Max 5 Gambar, Max 1MB/Gambar)
+              </Form.Label>
+              <Form.Control
+                name="foto"
+                type="file"
+                accept="image/png, image/jpg, image/jpeg"
+                multiple
+                disabled={
+                  image?.length >= 5 ||
+                  image_preview?.length > 5 ||
+                  isLoading ||
+                  add.isPending ||
+                  edit.isPending
+                }
+                onClick={() => {
+                  if (image?.length >= 5 || image_preview?.length > 5) {
+                    toast.error("Gambar maksimal 5!");
+                    return;
+                  }
+                }}
+                onChange={(e) => {
+                  if (
+                    e.target.files.length > 5 ||
+                    image?.length + e.target.files.length > 5 ||
+                    image_preview?.length > 5
+                  ) {
+                    toast.error("Gambar maksimal 5!");
+                    return;
+                  }
+
+                  for (const image of e.target.files) {
+                    if (image.size > 1000000) {
+                      toast.error("Ukuran gambar maksimal 1MB!");
+                      return;
                     }
-                    onClick={() => {
-                      if (image?.length >= 5 || image_preview?.length > 5) {
-                        toast.error("Gambar maksimal 5!");
-                        return;
-                      }
-                    }}
-                    onChange={(e) => {
-                      if (
-                        e.target.files.length > 5 ||
-                        image?.length + e.target.files.length > 5 ||
-                        image_preview?.length > 5
-                      ) {
-                        toast.error("Gambar maksimal 5!");
-                        return;
-                      }
+                  }
 
-                      for (const image of e.target.files) {
-                        if (image.size > 1000000) {
-                          toast.error("Ukuran gambar maksimal 1MB!");
-                          return;
-                        }
-                      }
-
-                      inputHelper.handleFileChange(e);
-                      setImagePreview(e.target.files);
-                    }}
+                  inputHelper.handleFileChange(e);
+                  setImagePreview(e.target.files);
+                }}
+              />
+            </Form.Group>
+          </Form.Group>
+          <Row>
+            {image != null &&
+              image.map((img, index) => (
+                <div key={index} className="image-container">
+                  <img
+                    draggable="false"
+                    src={img.url}
+                    alt="preview"
+                    width="200"
+                    height="200"
+                    className={`img-thumbnail my-2 mx-1 ${
+                      deleteImage.includes(img) && "selected-delete"
+                    }`}
                   />
-                </Form.Group>
-              </Form.Group>
-              <Row>
-                {image != null &&
-                  image.map((img, index) => (
-                    <div key={index} className="image-container">
-                      <img
-                        draggable="false"
-                        src={img.url}
-                        alt="preview"
-                        width="200"
-                        height="200"
-                        className={`img-thumbnail my-2 mx-1 ${
-                          deleteImage.includes(img) && "selected-delete"
-                        }`}
-                      />
-                      <div className="action-icons">
-                        <label
-                          className={`remove-icon text-white`}
-                          onClick={() => {
-                            if (isLoading || add.isPending || edit.isPending)
-                              return;
+                  <div className="action-icons">
+                    <label
+                      className={`remove-icon text-white`}
+                      onClick={() => {
+                        if (isLoading || add.isPending || edit.isPending)
+                          return;
 
-                            const updatedDeleteImage = deleteImage.includes(img)
-                              ? deleteImage.filter((image) => image !== img)
-                              : [...deleteImage, img];
-                            setDeleteImage(updatedDeleteImage);
-                          }}
-                        >
-                          <FaTrash />
-                        </label>
-                      </div>
+                        const updatedDeleteImage = deleteImage.includes(img)
+                          ? deleteImage.filter((image) => image !== img)
+                          : [...deleteImage, img];
+                        setDeleteImage(updatedDeleteImage);
+                      }}
+                    >
+                      <FaTrash />
+                    </label>
+                  </div>
+                </div>
+              ))}
+
+            {image_preview != null &&
+              Array.from(image_preview).map((file, index) => (
+                <>
+                  <div className="image-container">
+                    <img
+                      key={index}
+                      src={URL.createObjectURL(file)}
+                      alt="preview"
+                      width="200"
+                      height="200"
+                      className="img-thumbnail my-2 mx-1 selected-new"
+                    />
+                    <div className="action-icons">
+                      <label
+                        className="remove-icon text-white"
+                        onClick={() => {
+                          if (isLoading || add.isPending || edit.isPending)
+                            return;
+
+                          setImagePreview(
+                            Array.from(image_preview).filter(
+                              (image) => image !== file
+                            )
+                          );
+
+                          if (image_preview?.length === 1) {
+                            document.getElementsByName("foto")[0].value = "";
+                          }
+                        }}
+                      >
+                        <FaTrash />
+                      </label>
                     </div>
-                  ))}
+                  </div>
+                </>
+              ))}
+          </Row>
+        </AddEditModal>
 
-                {image_preview != null &&
-                  Array.from(image_preview).map((file, index) => (
-                    <>
-                      <div className="image-container">
-                        <img
-                          key={index}
-                          src={URL.createObjectURL(file)}
-                          alt="preview"
-                          width="200"
-                          height="200"
-                          className="img-thumbnail my-2 mx-1 selected-new"
-                        />
-                        <div className="action-icons">
-                          <label
-                            className="remove-icon text-white"
-                            onClick={() => {
-                              if (isLoading || add.isPending || edit.isPending)
-                                return;
+        <DeleteConfirmationModal
+          header="Anda Yakin Ingin Menghapus Data Hampers Ini?"
+          secondP="Semua data yang terkait dengan Hampers tersebut akan hilang."
+          show={showDelModal}
+          onClick={(e) => e.stopPropagation()}
+          onHapus={() => {
+            handleCloseDelModal();
+            setSelectedHampers(null);
+            setInModal(false);
+          }}
+          onSubmit={onSubmit}
+          del={del}
+        />
 
-                              setImagePreview(
-                                Array.from(image_preview).filter(
-                                  (image) => image !== file
-                                )
-                              );
-
-                              if (image_preview?.length === 1) {
-                                document.getElementsByName("foto")[0].value =
-                                  "";
-                              }
-                            }}
-                          >
-                            <FaTrash />
-                          </label>
-                        </div>
-                      </div>
-                    </>
-                  ))}
-              </Row>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-agree-btn w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    {add.isPending || edit.isPending ? "Loading..." : "Simpan"}
-                  </Button>
-                </Col>
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-danger-btn w-100"
-                    onClick={() => {
-                      handleCloseAddEditModal();
-                      setTimeout(() => {
-                        setSelectedHampers(null);
-                        setImage(null);
-                        setImagePreview(null);
-                        setInModal(false);
-                      }, 125);
-                    }}
-                    disabled={add.isPending || edit.isPending}
-                  >
-                    Batal
-                  </Button>
-                </Col>
-              </Row>
-            </Modal.Body>
-          </Form>
-        </Modal>
-
-        <Modal
+        <AddEditModal
           show={showAddEditProdModal}
           onEnter={async () => {
             await fetchProduk(selectedAllHampers || [], selectedProduk || "");
           }}
           onClick={(e) => e.stopPropagation()}
-          centered
-          keyboard={false}
-          backdrop="static"
+          title={
+            selectedProduk ? "Edit Data Isi Hampers" : "Tambah Data Isi Hampers"
+          }
+          text={
+            selectedProduk
+              ? "Pastikan data isi hampers yang Anda tambahkan benar"
+              : "Pastikan data isi hampers yang Anda ubahkan benar"
+          }
+          onSubmit={inputHelperProd.handleSubmit}
+          onHide={() => {
+            handleCloseAddEditProdModal();
+            setTimeout(() => {
+              setProduk(null);
+              setSelectedProduk(null);
+              setInModal(false);
+            }, 125);
+          }}
+          add={addProd}
+          edit={editProd}
+          isLoadingModal={isLoadingModal}
         >
-          <Form onSubmit={inputHelperProd.handleSubmit}>
-            <Modal.Body className="text-center p-4 m-2">
-              <h4 style={{ fontWeight: "bold" }}>
-                {selectedProduk
-                  ? "Edit Data Isi Hampers"
-                  : "Tambah Data Isi Hampers"}
-              </h4>
-              <p
-                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-                className="mt-1"
-              >
-                {selectedProduk
-                  ? "Pastikan data isi hampers yang Anda tambahkan benar"
-                  : "Pastikan data isi hampers yang Anda ubahkan benar"}
-              </p>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama Hampers
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="text"
-                  name="nama_hampers"
-                  value={nama_hampers}
-                  disabled
-                />
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Nama Produk
-                </Form.Label>
-                <Form.Select
-                  style={{ border: "1px solid #808080" }}
-                  name="id_produk"
-                  value={formDataProd?.id_produk}
-                  onChange={inputHelperProd.handleInputChange}
-                  disabled={isLoadingModal || edit.isPending || add.isPending}
-                  required
-                >
-                  <option value="" disabled selected hidden>
-                    ---
-                  </option>
-                  {produk?.map((produk, index) => (
-                    <option key={index} value={produk.id_produk}>
-                      {produk.id_kategori === "CK"
-                        ? produk.nama_produk + " " + produk?.ukuran + " Loyang"
-                        : produk.nama_produk}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="text-start mt-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Jumlah
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px solid #808080" }}
-                  type="number"
-                  placeholder="Masukkan jumlah produk"
-                  name="jumlah"
-                  value={formDataProd?.jumlah}
-                  onChange={inputHelperProd.handleInputChange}
-                  disabled={edit.isPending || add.isPending || isLoadingModal}
-                  required
-                />
-              </Form.Group>
-              <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-agree-btn w-100"
-                    type="submit"
-                    disabled={add.isPending || edit.isPending || isLoadingModal}
-                  >
-                    {add.isPending || edit.isPending || isLoadingModal
-                      ? "Loading..."
-                      : "Simpan"}
-                  </Button>
-                </Col>
-                <Col xs={12} sm={12} md={6} lg={6}>
-                  <Button
-                    variant="danger"
-                    className="custom-danger-btn w-100"
-                    onClick={() => {
-                      handleCloseAddEditProdModal();
-                      setTimeout(() => {
-                        setProduk(null);
-                        setSelectedProduk(null);
-                        setInModal(false);
-                      }, 125);
-                    }}
-                    disabled={add.isPending || edit.isPending || isLoadingModal}
-                  >
-                    Batal
-                  </Button>
-                </Col>
-              </Row>
-            </Modal.Body>
-          </Form>
-        </Modal>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Hampers
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              name="nama_hampers"
+              value={nama_hampers}
+              onChange={inputHelperProd.handleInputChange}
+              disabled
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Produk
+            </Form.Label>
+            <Form.Select
+              style={{ border: "1px solid #808080" }}
+              name="id_produk"
+              value={formDataProd?.id_produk}
+              onChange={inputHelperProd.handleInputChange}
+              disabled={isLoadingModal || edit.isPending || add.isPending}
+              required
+            >
+              <option value="" disabled selected hidden>
+                ---
+              </option>
+              {produk?.map((produk, index) => (
+                <option key={index} value={produk.id_produk}>
+                  {produk.id_kategori === "CK"
+                    ? produk.nama_produk + " " + produk?.ukuran + " Loyang"
+                    : produk.nama_produk}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Jumlah
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="number"
+              placeholder="Masukkan jumlah produk"
+              name="jumlah"
+              value={formDataProd?.jumlah}
+              onChange={inputHelperProd.handleInputChange}
+              disabled={edit.isPending || add.isPending || isLoadingModal}
+              required
+            />
+          </Form.Group>
+        </AddEditModal>
 
-        <Modal
+        <DeleteConfirmationModal
+          header="Anda Yakin Ingin Menghapus Data Isi Hampers Ini?"
+          secondP="Semua data yang terkait dengan isi hampers tersebut akan hilang."
           show={showDelProdModal}
           onClick={(e) => e.stopPropagation()}
-          centered
-          size="lg"
-          keyboard={false}
-          backdrop="static"
-        >
-          <Modal.Body className="text-center p-5">
-            <h3 style={{ fontWeight: "bold" }}>
-              Anda Yakin Ingin Menghapus Data Isi Hampers Ini?
-            </h3>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
-              className="mt-3"
-            >
-              <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
-              <p className="m-0 p-0">
-                Semua data yang terkait dengan isi hampers tersebut akan hilang.
-              </p>
-            </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-              <Col xs={12} sm={12} md={6} lg={6}>
-                {/* Khusus delete panggil langsng onSubmit()*/}
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#F48E28", border: "none" }}
-                  className="custom-agree-btn w-100 p-1"
-                  onClick={() => onSubmit()}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">
-                    {del.isPending ? "Loading..." : "Hapus"}
-                  </h5>
-                </Button>
-              </Col>
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  style={{ backgroundColor: "#FF5B19", border: "none" }}
-                  className="custom-danger-btn w-100 p-1"
-                  onClick={() => {
-                    handleCloseDelProdModal();
-                    setIdDetailHampers(null);
-                    setProduk(null);
-                    setInModal(false);
-                  }}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Body>
-        </Modal>
+          onHapus={() => {
+            handleCloseDelProdModal();
+            setIdDetailHampers(null);
+            setProduk(null);
+            setInModal(false);
+          }}
+          onSubmit={onSubmit}
+          del={delProd}
+        />
       </section>
     </>
   );

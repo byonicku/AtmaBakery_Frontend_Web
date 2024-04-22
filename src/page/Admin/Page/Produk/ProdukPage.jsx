@@ -4,7 +4,6 @@ import {
   Row,
   Form,
   Table,
-  Modal,
   InputGroup,
   Spinner,
   Badge,
@@ -27,6 +26,7 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/CustomPagination";
 import APIProduk from "@/api/APIProduk";
 import { Link } from "react-router-dom";
+import DeleteConfirmationModal from "@/component/Admin/DeleteConfirmationModal";
 
 const category = {
   CK: "Cake",
@@ -306,51 +306,14 @@ export default function ProdukPage() {
           />
         )}
 
-        <Modal
+        <DeleteConfirmationModal
+          header="Anda Yakin Ingin Menghapus Produk Ini?"
+          secondP="Semua data yang terkait dengan produk tersebut akan hilang."
           show={show}
-          onHide={handleClose}
-          centered
-          size="lg"
-          keyboard={false}
-          backdrop="static"
-        >
-          <Modal.Body className="text-center p-5">
-            <h3 style={{ fontWeight: "bold" }}>
-              Anda Yakin Ingin Menghapus Data Produk Ini?
-            </h3>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
-              className="mt-3"
-            >
-              <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
-              <p className="m-0 p-0">
-                Semua data yang terkait dengan produk tersebut akan hilang.
-              </p>
-            </p>
-            <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-agree-btn w-100 p-1"
-                  onClick={onDelete}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Hapus</h5>
-                </Button>
-              </Col>
-              <Col xs={12} sm={12} md={6} lg={6}>
-                <Button
-                  variant="danger"
-                  className="custom-danger-btn w-100 p-1"
-                  onClick={handleClose}
-                  disabled={del.isPending}
-                >
-                  <h5 className="mt-2">Batal</h5>
-                </Button>
-              </Col>
-            </Row>
-          </Modal.Body>
-        </Modal>
+          onHapus={handleClose}
+          onSubmit={onDelete}
+          del={del}
+        />
       </section>
     </>
   );
