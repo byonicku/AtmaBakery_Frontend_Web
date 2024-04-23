@@ -18,6 +18,8 @@ const AddEditModal = ({
   submitButtonVariant = "danger",
   cancelButtonVariant = "danger",
 }) => {
+  const isDisabled = add?.isPending || edit?.isPending || isLoadingModal;
+
   return (
     <Modal
       show={show}
@@ -45,11 +47,9 @@ const AddEditModal = ({
                 variant={submitButtonVariant}
                 className="custom-agree-btn w-100"
                 type="submit"
-                disabled={add.isPending || edit.isPending || isLoadingModal}
+                disabled={isDisabled}
               >
-                {add.isPending || edit.isPending || isLoadingModal
-                  ? "Loading..."
-                  : submitButtonText}
+                {isDisabled ? "Loading..." : submitButtonText}
               </Button>
             </Col>
             <Col xs={12} sm={12} md={6} lg={6}>
@@ -57,7 +57,7 @@ const AddEditModal = ({
                 variant={cancelButtonVariant}
                 className="custom-danger-btn w-100"
                 onClick={onHide}
-                disabled={add.isPending || edit.isPending || isLoadingModal}
+                disabled={isDisabled}
               >
                 {cancelButtonText}
               </Button>
