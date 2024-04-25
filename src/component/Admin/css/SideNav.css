@@ -1,26 +1,30 @@
 .nav-sidebar .active {
-    background-color: #fff !important;
-    color: #F48E28 !important;
-    border-radius: 10px;
-    padding: 0px 5px 0px 5px;
+  background-color: #fff !important;
+  color: #f48e28 !important;
+  border-radius: 10px;
+  padding: 0px 5px 0px 5px;
 }
 
 .nav-sidebar .nav-item {
-    padding: 0px 5px 0px 5px;
-    border-radius: 10px;
-    margin: 2px 0;
+  padding: 0px 5px 0px 5px;
+  border-radius: 10px;
+  margin: 2px 0;
 }
 
 .nav-pills .nav-link:not(.active):hover {
-    padding: 15px;
-    border-radius: 10px;
+  padding: 15px;
+  border-radius: 10px;
 }
 
 .nav-pills .nav-link {
-    padding: 15px;
-    border-radius: 10px;
+  padding: 15px;
+  border-radius: 10px;
 }
 
 .nav-sidebar .nav-item .nav-icon {
-    margin-bottom: 0.2rem;
-} 
+  margin-bottom: 0.2rem;
+}
+
+.main-sidebar {
+  position: fixed !important;
+}
