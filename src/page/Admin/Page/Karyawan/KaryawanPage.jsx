@@ -532,7 +532,7 @@ export default function KaryawanPage() {
                 </Form.Label>
                 <Form.Control
                   style={{ border: "1px solid #808080" }}
-                  type="text"
+                  type="number"
                   placeholder="Masukkan nomor telepon"
                   name="no_telp"
                   value={formData.no_telp}

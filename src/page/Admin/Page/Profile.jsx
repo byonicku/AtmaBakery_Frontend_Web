@@ -2,7 +2,8 @@ import {
   Spinner, 
   Button, 
   Modal, 
-  Form 
+  Form ,
+  InputGroup
 } from "react-bootstrap";
 
 import {
@@ -13,6 +14,7 @@ import {
   // BsPrinterFill,
 } from "react-icons/bs";
 
+import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 import React, { useState, useEffect, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -24,6 +26,8 @@ import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
+  const [eyeToggle, setEyeToggle] = useState(true);
+  const handleToggle = () => setEyeToggle(!eyeToggle);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [mode, setMode] = useState("edit");
   const [showAddEditModal, setShowAddEditModal] = useState(false);
@@ -56,19 +60,19 @@ export default function Profile() {
   const validationSchema = {
     old_password: {
       required: true,
-      alias: "old_password",
+      alias: "Password Lama",
     },
     password: {
       required: true,
-      alias: "password",
+      alias: "Password Baru",
     },
     password_confirmation: {
       required: true,
-      alias: "password_confirmation",
+      alias: "Konfirmasi Password Baru",
     },
 
   };
-  
+
   const handleMutationSuccess = () => {
     setIsLoading(true);
     fetchUser();
@@ -108,7 +112,11 @@ export default function Profile() {
         return;
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
     }
   };
 
@@ -236,15 +244,13 @@ export default function Profile() {
                 }}
               >
                 <BsPencilSquare className="mb-1" /> Ubah Password
-            </Button>
-
-              
+              </Button>
             </div>
             </div>
           </div>
         )}
+
       </section>
-      
        {/* Modal */}
        <AddEditModal
           show={showAddEditModal} 
@@ -265,46 +271,76 @@ export default function Profile() {
           onSubmit={inputHelper.handleSubmit}
         >
           <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Kata Sandi Lama
-            </Form.Label>
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>Kata Sandi Lama</Form.Label>
+            <InputGroup>
             <Form.Control
+              type={eyeToggle ? "password" : "text"}
               style={{ border: "1px solid #808080" }}
-              type="password"
+              placeholder="Masukkan Kata Sandi Lama"
               name="old_password"
               value={formData.old_password}
               onChange={inputHelper.handleInputChange}
-              placeholder="Masukkan Kata Sandi Lama"
               disabled={edit.isPending || isLoadingModal}
             />
+            <InputGroup.Text
+              style={{
+                border: "1px solid #808080",
+                backgroundColor: "#FFFF",
+                userSelect: "none",
+              }}
+               onClick={handleToggle}
+              >
+              {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
+            </InputGroup.Text>
+            </InputGroup>
           </Form.Group>
           <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Kata Sandi Baru
-            </Form.Label>
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>Kata Sandi Baru</Form.Label>
+            <InputGroup>
             <Form.Control
+              type={eyeToggle ? "password" : "text"}
               style={{ border: "1px solid #808080" }}
-              type="password"
+              placeholder="Masukkan Kata Sandi Baru"
               name="password"
               value={formData.password}
               onChange={inputHelper.handleInputChange}
-              placeholder="Masukkan Kata Sandi Baru"
               disabled={edit.isPending || isLoadingModal}
             />
+            <InputGroup.Text
+              style={{
+                border: "1px solid #808080",
+                backgroundColor: "#FFFF",
+                userSelect: "none",
+              }}
+               onClick={handleToggle}
+              >
+              {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
+            </InputGroup.Text>
+            </InputGroup>
           </Form.Group>
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Konfirmasi Kata Sandi Baru
-            </Form.Label>
+        <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>Konfirmasi Kata Sandi Baru</Form.Label>
+            <InputGroup>
             <Form.Control
+              type={eyeToggle ? "password" : "text"}
               style={{ border: "1px solid #808080" }}
-              type="password"
+              placeholder="Masukkan Kata Sandi Baru"
               name="password_confirmation"
               value={formData.password_confirmation}
               onChange={inputHelper.handleInputChange}
-              placeholder="Masukkan Konfirmasi Kata Sandi Baru"
               disabled={edit.isPending || isLoadingModal}
             />
+            <InputGroup.Text
+              style={{
+                border: "1px solid #808080",
+                backgroundColor: "#FFFF",
+                userSelect: "none",
+              }}
+               onClick={handleToggle}
+              >
+              {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
+            </InputGroup.Text>
+            </InputGroup>
           </Form.Group>
         </AddEditModal>
     </>
