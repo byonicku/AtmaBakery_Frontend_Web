@@ -1,67 +1,135 @@
+import { 
+  Spinner, 
+  Button, 
+  Modal, 
+  Form 
+} from "react-bootstrap";
+
+import {
+  BsSearch,
+  BsPlusSquare,
+  BsPencilSquare,
+  BsFillTrash3Fill,
+  // BsPrinterFill,
+} from "react-icons/bs";
+
+import React, { useState, useEffect, useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import InputHelper from "@/page/InputHelper";
+
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIUser from "@/api/APIUser";
-import { useEffect, useState } from "react";
-import { Spinner, Button, Modal, Form } from "react-bootstrap";
-import { toast } from "sonner";
+import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-
-  const [passwordData, setPasswordData] = useState({
-    old_password: "",
-    password: "",
-    password_confirmation: ""
-  });
-
-  useEffect(() => {
-    const fetchUser = async () => {
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const [mode, setMode] = useState("edit");
+  const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const handleCloseAddEditModal = () => setShowAddEditModal(false);
+  const [user, setUser] = useState(null);
+  
+  const fetchUser = useCallback(async () => {
       try {
         const data = await APIUser.getSelf();
         console.log(data);
         setUser(data);
       } catch (error) {
         console.error(error);
-        toast.error(
-          error?.data?.message ||
-            error?.message ||
-            "Sesuatu sedang bermasalah pada server!"
-        );
       } finally {
         setIsLoading(false);
       }
-    };
-    fetchUser();
-  }, []);
+    }, []
+  );
 
-  const handlePasswordChange = (e) => {
-    setPasswordData({
-      ...passwordData,
-      [e.target.name]: e.target.value
-    });
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const [formData, setFormData] = useState({
+    old_password: "",
+    password: "",
+    password_confirmation: ""
+  });
+
+  const validationSchema = {
+    old_password: {
+      required: true,
+      alias: "old_password",
+    },
+    password: {
+      required: true,
+      alias: "password",
+    },
+    password_confirmation: {
+      required: true,
+      alias: "password_confirmation",
+    },
+
   };
   
-  const handlePasswordSubmit = async () => {
-    try {
-      await APIUser.updateSelfPassword(passwordData);
-      setPasswordData({
+  const handleMutationSuccess = () => {
+    setIsLoading(true);
+    fetchUser();
+    setTimeout(() => {
+      setFormData({
         old_password: "",
         password: "",
         password_confirmation: ""
       });
-      setShowModal(false);
-      toast.success("Password updated successfully!");
-    } catch (error) {
+    }, 125);
+  };
+  
+  const edit = useMutation({
+    mutationFn: (data) => APIUser.updateSelfPassword(data),
+    onSuccess: async () => {
+      toast.success("Edit Berhasil!");
+      handleCloseAddEditModal();
+      handleMutationSuccess();
+    },
+    onError: (error) => {
       console.error(error);
-      toast.error(
-        error?.data?.message ||
-          error?.message ||
-          "Sesuatu sedang bermasalah pada server!"
-      );
+    },
+  });
+
+  const onSubmit = async (formData) => {
+    if (isLoading) return;
+
+    try {
+      if (mode === "edit") {
+        const data = {
+          old_password: formData.old_password,
+          password: formData.password,
+          password_confirmation: formData.password_confirmation
+        };
+
+        await edit.mutateAsync(data);
+        return;
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
+  const inputHelper = new InputHelper(
+    formData,
+    setFormData,
+    validationSchema,
+    onSubmit
+  );
+
+  const handleEditPasswordClick = (user) => {
+    setMode("edit");
+    setFormData({
+      ...formData,
+      old_password: user.old_password,
+      password: user.password,
+      password_confirmation: user.password_confirmation
+    });
+    setShowAddEditModal(true);
+  };
+  
   return (
     <>
       <OutlerHeader title="Profile" breadcrumb="Profile" />
@@ -159,12 +227,18 @@ export default function Profile() {
                 className="custom-agree-btn w-45 mr-2">
                 Ubah Profile
               </Button>
-              <Button 
+              <Button
                 variant="danger"
                 className="custom-agree-btn w-45"
-                onClick={() => setShowModal(true)}>
-                Ubah Password
-              </Button>
+                onClick={() => {
+                setMode("edit");
+                handleEditPasswordClick(user);
+                }}
+              >
+                <BsPencilSquare className="mb-1" /> Ubah Password
+            </Button>
+
+              
             </div>
             </div>
           </div>
@@ -172,24 +246,24 @@ export default function Profile() {
       </section>
       
        {/* Modal */}
-       <Modal 
-          show={showModal} 
-          onHide={() => setShowModal(false)}
-          backdrop="static"
-          centered
-          size="lg"
-          style={{ border: "none" }}
-          >
-        <Modal.Body className="text-center p-5">
-            <h3 style={{ fontWeight: "bold" }}>
-              Ubah Kata Sandi
-            </h3>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
-              className="mt-3"
-            >
-              <p className="m-0 p-0">Pastikan kata sandi yang Anda ubahkan benar</p>
-            </p>
+       <AddEditModal
+          show={showAddEditModal} 
+          onHide={() => {
+            setShowAddEditModal(false);
+            setTimeout(() => {
+              setFormData({
+                old_password: "",
+                password: "",
+                password_confirmation: ""
+              });
+            }, 125);
+          }}
+          title={"Edit Data Resep"}
+          text={"Pastikan password yang Anda ubah benar"}
+          edit={edit}
+          isLoadingModal={isLoadingModal}
+          onSubmit={inputHelper.handleSubmit}
+        >
           <Form.Group className="text-start mt-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Kata Sandi Lama
@@ -197,10 +271,11 @@ export default function Profile() {
             <Form.Control
               style={{ border: "1px solid #808080" }}
               type="password"
-              placeholder="Masukkan Kata Sandi Lama"
               name="old_password"
-              value={passwordData.old_password}
-              onChange={handlePasswordChange}
+              value={formData.old_password}
+              onChange={inputHelper.handleInputChange}
+              placeholder="Masukkan Kata Sandi Lama"
+              disabled={edit.isPending || isLoadingModal}
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -210,41 +285,28 @@ export default function Profile() {
             <Form.Control
               style={{ border: "1px solid #808080" }}
               type="password"
-              placeholder="Masukkan Kata Sandi Baru"
               name="password"
-              value={passwordData.password}
-              onChange={handlePasswordChange}
+              value={formData.password}
+              onChange={inputHelper.handleInputChange}
+              placeholder="Masukkan Kata Sandi Baru"
+              disabled={edit.isPending || isLoadingModal}
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Konfirmasi Kata Sandi
+              Konfirmasi Kata Sandi Baru
             </Form.Label>
             <Form.Control
               style={{ border: "1px solid #808080" }}
               type="password"
-              placeholder="Masukkan Konfirmasi Kata Sandi"
               name="password_confirmation"
-              value={passwordData.password_confirmation}
-              onChange={handlePasswordChange}
+              value={formData.password_confirmation}
+              onChange={inputHelper.handleInputChange}
+              placeholder="Masukkan Konfirmasi Kata Sandi Baru"
+              disabled={edit.isPending || isLoadingModal}
             />
           </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="danger"
-            className="custom-danger-btn w-100"
-            onClick={() => setShowModal(false)}>
-            Batal
-          </Button>
-          <Button 
-            variant="danger"
-            className="custom-agree-btn w-100" 
-            onClick={handlePasswordSubmit}>
-            Simpan Perubahan
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        </AddEditModal>
     </>
   );
 }
