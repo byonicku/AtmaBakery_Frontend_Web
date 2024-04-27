@@ -7,7 +7,7 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -53,6 +53,13 @@ export default function BahanBakuPage() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
+
+  
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+
+  const startDateRef = useRef();
+  const endDateRef = useRef();
 
   const fetchBahanBaku = useCallback(async () => {
     setIsLoading(true);
@@ -410,8 +417,10 @@ export default function BahanBakuPage() {
             <Form.Control
               style={{ border: "1px solid #808080" }}
               type="date"
-              placeholder="Month YYYY"
               max={new Date().toISOString().split("T")[0]}
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              ref={startDateRef}
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -421,8 +430,11 @@ export default function BahanBakuPage() {
             <Form.Control
               style={{ border: "1px solid #808080" }}
               type="date"
-              placeholder="Month YYYY"
+              min={startDate}
               max={new Date().toISOString().split("T")[0]}
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              ref={endDateRef}
             />
           </Form.Group>
         </PrintModal>
@@ -463,6 +475,9 @@ export default function BahanBakuPage() {
               disabled={edit.isPending || add.isPending}
             />
           </Form.Group>
+          {selectedBahanBaku ? 
+            null
+          :
           <Form.Group className="text-start mt-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Stok
@@ -477,7 +492,9 @@ export default function BahanBakuPage() {
               disabled={edit.isPending || add.isPending}
             />
           </Form.Group>
-          <Form.Group className="text-start mt-3">
+          }
+          
+          <Form.Group className="text-start my-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Satuan
             </Form.Label>
