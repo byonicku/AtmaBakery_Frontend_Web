@@ -7,7 +7,7 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef  } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -45,6 +45,7 @@ export default function PenitipPage() {
 
   const handleClosePrintModal = () => setshowPrintModal(false);
   const handleShowPrintModal = () => setshowPrintModal(true);
+  const ref = useRef();
 
   // Mode untuk CRD
   // create -> "add"
@@ -412,7 +413,10 @@ export default function PenitipPage() {
             </Form.Label>
             <Form.Control
               style={{ border: "1px solid #808080" }}
-              type="month"
+              ref={ref}
+              type="text"
+              onFocus={() => (ref.current.type = "month")}
+              onBlur={() => (ref.current.type = "month")}
               placeholder="Month YYYY"
             />
           </Form.Group>
