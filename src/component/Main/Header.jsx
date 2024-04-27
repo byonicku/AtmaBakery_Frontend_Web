@@ -1,5 +1,7 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { FaRegUser } from "react-icons/fa6";
+import { IoIosLogOut } from "react-icons/io";
 
 import logo from "@/assets/images/atma-bakery.png";
 import { useState } from "react";
@@ -51,8 +53,7 @@ export default function Header() {
   };
 
   return (
-    <Navbar expand="lg" fixed="top">
-      <Container>
+    <Navbar className="navbarHome" expand="lg" fixed="top">
         <Navbar.Brand
           style={{ cursor: "pointer" }}
           onClick={() => {
@@ -70,39 +71,47 @@ export default function Header() {
         >
           <div className="navbar-toggler-icon" />
         </Navbar.Toggle>
-        <Navbar.Collapse id="navbarNavDropdown" className="justify-content-end">
-          <Nav>
+        <Navbar.Collapse id="navbarNavDropdown" className="justify-content-center">
+          <Nav className="mx-auto">
             <Nav.Link
               onClick={() => {
                 scrollToTop();
                 navigate("/");
               }}
             >
-              Home
+              Beranda
             </Nav.Link>
             <Nav.Link
               onClick={() => {
                 scrollToTop();
-                navigate("/product");
+                navigate("/tentang");
               }}
             >
-              Product
+              Tentang Kami
             </Nav.Link>
             <Nav.Link
               onClick={() => {
                 scrollToTop();
-                navigate("/about");
+                navigate("/produk");
               }}
             >
-              About
+              Produk
             </Nav.Link>
             <Nav.Link
               onClick={() => {
                 scrollToTop();
-                navigate("/contact");
+                navigate("/pesan");
               }}
             >
-              Contact
+              Pesan
+            </Nav.Link>
+            <Nav.Link
+              onClick={() => {
+                scrollToTop();
+                navigate("/kontak");
+              }}
+            >
+              Kontak
             </Nav.Link>
             {role !== null && role !== "CUST" && (
               <Nav.Link
@@ -111,31 +120,34 @@ export default function Header() {
                   navigate("/admin");
                 }}
               >
-                Admin
+                Dashboard
               </Nav.Link>
             )}
+          </Nav>
+          <Nav className="ml-auto">
             {token === null ? (
-              <Nav.Link
+              <Nav.Link className="button-style"
                 onClick={() => {
                   scrollToTop();
                   navigate("/login");
                 }}
               >
-                Login
+                <FaRegUser style={{ marginRight: '10px', color: '#F48E28'}} />
+                Masuk ke Akun
               </Nav.Link>
             ) : (
-              <Nav.Link
+              <Nav.Link className="button-style"
                 onClick={() => {
                   scrollToTop();
                   handleLogout();
                 }}
               >
+                <IoIosLogOut style={{ marginRight: '10px', color: '#F48E28'}} />
                 {isLoading ? "Loading..." : "Logout"}
               </Nav.Link>
             )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
+            </Nav>
+          </Navbar.Collapse>
     </Navbar>
   );
 }

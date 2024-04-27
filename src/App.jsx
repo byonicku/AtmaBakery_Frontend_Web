@@ -3,6 +3,10 @@ import { Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Home from "@/page/Main/Home";
+import TentangKami from "@/page/Main/TentangKami";
+import ProdukView from "@/page/Main/ProdukView";
+import Pesan from "@/page/Main/Pesan";
+import Kontak from "@/page/Main/Kontak";
 import HomeAdmin from "@/page/Admin/Page/Home";
 import Login from "@/page/Auth/Login";
 import Register from "@/page/Auth/Register";
@@ -31,6 +35,10 @@ export default function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/tentang" element={<TentangKami />} />
+            <Route path="/produk" element={<ProdukView />} />
+            <Route path="/pesan" element={<Pesan />} />
+            <Route path="/kontak" element={<Kontak />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/reset" element={<ResetPass />} />
