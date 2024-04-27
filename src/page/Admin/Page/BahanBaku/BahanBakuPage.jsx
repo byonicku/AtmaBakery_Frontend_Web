@@ -475,6 +475,9 @@ export default function BahanBakuPage() {
               disabled={edit.isPending || add.isPending}
             />
           </Form.Group>
+          {selectedBahanBaku ? 
+            null
+          :
           <Form.Group className="text-start mt-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Stok
@@ -489,7 +492,9 @@ export default function BahanBakuPage() {
               disabled={edit.isPending || add.isPending}
             />
           </Form.Group>
-          <Form.Group className="text-start mt-3">
+          }
+          
+          <Form.Group className="text-start my-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Satuan
             </Form.Label>
