@@ -1,3 +1,4 @@
+import logo from "@/assets/images/atma-bakery.png";
 import { useState } from "react";
 import {
   Button,
@@ -7,6 +8,7 @@ import {
   Image,
   Col,
   InputGroup,
+  Navbar,
 } from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 
@@ -81,6 +83,19 @@ export default function Login() {
 
   return (
     <div className="bg-half">
+      <Navbar className="navbarLogin" expand="lg" fixed="top" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', paddingLeft: '10rem'}}>
+        <Navbar.Brand
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          <div className="logo">
+            <img src={logo} alt="logo" />
+          </div>
+        </Navbar.Brand>
+      </Navbar>
+
       <Container className="container-setting">
         <Row className="no-gutters shadow-lg rounded h-auto">
           <Col

@@ -2,17 +2,24 @@ import Footer from "@/component/Main/Footer";
 import Header from "@/component/Main/Header";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { MdOutlinePlayCircleFilled } from "react-icons/md";
-
 import "./css/Main.css";
 import { Outlet } from "react-router-dom";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Home() {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleClickCoding2 = () => {
+    toast.error("Fitur Belum Tersedia!");
+  };
+
   return (
     <>
       <Header />
-      <Container className="content-main">
+      <div className="content-main">
         <Row>
-          <Col md={12} className="content-left">
+          <Col md={6} className="content-left">
             <Outlet />
             <div className="ellipse-container button-style" onClick={() => window.open('https://www.youtube.com')}>
               <span className="ellipse-text mr-2">Tonton Video</span>
@@ -26,18 +33,35 @@ export default function Home() {
             <div className="ftext-desc mt-5">
               Kue-kue ini dibuat dengan teliti menggunakan bahan-bahan berkualitas pilihan. Proses pembuatannya menggabungkan keahlian tangan dan perhatian mendetail untuk menciptakan produk akhir yang istimewa
             </div>
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
             <Row className="mt-5">
-              <Col md={4} className="mb-3 mb-md-0">
-                <Button className="button-landing button-style" variant="danger" block>Baca Selanjutnya</Button>
+              <Col md={5} className="mb-3 mb-md-0">
+                <Button
+                  className="button-landing button-style"
+                  variant="danger"
+                  block
+                  onClick={handleClickCoding2}
+                >
+                  Baca Selanjutnya
+                </Button>
               </Col>
-              <Col md={4} className="mb-3 mb-md-0">
-                <Button className="button-landing-border button-style" variant="outline-light" block>Pesan Sekarang</Button>
+              <Col md={5} className="mb-3 mb-md-0">
+                <Button
+                  className="button-landing-border button-style"
+                  variant="outline-light"
+                  block
+                  onClick={handleClickCoding2}
+                >
+                  Pesan Sekarang
+                </Button>
               </Col>
             </Row>
           </Col>
-          <Col md={4} className="content-right"></Col>
+          <Col md={6} className="content-right">
+            <div className="rectangleLanding"></div>
+          </Col>
         </Row>
-      </Container>
+      </div>
       <Footer />
     </>
   );
