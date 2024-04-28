@@ -1,4 +1,6 @@
 .content-main {
+  width: 100%;
+  height: 100%;
   font-size: 1.5rem; 
   margin: 0;
   overflow-x: hidden;
@@ -31,7 +33,7 @@
   text-align: center;
   font-size: 0.75rem; 
   line-height: 1.42857;
-  background-color: #FFFFFF !important;
+  background-color: #F5DDC4;
 }
 
 .main-title {
@@ -69,3 +71,52 @@
 .button-style:hover {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2); 
 }
+
+.rectangleLanding {
+  margin-left: 40%; 
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(180deg, #D9D9D9 0%, #f4f2f2 100%);
+  border-radius: 1.25rem;
+}
+
+
+/* Just For Desain Fitur Belum Tersedia*/
+.error-message {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.error-title {
+  color: #F48E28;
+  font-size: 3.75rem;
+  font-weight: bold; 
+  font-family: 'Montserrat', sans-serif; 
+}
+
+.error-description {
+  color: #666666;
+  font-size: 2rem;
+  font-family: 'Montserrat', sans-serif; 
+}
+
+.error-info {
+  color: #000000;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif; 
+  margin-top: 1.25rem;
+}
+
+.error-button {
+  margin-top: 1.25rem;
+  font-family: 'Montserrat', sans-serif; 
+}
+
+
+
+
+
+
+
+
