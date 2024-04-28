@@ -23,7 +23,7 @@ export default function Home() {
             <Outlet />
             <div className="ellipse-container button-style" onClick={() => window.open('https://www.youtube.com')}>
               <span className="ellipse-text mr-2">Tonton Video</span>
-              <MdOutlinePlayCircleFilled className="btn-circle ml-1" style={{ color: '#F48E28' }} />
+              <MdOutlinePlayCircleFilled className="btn-circleLanding ml-1" style={{ color: '#F48E28' }} />
             </div>
             <h1 className="main-title mt-5">
               Nikmati <br /> 

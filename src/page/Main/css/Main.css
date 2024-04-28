@@ -25,7 +25,7 @@
   padding-left: 0.625rem; 
 }
 
-.btn-circle {
+.btn-circleLanding {
   width: 1.875rem;
   height: 1.875rem;
   padding: 0.375rem 0rem;
@@ -33,7 +33,7 @@
   text-align: center;
   font-size: 0.75rem; 
   line-height: 1.42857;
-  background-color: #F5DDC4;
+  background-color: #ffffff;
 }
 
 .main-title {
