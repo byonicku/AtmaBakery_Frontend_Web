@@ -27,7 +27,11 @@ import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [eyeToggle, setEyeToggle] = useState(true);
+  const [eyeToggle1, setEyeToggle1] = useState(true);
+  const [eyeToggle2, setEyeToggle2] = useState(true);
   const handleToggle = () => setEyeToggle(!eyeToggle);
+  const handleToggle1 = () => setEyeToggle1(!eyeToggle1);
+  const handleToggle2 = () => setEyeToggle2(!eyeToggle2);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [mode, setMode] = useState("edit");
   const [showAddEditModal, setShowAddEditModal] = useState(false);
@@ -264,7 +268,7 @@ export default function Profile() {
               });
             }, 125);
           }}
-          title={"Edit Data Resep"}
+          title={"Ubah Password"}
           text={"Pastikan password yang Anda ubah benar"}
           edit={edit}
           isLoadingModal={isLoadingModal}
@@ -298,7 +302,7 @@ export default function Profile() {
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>Kata Sandi Baru</Form.Label>
             <InputGroup>
             <Form.Control
-              type={eyeToggle ? "password" : "text"}
+              type={eyeToggle1 ? "password" : "text"}
               style={{ border: "1px solid #808080" }}
               placeholder="Masukkan Kata Sandi Baru"
               name="password"
@@ -312,9 +316,9 @@ export default function Profile() {
                 backgroundColor: "#FFFF",
                 userSelect: "none",
               }}
-               onClick={handleToggle}
+               onClick={handleToggle1}
               >
-              {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
+              {eyeToggle1 ? <BsEyeFill /> : <BsEyeSlashFill />}
             </InputGroup.Text>
             </InputGroup>
           </Form.Group>
@@ -322,7 +326,7 @@ export default function Profile() {
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>Konfirmasi Kata Sandi Baru</Form.Label>
             <InputGroup>
             <Form.Control
-              type={eyeToggle ? "password" : "text"}
+              type={eyeToggle2 ? "password" : "text"}
               style={{ border: "1px solid #808080" }}
               placeholder="Masukkan Kata Sandi Baru"
               name="password_confirmation"
@@ -336,9 +340,9 @@ export default function Profile() {
                 backgroundColor: "#FFFF",
                 userSelect: "none",
               }}
-               onClick={handleToggle}
+               onClick={handleToggle2}
               >
-              {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
+              {eyeToggle2 ? <BsEyeFill /> : <BsEyeSlashFill />}
             </InputGroup.Text>
             </InputGroup>
           </Form.Group>
