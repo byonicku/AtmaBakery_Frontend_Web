@@ -32,8 +32,12 @@ const getProdukByPage = async (page = 0) => {
 };
 
 const searchProduk = async (search) => {
+  const data = {
+    data: search,
+  };
+
   try {
-    const response = await useAxios.get(`/produk/search/${search}`, {
+    const response = await useAxios.post(`/produk/search`, data, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
