@@ -110,16 +110,12 @@ export default function AddEditProdukPage({ isEdit }) {
       minValue: 0,
     },
     limit: {
-      required: true,
+      required: formData.status === "READY" ? false : true,
       alias: "Limit",
     },
     status: {
       required: formData.id_kategori === "TP" ? false : true,
       alias: "Status",
-    },
-    foto: {
-      required: isEdit ? false : true,
-      alias: "Gambar",
     },
     id_kategori: {
       required: true,
@@ -131,7 +127,7 @@ export default function AddEditProdukPage({ isEdit }) {
       minValue: 0,
     },
     stok: {
-      required: true,
+      required: formData.status === "PO" ? false : true,
       alias: "Stok",
       minValue: 0,
     },
@@ -171,7 +167,6 @@ export default function AddEditProdukPage({ isEdit }) {
       if (image_preview == null) return result;
 
       for (const image of image_preview) {
-        console.log(image);
         const formData = new FormData();
         const filename = new Date().getTime() + "-produk";
         formData.append("file", image);
@@ -220,10 +215,7 @@ export default function AddEditProdukPage({ isEdit }) {
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
-    if (
-      formData.gambar?.length > 5 ||
-      image?.length + formData.gambar?.length > 5
-    ) {
+    if (image?.length + formData.gambar?.length > 5) {
       toast.error("Gambar maksimal 5!");
       return;
     }
@@ -233,7 +225,7 @@ export default function AddEditProdukPage({ isEdit }) {
       return;
     }
 
-    if (formData.gambar?.length === 0) {
+    if ((image_preview?.length === 0 || image?.length === 0) && !isEdit) {
       toast.error("Gambar tidak boleh kosong!");
       return;
     }
@@ -254,6 +246,14 @@ export default function AddEditProdukPage({ isEdit }) {
     }
 
     try {
+      if (formData.status === "READY") {
+        formData.limit = 0;
+      }
+
+      if (formData.status === "PO") {
+        formData.stok = 0;
+      }
+
       if (isTitipan) {
         formData.status = "READY";
       }
@@ -268,6 +268,7 @@ export default function AddEditProdukPage({ isEdit }) {
         if (formData.id_penitip === "") {
           delete formData.id_penitip;
         }
+
         await add.mutateAsync(formData);
       }
     } catch (error) {
@@ -363,6 +364,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       }
                       onClick={() => {
                         if (image?.length >= 5 || image_preview?.length) {
+                          document.getElementsByName("foto")[0].value = "";
                           toast.error("Gambar maksimal 5!");
                           return;
                         }
@@ -374,17 +376,18 @@ export default function AddEditProdukPage({ isEdit }) {
                           image_preview?.length > 5
                         ) {
                           toast.error("Gambar maksimal 5!");
+                          document.getElementsByName("foto")[0].value = "";
                           return;
                         }
 
                         for (const image of e.target.files) {
                           if (image.size > 1000000) {
+                            document.getElementsByName("foto")[0].value = "";
                             toast.error("Ukuran gambar maksimal 1MB!");
                             return;
                           }
                         }
 
-                        inputHelper.handleFileChange(e);
                         setImagePreview(e.target.files);
                       }}
                     />
@@ -542,10 +545,16 @@ export default function AddEditProdukPage({ isEdit }) {
                     <Form.Control
                       type="number"
                       name="limit"
-                      defaultValue={formData.limit}
+                      value={formData.status === "READY" ? 0 : formData.limit}
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan Limit produk"
-                      disabled={isLoading || add.isPending || edit.isPending}
+                      disabled={
+                        isLoading ||
+                        add.isPending ||
+                        edit.isPending ||
+                        formData.status === "READY" ||
+                        formData.status === ""
+                      }
                       required
                     />
                   </Form.Group>
@@ -591,10 +600,16 @@ export default function AddEditProdukPage({ isEdit }) {
                     <Form.Control
                       type="number"
                       name="stok"
-                      defaultValue={formData.stok}
+                      value={formData.status === "PO" ? 0 : formData.stok}
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan Stok produk"
-                      disabled={isLoading || add.isPending || edit.isPending}
+                      disabled={
+                        isLoading ||
+                        add.isPending ||
+                        edit.isPending ||
+                        formData.status === "PO" ||
+                        formData.status === ""
+                      }
                       required
                     />
                   </Form.Group>
