@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 export default function Verify() {
   const { key } = useParams();
-  const [isLoadingVerify, setIsLoadingVerify] = useState(false);
+  const [isLoadingVerify, setIsLoadingVerify] = useState(true);
   const [status, setStatus] = useState(-1);
 
   useEffect(() => {
