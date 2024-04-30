@@ -12,14 +12,17 @@ import Login from "@/page/Auth/Login";
 import Register from "@/page/Auth/Register";
 import ResetPass from "@/page/Auth/ResetPass";
 import ChangePass from "@/page/Auth/ChangePass";
+import Verify from "@/page/Auth/Verify";
+
 import Produk from "@/page/Admin/Page/Produk/ProdukPage";
 import AddEditProdukPage from "@/page/Admin/Page/Produk/AddEditProdukPage";
 import Resep from "@/page/Admin/Page/Resep/ResepPage";
 import BahanBaku from "@/page/Admin/Page/BahanBaku/BahanBakuPage";
 import Karyawan from "@/page/Admin/Page/Karyawan/KaryawanPage";
 import Penitip from "@/page/Admin/Page/Penitip/PenitipPage";
+import Customer from "@/page/Admin/Page/Customer/CustomerPage";
+import PengeluaranLain from "@/page/Admin/Page/PengeluaranLain/PengeluaranPage";
 import Dashboard from "@/page/Admin/Dashboard";
-import Verify from "@/page/Auth/Verify";
 import HampersPage from "@/page/Admin/Page/Hampers/HampersPage";
 import AdminProfile from "@/page/Admin/Page/Profile";
 import DashboardRoute from "./page/Routes/DashboardRoute";
@@ -105,6 +108,30 @@ export default function App() {
                 element={
                   <RoleRoute roles={["MO"]}>
                     <Penitip />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="customer"
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <Customer />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="pengeluaran_lain"
+                element={
+                  <RoleRoute roles={["MO"]}>
+                    <PengeluaranLain />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="pembelian_bahan_baku"
+                element={
+                  <RoleRoute roles={["MO"]}>
+                    {/*jangan lupa kasih page nya disini */}
                   </RoleRoute>
                 }
               />
