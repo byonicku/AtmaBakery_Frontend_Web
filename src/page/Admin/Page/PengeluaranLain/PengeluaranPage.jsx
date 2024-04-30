@@ -101,13 +101,13 @@ import {
         required: true,
         alias: "Nama Pengeluaran Lain",
       },
-      satuan: {
-        required: true,
-        alias: "Satuan Pengeluaran Lain",
-      },
       total: {
         required: true,
         alias: "Total Pengeluaran Lain",
+      },
+      satuan: {
+        required: true,
+        alias: "Satuan Pengeluaran Lain",
       },
       tanggal_pengeluaran: {
         required: true,
@@ -124,7 +124,7 @@ import {
             nama: "",
             satuan: "",
             total:"",
-            tanggal_pengeuaran: "",
+            tanggal_pengeluaran: "",
         });
         setSearch(null);
       }, 125);
@@ -171,11 +171,6 @@ import {
   
     const onSubmit = async (formData) => {
       if (isLoading) return;
-  
-      if (parseInt(formData?.stok) < 0) {
-        toast.error("Stok tidak boleh kurang dari 0!");
-        return;
-      }
   
       try {
         if (mode === "add") {
@@ -332,10 +327,10 @@ import {
                       Nama
                     </th>
                     <th style={{ width: "16%" }} className="th-style">
-                      Satuan
+                      Total
                     </th>
                     <th style={{ width: "18%" }} className="th-style">
-                      Total
+                      Satuan
                     </th>
                     <th style={{ width: "20%" }} className="th-style">
                       Tanggal Pengeluaran
@@ -349,8 +344,8 @@ import {
                   {pengeluaran.map((pengeluaran, index) => (
                     <tr key={index}>
                       <td>{pengeluaran.nama}</td>
-                      <td>{pengeluaran.satuan}</td>
                       <td>{pengeluaran.total}</td>
+                      <td>{pengeluaran.satuan}</td>
                       <td>{pengeluaran.tanggal_pengeluaran}</td>
                       <td>
                         <Row className="gap-1 gap-lg-0 gap-md-0">
@@ -480,30 +475,26 @@ import {
                 style={{ border: "1px solid #808080" }}
                 type="text"
                 placeholder="Masukkan nama pengeluaran"
-                name="nama_bahan_baku"
-                value={formData?.nama_bahan_baku}
+                name="nama"
+                value={formData?.nama}
                 onChange={inputHelper.handleInputChange}
                 disabled={edit.isPending || add.isPending}
               />
             </Form.Group>
-            {selectedPengeluaran ? 
-              null
-            :
             <Form.Group className="text-start mt-3">
               <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                Stok
+                Total
               </Form.Label>
               <Form.Control
                 style={{ border: "1px solid #808080" }}
                 type="number"
                 placeholder="Masukkan stok pengeluaran"
-                name="stok"
-                value={formData?.stok}
+                name="total"
+                value={formData?.total}
                 onChange={inputHelper.handleInputChange}
                 disabled={edit.isPending || add.isPending}
               />
             </Form.Group>
-            }
             
             <Form.Group className="text-start my-3">
               <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -517,6 +508,19 @@ import {
                 value={formData?.satuan}
                 onChange={inputHelper.handleInputChange}
                 disabled={edit.isPending || add.isPending}
+              />
+            </Form.Group>
+            <Form.Group className="text-start mt-3">
+              <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                Tanggal Pengeluaran
+              </Form.Label>
+              <Form.Control
+                style={{ border: "1px solid #808080" }}
+                type="date"
+                name="tanggal_pengeluaran"
+                max={new Date().toISOString().split("T")[0]}
+                value={formData?.tanggal_pengeluaran}
+                onChange={inputHelper.handleInputChange}
               />
             </Form.Group>
           </AddEditModal>
