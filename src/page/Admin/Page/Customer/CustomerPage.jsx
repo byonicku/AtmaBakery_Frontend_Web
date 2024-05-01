@@ -10,6 +10,7 @@ import {
 import { useState, useEffect, useCallback, useRef  } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 import InputHelper from "@/page/InputHelper";
 import {
@@ -190,12 +191,16 @@ export default function CustomerPage() {
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-0">
                         <Col xs={12} sm={12} md={11} lg={11}>
-                          <Button
-                            variant="danger"
-                            className="custom-danger-btn w-100"
-                          >
-                            <BsInbox className="mb-1" /> Lihat History
-                          </Button>
+                          <Link
+                            to={`./history/${cust.id_user}`}
+                            className={
+                              isLoading
+                              ? "btn btn-danger custom-danger-btn w-100 me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2 disabled"
+                              : "btn btn-danger custom-danger-btn w-100 me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+                            }
+                          >                    
+                            <BsInbox className="mb-1" /> Lihat Detail
+                          </Link>
                         </Col>
                       </Row>
                     </td>

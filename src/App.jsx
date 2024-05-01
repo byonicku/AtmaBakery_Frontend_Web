@@ -21,6 +21,7 @@ import BahanBaku from "@/page/Admin/Page/BahanBaku/BahanBakuPage";
 import Karyawan from "@/page/Admin/Page/Karyawan/KaryawanPage";
 import Penitip from "@/page/Admin/Page/Penitip/PenitipPage";
 import Customer from "@/page/Admin/Page/Customer/CustomerPage";
+import HistoryCustomer from "@/page/Admin/Page/Customer/HistoryCustomerPage";
 import PengeluaranLain from "@/page/Admin/Page/PengeluaranLain/PengeluaranPage";
 import Dashboard from "@/page/Admin/Dashboard";
 import HampersPage from "@/page/Admin/Page/Hampers/HampersPage";
@@ -116,6 +117,14 @@ export default function App() {
                 element={
                   <RoleRoute roles={["ADM"]}>
                     <Customer />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="customer/history/:id"
+                element={
+                  <RoleRoute roles={["ADM"]}>
+                    <HistoryCustomer />
                   </RoleRoute>
                 }
               />
