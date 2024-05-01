@@ -70,6 +70,7 @@ export default function SideNav() {
               style={{
                 width: "3rem",
                 height: "3rem",
+                objectFit: "cover",
               }}
             />
           </div>
