@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 
 import RouteData from "@/assets/AdminConstant";
 import AdminLTELogo from "/dist/img/AdminLTELogo.png";
-import DefaultUser from "/dist/img/user2-160x160.jpg";
 
 import "./css/SideNav.css";
 import { useEffect } from "react";
@@ -41,6 +40,8 @@ export default function SideNav() {
     });
   }, [location]);
 
+  useEffect(() => {}, [foto_profil]);
+
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       {/* Brand Logo */}
@@ -61,8 +62,8 @@ export default function SideNav() {
             <Image
               src={
                 foto_profil == "null" || foto_profil == null
-                  ? DefaultUser
-                  : sessionStorage.getItem("foto_profil")
+                  ? "https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/r1xujbu1yfoenzked4rc"
+                  : foto_profil
               }
               className="img-circle elevation-2"
               alt="User Image"
