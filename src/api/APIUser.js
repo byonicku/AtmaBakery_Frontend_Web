@@ -115,6 +115,52 @@ const updateSelfPassword = async (data) => {
   }
 };
 
+const updateUserSelf = async (data) => {
+  try {
+    const response = await useAxios.post("/users/self", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const updateUserSelfGambar = async (image) => {
+  const data = {
+    foto_profil: image,
+  };
+  console.log(data);
+  try {
+    const response = await useAxios.post(`/users/self`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const deleteUserSelfGambar = async () => {
+  try {
+    const response = await useAxios.delete(`/users/self/pfp`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APIUser = {
   getSelf,
   getAllUser,
@@ -124,6 +170,9 @@ const APIUser = {
   updateUser,
   deleteUser,
   updateSelfPassword,
+  updateUserSelf,
+  updateUserSelfGambar,
+  deleteUserSelfGambar,
 };
 
 export default APIUser;

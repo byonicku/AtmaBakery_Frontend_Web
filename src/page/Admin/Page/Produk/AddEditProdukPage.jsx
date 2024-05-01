@@ -461,6 +461,7 @@ export default function AddEditProdukPage({ isEdit }) {
                                   );
 
                                   if (image_preview?.length === 1) {
+                                    URL.revokeObjectURL(image_preview[index]);
                                     document.getElementsByName(
                                       "foto"
                                     )[0].value = "";

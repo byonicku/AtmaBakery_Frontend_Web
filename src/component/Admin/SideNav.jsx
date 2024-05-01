@@ -4,10 +4,9 @@ import { useLocation } from "react-router-dom";
 
 import RouteData from "@/assets/AdminConstant";
 import AdminLTELogo from "/dist/img/AdminLTELogo.png";
-import DefaultUser from "/dist/img/user2-160x160.jpg";
 
 import "./css/SideNav.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import NavItem from "./component/NavItem";
 
 const role = {
@@ -21,7 +20,7 @@ export default function SideNav() {
   const location = useLocation();
   const roleId = sessionStorage.getItem("role") || "EMP";
   const roleName = role[roleId];
-  const foto_profil = sessionStorage.getItem("foto_profil");
+  const [image, setImage] = useState(getImageSrc());
   const nama = sessionStorage.getItem("nama");
 
   useEffect(() => {
@@ -41,6 +40,29 @@ export default function SideNav() {
     });
   }, [location]);
 
+  function getImageSrc() {
+    const foto_profil = sessionStorage.getItem("foto_profil");
+    return foto_profil === "null" || foto_profil === null
+      ? "https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/r1xujbu1yfoenzked4rc"
+      : foto_profil;
+  }
+
+  useEffect(() => {
+    function handleStorageEvent(event) {
+      if (event.storageArea === sessionStorage && event.key === "foto_profil") {
+        setImage(getImageSrc());
+      }
+    }
+
+    // Add the storage event listener
+    window.addEventListener("storage", handleStorageEvent);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("storage", handleStorageEvent);
+    };
+  }, []);
+
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       {/* Brand Logo */}
@@ -59,16 +81,13 @@ export default function SideNav() {
         <div className="user-panel mt-1 pb-2 mb-3 d-flex">
           <div className="image pt-2">
             <Image
-              src={
-                foto_profil == "null" || foto_profil == null
-                  ? DefaultUser
-                  : sessionStorage.getItem("foto_profil")
-              }
+              src={image}
               className="img-circle elevation-2"
               alt="User Image"
               style={{
                 width: "3rem",
                 height: "3rem",
+                objectFit: "cover",
               }}
             />
           </div>
