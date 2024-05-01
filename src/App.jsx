@@ -27,6 +27,7 @@ import HampersPage from "@/page/Admin/Page/Hampers/HampersPage";
 import AdminProfile from "@/page/Admin/Page/Profile";
 import DashboardRoute from "./page/Routes/DashboardRoute";
 import RoleRoute from "./page/Routes/RoleRoute";
+import PembelianBahanBakuPage from "./page/Admin/Page/PembelianBahanBaku/PembelianBahanBakuPage";
 
 const queryClient = new QueryClient();
 
@@ -131,7 +132,7 @@ export default function App() {
                 path="pembelian_bahan_baku"
                 element={
                   <RoleRoute roles={["MO"]}>
-                    {/*jangan lupa kasih page nya disini */}
+                    <PembelianBahanBakuPage />
                   </RoleRoute>
                 }
               />

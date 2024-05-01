@@ -47,7 +47,7 @@ const AddEditModal = ({
                 variant={submitButtonVariant}
                 className="custom-agree-btn w-100"
                 type="submit"
-                disabled={isDisabled}
+                disabled={isDisabled || isLoadingModal}
               >
                 {isDisabled ? "Loading..." : submitButtonText}
               </Button>
@@ -57,7 +57,7 @@ const AddEditModal = ({
                 variant={cancelButtonVariant}
                 className="custom-danger-btn w-100"
                 onClick={onHide}
-                disabled={isDisabled}
+                disabled={isDisabled || isLoadingModal}
               >
                 {cancelButtonText}
               </Button>
