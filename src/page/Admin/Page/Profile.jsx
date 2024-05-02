@@ -207,6 +207,7 @@ export default function Profile() {
   const [formDataProfil, setFormDataProfil] = useState({
     nama: "",
     no_telp: "",
+    jenis_kelamin: "",
   });
 
   const validationSchemaProfil = {
@@ -220,6 +221,10 @@ export default function Profile() {
       minLength: 10,
       maxLength: 13,
       pattern: /^(?:\+?08)(?:\d{2,3})?[ -]?\d{3,4}[ -]?\d{4}$/,
+    },
+    jenis_kelamin: {
+      required: true,
+      alias: "Jenis Kelamin",
     },
   };
 
@@ -241,6 +246,7 @@ export default function Profile() {
       ...formData,
       nama: user.nama,
       no_telp: user.no_telp,
+      jenis_kelamin: user.jenis_kelamin,
     });
     setShowAddEditModalProfil(true);
   };
@@ -379,6 +385,28 @@ export default function Profile() {
                   type="text"
                   className="form-control"
                   value={user?.email || ""}
+                  disabled
+                />
+              </div>
+              <div className="text-start mt-3">
+                <label
+                  htmlFor="jenis_kelamin"
+                  style={{ fontWeight: "bold", fontSize: "1em" }}
+                >
+                  Jenis Kelamin
+                </label>
+                <input
+                  style={{ border: "1px solid #808080" }}
+                  id="jenis_kelamin"
+                  type="text"
+                  className="form-control"
+                  value={
+                    user.jenis_kelamin === null
+                      ? ""
+                      : user?.jenis_kelamin === "L"
+                      ? "Laki-laki"
+                      : "Perempuan"
+                  }
                   disabled
                 />
               </div>
@@ -579,9 +607,8 @@ export default function Profile() {
           setTimeout(() => {
             setFormDataProfil({
               nama: "",
-              tanggal_lahir: "",
               no_telp: "",
-              email: "",
+              jenis_kelamin: "",
             });
           }, 125);
         }}
@@ -620,6 +647,32 @@ export default function Profile() {
             onChange={inputHelperProfil.handleInputChange}
             disabled={editProfil.isPending || isLoadingModal}
           />
+        </Form.Group>
+        <Form.Group className="text-start mt-3">
+          <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+            Jenis Kelamin
+          </Form.Label>
+          <div className="d-flex ps-1">
+            <Form.Check
+              type="radio"
+              label="Laki-laki"
+              name="jenis_kelamin"
+              value="L"
+              checked={formDataProfil.jenis_kelamin === "L"}
+              onChange={inputHelperProfil.handleInputChange}
+              disabled={editProfil.isPending || isLoadingModal}
+              className="me-3"
+            />
+            <Form.Check
+              type="radio"
+              label="Perempuan"
+              name="jenis_kelamin"
+              value="P"
+              checked={formDataProfil.jenis_kelamin === "P"}
+              onChange={inputHelperProfil.handleInputChange}
+              disabled={editProfil.isPending || isLoadingModal}
+            />
+          </div>
         </Form.Group>
       </AddEditModal>
     </>
