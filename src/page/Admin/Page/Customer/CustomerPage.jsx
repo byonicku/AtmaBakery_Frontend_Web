@@ -184,7 +184,7 @@ export default function CustomerPage() {
               <tbody>
                 {cust.map((cust, index) => (
                   <tr key={index}>
-                    <td style={{ fontWeight:"bolder", textAlign:"center"}}>{index+1}</td>
+                    <td style={{ fontWeight:"bolder", textAlign:"center"}}>{(page - 1) * 10 + index + 1}</td>
                     <td>{cust.nama}</td>
                     <td>{cust.email}</td>
                     <td>{cust.no_telp}</td>
