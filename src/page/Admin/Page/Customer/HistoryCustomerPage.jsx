@@ -2,24 +2,15 @@ import {
     Button,
     Col,
     Row,
-    Form,
+    Modal,
     Table,
-    InputGroup,
     Spinner,
     Badge,
   } from "react-bootstrap";
   import { useState, useEffect, useCallback, useRef  } from "react";
-  import { useMutation } from "@tanstack/react-query";
-  import { toast } from "sonner";
   import { useParams } from "react-router-dom";
   
-  import InputHelper from "@/page/InputHelper";
   import {
-    BsSearch,
-    BsPlusSquare,
-    BsPencilSquare,
-    BsFillTrash3Fill,
-    BsPrinterFill,
     BsInbox,
   } from "react-icons/bs";
   
@@ -33,7 +24,8 @@ import {
   export default function HistoryCustomerPage() {
     const { id } = useParams();
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedHistory, setSelectedHistory] = useState(null);
+    const [selectedHistory, setSelectedHistory] = useState([]);
+    const [selectedNota, setSelectedNota] = useState(null);
   
     const ref = useRef();
   
@@ -41,7 +33,11 @@ import {
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [search, setSearch] = useState(null);
+    const [showModal , setShowModal] = useState(false);
   
+    const handleCloseModal = () => setShowModal(false);
+    const handleShowModal = () => setShowModal(true);
+
     const fetchHistoryCust = useCallback(async (id) => {
       setIsLoading(true);
       try {
@@ -71,26 +67,6 @@ import {
       fetchHistoryCust(id);
     }, [fetchHistoryCust]);
   
-    // Search Data
-    const fetchHistorySearch = async () => {
-      if (search.trim() === "") {
-        // Kalo spasi doang bakal gabisa
-        return;
-      }
-  
-      setIsLoading(true);
-  
-      try {
-        const response = await APIHistory.searchCust(search.trim());
-        setHistory(response);
-      } catch (error) {
-        setHistory([]);
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-  
     return (
       <>
         <OutlerHeader
@@ -99,55 +75,6 @@ import {
           breadcrumb="History_Customer"
         />
         <section className="content px-3">
-          <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
-            <Col
-              xs={12}
-              sm={12}
-              lg={6}
-              md={12}
-              className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-            >
-            </Col>
-            <Col
-              xs={12}
-              sm={12}
-              lg={6}
-              md={12}
-              className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-            >
-              <InputGroup>
-                <Form.Control
-                  type="text"
-                  placeholder="Cari History Customer disini"
-                  name="search"
-                  value={search || ""}
-                  disabled={isLoading}
-                  onChange={(e) => {
-                    if (e.target.value === "") {
-                      if (page !== 1) {
-                        setPage(1);
-                      } else {
-                        fetchHistoryCust();
-                      }
-                    }
-                    setSearch(e.target.value);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      fetchHistorySearch();
-                    }
-                  }}
-                />
-                <Button
-                  variant="secondary"
-                  disabled={isLoading}
-                  onClick={() => fetchHistorySearch()}
-                >
-                  <BsSearch />
-                </Button>
-              </InputGroup>
-            </Col>
-          </Row>
           {isLoading ? (
             <div className="text-center">
               <Spinner
@@ -213,6 +140,14 @@ import {
                             <Button
                               variant="danger"
                               className="custom-danger-btn w-100"
+                              onClick={() => {
+                                setSelectedNota(history)
+                                setSelectedHistory(history.detail_transaksi);
+                                console.log(history.detail_transaksi);
+                                handleShowModal();
+                              }
+                                
+                              }
                             >
                               <BsInbox className="mb-1" /> Lihat Detail
                             </Button>
@@ -239,6 +174,60 @@ import {
               }
             />
           )}
+
+          <Modal
+            show={showModal}
+            onHide={handleCloseModal}
+          >
+            <Modal.Body className="text-center p-4 m-2">
+              <h5 style={{ fontWeight: "bold" }}>Detail Transaksi {selectedNota?.no_nota}</h5>
+              <p
+                style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
+                className="mt-1"
+              >
+                Tipe Delivery : {selectedNota?.tipe_delivery}
+              </p>
+              
+              <Table responsive striped className="text-start">
+                <thead>
+                  <tr>
+                    <th style={{ width: "20%" }} className="th-style">
+                      Produk
+                    </th>
+                    <th style={{ width: "15%" }} className="th-style">
+                      Jumlah
+                    </th>
+                    <th style={{ width: "20%" }} className="th-style">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                  <tbody>
+                    { selectedHistory.map(function(
+                      detail,idx
+                    ) {
+                      return(
+                        <tr key={idx}>
+                          <td>ini nanti nama produk/hampers </td>
+                          <td>{detail.jumlah}</td>
+                          <td>
+                            {/* {new Intl.NumberFormat("id-ID", {
+                              style: "currency",
+                              currency: "IDR",
+                            }).format()} */}
+                             ini nanti subtotal
+                        </td>
+                        </tr>
+                      );
+                    }
+                  
+                  )}
+                      
+                  </tbody>
+              </Table>
+            </Modal.Body>
+            
+          </Modal>
         </section>
       </>
     );
