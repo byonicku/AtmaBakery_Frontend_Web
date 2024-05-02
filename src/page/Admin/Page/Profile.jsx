@@ -35,6 +35,9 @@ export default function Profile() {
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
 
+  const [showAddEditModalProfil, setShowAddEditModalProfil] = useState(false);
+  const handleCloseAddEditModalProfil = () => setShowAddEditModalProfil(false);
+
   const [showAddEditModalGambar, setShowAddEditModalGambar] = useState(false);
   const handleCloseAddEditModalGambar = () => setShowAddEditModalGambar(false);
 
@@ -48,6 +51,7 @@ export default function Profile() {
     try {
       const data = await APIUser.getSelf();
       sessionStorage.setItem("foto_profil", data.foto_profil);
+      sessionStorage.setItem("nama", data.nama);
       setUser(data);
     } catch (error) {
       console.error(error);
@@ -147,6 +151,11 @@ export default function Profile() {
         return;
       }
 
+      if (mode === "edit-profil") {
+        await editProfil.mutateAsync(formDataProfil);
+        return;
+      }
+
       if (mode === "delete") {
         await delGambar.mutateAsync();
 
@@ -194,6 +203,54 @@ export default function Profile() {
 
     await editGambar.mutateAsync();
   };
+
+  const [formDataProfil, setFormDataProfil] = useState({
+    nama: "",
+    no_telp: "",
+  });
+
+  const validationSchemaProfil = {
+    nama: {
+      required: true,
+      alias: "Nama",
+    },
+    no_telp: {
+      required: true,
+      alias: "Nomor Telepon",
+      minLength: 10,
+      maxLength: 13,
+      pattern: /^(?:\+?08)(?:\d{2,3})?[ -]?\d{3,4}[ -]?\d{4}$/,
+    },
+  };
+
+  const editProfil = useMutation({
+    mutationFn: (data) => APIUser.updateUserSelf(data),
+    onSuccess: async () => {
+      toast.success("Edit Profil Berhasil!");
+      handleCloseAddEditModalProfil();
+      handleMutationSuccess();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const handleEditProfileClick = (user) => {
+    setMode("edit-profil");
+    setFormDataProfil({
+      ...formData,
+      nama: user.nama,
+      no_telp: user.no_telp,
+    });
+    setShowAddEditModalProfil(true);
+  };
+
+  const inputHelperProfil = new InputHelper(
+    formDataProfil,
+    setFormDataProfil,
+    validationSchemaProfil,
+    onSubmit
+  );
 
   return (
     <>
@@ -325,9 +382,16 @@ export default function Profile() {
                   disabled
                 />
               </div>
-              <div className="text-start mt-5 d-flex mb-3">
-                <Button variant="danger" className="custom-agree-btn w-45 mr-2">
-                  Ubah Profile
+              <div className="text-start mt-3 d-flex mb-3">
+                <Button
+                  variant="success"
+                  className="w-45 mr-2"
+                  onClick={() => {
+                    setMode("edit-profil");
+                    handleEditProfileClick(user);
+                  }}
+                >
+                  <BsPencilSquare className="mb-1" /> Ubah Profile
                 </Button>
                 <Button
                   variant="danger"
@@ -507,6 +571,57 @@ export default function Profile() {
         onSubmit={onSubmit}
         isLoadingModal={isLoadingModal}
       />
+
+      <AddEditModal
+        show={showAddEditModalProfil}
+        onHide={() => {
+          setShowAddEditModalProfil(false);
+          setTimeout(() => {
+            setFormDataProfil({
+              nama: "",
+              tanggal_lahir: "",
+              no_telp: "",
+              email: "",
+            });
+          }, 125);
+        }}
+        title={"Ubah Profile"}
+        text={
+          "Pastikan data profil yang Anda ubah benar, hanya dapat mengganti nama, dan nomor telepon."
+        }
+        edit={editProfil}
+        isLoadingModal={isLoadingModal}
+        onSubmit={inputHelperProfil.handleSubmit}
+      >
+        <Form.Group className="text-start mt-3">
+          <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+            Nama
+          </Form.Label>
+          <Form.Control
+            type="text"
+            style={{ border: "1px solid #808080" }}
+            placeholder="Masukkan Nama"
+            name="nama"
+            value={formDataProfil.nama}
+            onChange={inputHelperProfil.handleInputChange}
+            disabled={editProfil.isPending || isLoadingModal}
+          />
+        </Form.Group>
+        <Form.Group className="text-start mt-3">
+          <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+            Nomor Telepon
+          </Form.Label>
+          <Form.Control
+            type="text"
+            style={{ border: "1px solid #808080" }}
+            placeholder="Masukkan Nomor Telepon"
+            name="no_telp"
+            value={formDataProfil.no_telp}
+            onChange={inputHelperProfil.handleInputChange}
+            disabled={editProfil.isPending || isLoadingModal}
+          />
+        </Form.Group>
+      </AddEditModal>
     </>
   );
 }
