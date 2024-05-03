@@ -24,6 +24,8 @@ export default function HistoryCustomerPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedHistory, setSelectedHistory] = useState([]);
   const [selectedNota, setSelectedNota] = useState(null);
+  const [selectedNota1, setSelectedNota1] = useState(null);
+  const [hargaOngkir, setOngkir] = useState(null);
 
   const ref = useRef();
 
@@ -34,15 +36,22 @@ export default function HistoryCustomerPage() {
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = () => setShowModal(true);
+  const handleShowModal = useCallback( 
+    async(data) =>{
+    const response = await APIHistory.getNotaPesanan(data);
+    console.log(response);
+    setSelectedNota1(response);
+    setShowModal(true);
+  },
+  []
+);
 
   const fetchHistoryCust = useCallback(
     async (id) => {
       setIsLoading(true);
       try {
         const response = await APIHistory.getCustHistoryByPage(id, page);
-        setHistory(response.data);
-        console.log(response);
+        setHistory(response);
         setLastPage(response.last_page);
       } catch (error) {
         // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
@@ -97,19 +106,22 @@ export default function HistoryCustomerPage() {
                   <th style={{ width: "10%" }} className="th-style">
                     Nomor Nota
                   </th>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Tanggal Pesan
                   </th>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Tanggal Ambil
                   </th>
-                  <th style={{ width: "13%" }} className="th-style">
+                  <th style={{ width: "10%" }} className="th-style">
+                    Tipe Delivery
+                  </th>
+                  <th style={{ width: "10%" }} className="th-style">
                     Status
                   </th>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Total
                   </th>
-                  <th style={{ width: "13%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Aksi
                   </th>
                 </tr>
@@ -121,6 +133,15 @@ export default function HistoryCustomerPage() {
                     <td>{history.no_nota}</td>
                     <td>{history.tanggal_pesan}</td>
                     <td>{history.tanggal_ambil}</td>
+                    <td>
+                    {history.tipe_delivery == "Ojol" ? (
+                        <Badge bg="success">{history.tipe_delivery}</Badge>
+                      ) : history.tipe_delivery === "Kurir" ? (
+                        <Badge bg="primary">{history.tipe_delivery}</Badge>
+                      ) : (
+                        <Badge bg="dark">{history.tipe_delivery}</Badge>
+                      )}
+                    </td>
                     <td>
                       {history.status == "Terkirim" ? (
                         <Badge bg="success">{history.status}</Badge>
@@ -145,8 +166,16 @@ export default function HistoryCustomerPage() {
                             onClick={() => {
                               setSelectedNota(history);
                               setSelectedHistory(history.detail_transaksi);
-                              console.log(history.detail_transaksi);
-                              handleShowModal();
+                              if(history.radius <= 5){
+                                setOngkir(10000);
+                              } else if (history.radius <= 10) {
+                                setOngkir(15000);
+                              } else if (history.radius <= 15) {
+                                setOngkir(20000);
+                              } else {
+                                setOngkir(25000);
+                              }
+                              handleShowModal(history);
                             }}
                           >
                             <BsInbox className="mb-1" /> Lihat Detail
@@ -175,29 +204,123 @@ export default function HistoryCustomerPage() {
           />
         )}
 
-        <Modal show={showModal} onHide={handleCloseModal}>
-          <Modal.Body className="text-center p-4 m-2">
-            <h5 style={{ fontWeight: "bold" }}>
-              Detail Transaksi {selectedNota?.no_nota}
-            </h5>
-            <p
-              style={{ color: "rgb(18,19,20,70%)", fontSize: "1em" }}
-              className="mt-1"
-            >
-              Tipe Delivery : {selectedNota?.tipe_delivery}
-            </p>
+        <Modal show={showModal} onHide={handleCloseModal} size="xl">
+          <Modal.Body className="text-start p-4 m-2">
+            <Row>
+              <Col>
+                <h2 style={{ fontWeight: "bold" }}>Atma Kitchen</h2>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                  className="mt-3"
+                >
+                  Jl. Centralpark No. 10 Yogyakarta
+                </h5>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                >
+                  AtmaKitchen@gmail.uajy.ac.id
+                </h5>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                >
+                  012-345-6789
+                </h5>
+              </Col>
+              <Col className="text-end">
+                <h4 >Nota {selectedNota1?.no_nota} 
+                  {selectedNota1?.status == "Terkirim" ? (
+                        <Badge className="ms-3 font-size-12" bg="success">{selectedNota1?.status}</Badge>
+                      ) : selectedNota1?.status === "Dibatalkan" ? (
+                        <Badge className="ms-3 font-size-12" bg="danger">{selectedNota1?.status}</Badge>
+                      ) : (
+                        <Badge className="ms-3 font-size-12" bg="secondary">{selectedNota1?.status}</Badge>
+                      )}
+                </h4>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                  className="mt-3"
+                >
+                  Tanggal Pesan : {selectedNota1?.tanggal_pesan}
+                </h5>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                >
+                  Lunas Pada : {selectedNota1?.tanggal_lunas}
+                </h5>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                >
+                  Tanggal Ambil : {selectedNota1?.tanggal_ambil}
+                </h5>
+              </Col>
+            </Row>
 
-            <Table responsive striped className="text-start">
+            <hr style={{ border:"1px solid" }}/>
+
+            <Row>
+              <Col>
+                <h4 style={{ fontWeight: "bold" }}>Customer : </h4>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.07em", fontWeight:"600"}}
+                >
+                  {selectedNota1?.nama}
+                </h5>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.07em" }}
+                >
+                  {selectedNota1?.email}
+                </h5>
+                <h5
+                  style={{ color: "rgb(18,19,20,70%)", fontSize: "1.07em" }}
+                >
+                  {selectedNota1?.no_telp}
+                </h5>
+              </Col>
+              <Col className="text-end">
+                <h4 >Tipe Delivery
+                    {selectedNota1?.tipe_delivery == "Ojol" ? (
+                        <Badge className="ms-2 font-size-12" bg="success">{selectedNota1?.tipe_delivery}</Badge>
+                      ) : selectedNota1?.tipe_delivery === "Kurir" ? (
+                        <Badge className="ms-2 font-size-12" bg="primary">{selectedNota1?.tipe_delivery}</Badge>
+                      ) : (
+                        <Badge className="ms-2 font-size-12" bg="dark">{selectedNota1?.tipe_delivery}</Badge>
+                      )}
+                </h4>
+                {selectedNota1?.tipe_delivery == "Ambil" ? (
+                  null
+                ) : (
+                  <>
+                    <h5
+                      style={{ color: "rgb(18,19,20,70%)", fontSize: "1.05em" }}
+                      className="mt-2"
+                    >
+                      {selectedNota1?.lokasi}
+                    </h5>
+                    <h5
+                      style={{ color: "rgb(18,19,20,70%)", fontSize: "1.05em" }}
+                    >
+                      {selectedNota1?.keterangan}
+                    </h5>
+                  </>
+                ) }
+                
+              </Col>
+            </Row>
+            <h5 className="mt-3" style={{ fontWeight:"bold" }}>Ringkasan Pesanan</h5>
+            <Table responsive className="text-start align-middle table-nowrap">
               <thead>
                 <tr>
+                  <th style={{ width: "5%" }} className="th-style">
+                    No
+                  </th>
                   <th style={{ width: "50%" }} className="th-style">
                     Produk
                   </th>
-                  <th style={{ width: "10%" }} className="th-style">
+                  <th style={{ width: "20%" }} className="th-style">
                     Jumlah
                   </th>
                   <th style={{ width: "30%" }} className="th-style">
-                    Total
+                    Sub Total
                   </th>
                 </tr>
               </thead>
@@ -205,6 +328,7 @@ export default function HistoryCustomerPage() {
                 {selectedHistory.map(function (detail, idx) {
                   return (
                     <tr key={idx}>
+                      <td>{idx+1}</td>
                       <td>{detail.nama_produk} </td>
                       <td>{detail.jumlah}</td>
                       <td>
@@ -216,8 +340,55 @@ export default function HistoryCustomerPage() {
                     </tr>
                   );
                 })}
+                {selectedNota?.tipe_delivery === "Kurir" ? (
+                <tr>
+                  <td colSpan={3} className="text-end">
+                    Ongkos Kirim (rad. {selectedNota?.radius} km) : 
+                  </td>
+                  <td>
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    }).format(hargaOngkir)}
+                  </td>
+                </tr>
+                ) : null}
+                <tr>
+                  <td className="text-end" colSpan={3}>
+                    Potongan Poin {selectedNota1?.penggunaan_poin} poin : 
+                  </td>
+                  <td>
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    }).format(selectedNota1?.penggunaan_poin * 100)}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-end" colSpan={3}>
+                    Total : 
+                  </td>
+                  <td>
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    }).format(selectedNota?.total)}
+                  </td>
+                </tr> 
               </tbody>
             </Table>
+              <h5
+                style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                className="mt-1"
+              >
+                Poin dari pesanan ini : {selectedNota1?.penambahan_poin}
+              </h5>
+              <h5
+                style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
+                className="mt-1"
+              >
+                Total Poin Customer : {selectedNota1?.poin_user_setelah_penambahan}
+              </h5>
           </Modal.Body>
         </Modal>
       </section>
