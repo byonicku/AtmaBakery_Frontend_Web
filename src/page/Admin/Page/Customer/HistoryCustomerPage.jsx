@@ -42,7 +42,8 @@ import {
       setIsLoading(true);
       try {
         const response = await APIHistory.getCustHistoryByPage(id, page);
-        setHistory(response.data);
+        setHistory(response);
+        console.log(response);
         setLastPage(response.last_page);
       } catch (error) {
         // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
@@ -191,13 +192,13 @@ import {
               <Table responsive striped className="text-start">
                 <thead>
                   <tr>
-                    <th style={{ width: "20%" }} className="th-style">
+                    <th style={{ width: "50%" }} className="th-style">
                       Produk
                     </th>
-                    <th style={{ width: "15%" }} className="th-style">
+                    <th style={{ width: "10%" }} className="th-style">
                       Jumlah
                     </th>
-                    <th style={{ width: "20%" }} className="th-style">
+                    <th style={{ width: "30%" }} className="th-style">
                       Total
                     </th>
                   </tr>
@@ -208,14 +209,13 @@ import {
                     ) {
                       return(
                         <tr key={idx}>
-                          <td>ini nanti nama produk/hampers </td>
+                          <td>{detail.nama_produk} </td>
                           <td>{detail.jumlah}</td>
                           <td>
-                            {/* {new Intl.NumberFormat("id-ID", {
+                            {new Intl.NumberFormat("id-ID", {
                               style: "currency",
                               currency: "IDR",
-                            }).format()} */}
-                             ini nanti subtotal
+                            }).format(detail.jumlah * detail.harga_saat_beli)}
                         </td>
                         </tr>
                       );
