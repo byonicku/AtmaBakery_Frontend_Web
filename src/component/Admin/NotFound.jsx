@@ -5,9 +5,7 @@ NotFound.propTypes = {
   text: propTypes.string,
 };
 
-export default function NotFound({
-  text
-}) {
+export default function NotFound({ text }) {
   return (
     <Container className="text-center p-5">
       <h1 style={{ fontWeight: "bold" }}>{text}</h1>

@@ -13,6 +13,7 @@ import Register from "@/page/Auth/Register";
 import ResetPass from "@/page/Auth/ResetPass";
 import ChangePass from "@/page/Auth/ChangePass";
 import Verify from "@/page/Auth/Verify";
+import HistoryCustomerPageSelf from "@/page/Main/HistoryCustomerPage";
 
 import Produk from "@/page/Admin/Page/Produk/ProdukPage";
 import AddEditProdukPage from "@/page/Admin/Page/Produk/AddEditProdukPage";
@@ -29,6 +30,8 @@ import AdminProfile from "@/page/Admin/Page/Profile";
 import DashboardRoute from "./page/Routes/DashboardRoute";
 import RoleRoute from "./page/Routes/RoleRoute";
 import PembelianBahanBakuPage from "./page/Admin/Page/PembelianBahanBaku/PembelianBahanBakuPage";
+import ErrorPage from "./page/Main/ErrorPage";
+import NotFound404 from "@/page/Admin/Page/NotFound404";
 
 const queryClient = new QueryClient();
 
@@ -162,7 +165,21 @@ export default function App() {
                 }
               />
               <Route index element={<HomeAdmin />} />
+              <Route path="*" element={<NotFound404 />} />
             </Route>
+            <Route
+              path="/profile"
+              element={
+                <RoleRoute roles={["CUST"]}>
+                  <Dashboard />
+                </RoleRoute>
+              }
+            >
+              <Route path="pemesanan" element={<HistoryCustomerPageSelf />} />
+              <Route index element={<AdminProfile />} />
+              <Route path="*" element={<NotFound404 />} />
+            </Route>
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </main>
       </QueryClientProvider>

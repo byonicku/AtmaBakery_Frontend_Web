@@ -421,16 +421,18 @@ export default function Profile() {
                 >
                   <BsPencilSquare className="mb-1" /> Ubah Profile
                 </Button>
-                <Button
-                  variant="danger"
-                  className="custom-agree-btn w-45"
-                  onClick={() => {
-                    setMode("edit");
-                    handleEditPasswordClick(user);
-                  }}
-                >
-                  <BsPencilSquare className="mb-1" /> Ubah Password
-                </Button>
+                {sessionStorage.getItem("role_id") === "CUST" && (
+                  <Button
+                    variant="danger"
+                    className="custom-agree-btn w-45"
+                    onClick={() => {
+                      setMode("edit");
+                      handleEditPasswordClick(user);
+                    }}
+                  >
+                    <BsPencilSquare className="mb-1" /> Ubah Password
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -614,7 +616,7 @@ export default function Profile() {
         }}
         title={"Ubah Profile"}
         text={
-          "Pastikan data profil yang Anda ubah benar, hanya dapat mengganti nama, dan nomor telepon."
+          "Pastikan data profil yang Anda ubah benar, hanya dapat mengganti nama, nomor telepon dan jenis kelamin."
         }
         edit={editProfil}
         isLoadingModal={isLoadingModal}

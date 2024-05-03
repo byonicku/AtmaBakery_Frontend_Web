@@ -92,13 +92,20 @@ export default function SideNav() {
             />
           </div>
           <div className="info mt-1">
-            <Link to="./profile" className="d-block">
+            <Link
+              to={roleId === "CUST" ? "/profile" : "./profile"}
+              className="d-block"
+            >
               <span className="text-bold">
                 {nama == "null" || nama == null
                   ? "User"
                   : sessionStorage.getItem("nama")}
               </span>
-              <p className="p-0 m-0">{roleName} Atma Bakery</p>
+              <p className="p-0 m-0">
+                {roleId === "CUST"
+                  ? "Beloved Customer"
+                  : `${roleName} Atma Bakery`}
+              </p>
             </Link>
           </div>
         </div>

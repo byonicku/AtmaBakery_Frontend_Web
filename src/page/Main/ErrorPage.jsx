@@ -1,11 +1,11 @@
 import Footer from "@/component/Main/Footer";
 import Header from "@/component/Main/Header";
-import { Container, Button } from "react-bootstrap";
-import { Outlet, Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 import "./css/Main.css";
+import { Link } from "react-router-dom";
 
-export default function ProdukView() {
+export default function ErrorPage() {
   return (
     <>
       <Header />
@@ -14,17 +14,10 @@ export default function ProdukView() {
           className="error-message"
           style={{ justifyContent: "center", textAlign: "center" }}
         >
-          <span className="error-title">Produk</span>
+          <span className="error-title">Ooops! 404 Not Found</span>
           <p className="error-description mt-3">
-            Halaman ini sedang dalam proses pembangunan
-          </p>
-          <p className="error-info mt-4">
-            Produk Atma Bakery akan segera hadir dengan citra rasa dan kualitas
-            yang luar biasa.
-          </p>
-          <p className="error-info mt-1">
-            Nantikan dan jangan sampai melewatkan setiap gigitan dari kue-kue
-            kami!
+            Halaman ini sedang dalam proses pembangunan atau anda mengakses
+            halaman yang tidak tersedia
           </p>
           <Link to="/" className="error-button">
             <Button

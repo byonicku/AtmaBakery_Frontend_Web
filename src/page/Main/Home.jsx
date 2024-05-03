@@ -1,6 +1,6 @@
 import Footer from "@/component/Main/Footer";
 import Header from "@/component/Main/Header";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { MdOutlinePlayCircleFilled } from "react-icons/md";
 import "./css/Main.css";
 import { Outlet } from "react-router-dom";
@@ -21,19 +21,30 @@ export default function Home() {
         <Row>
           <Col md={6} className="content-left">
             <Outlet />
-            <div className="ellipse-container button-style" onClick={() => window.open('https://www.youtube.com')}>
+            <div
+              className="ellipse-container button-style"
+              onClick={() => window.open("https://www.youtube.com")}
+            >
               <span className="ellipse-text mr-2">Tonton Video</span>
-              <MdOutlinePlayCircleFilled className="btn-circleLanding ml-1" style={{ color: '#F48E28' }} />
+              <MdOutlinePlayCircleFilled
+                className="btn-circleLanding ml-1"
+                style={{ color: "#F48E28" }}
+              />
             </div>
             <h1 className="main-title mt-5">
-              Nikmati <br /> 
-              <span style={{ color: '#F48E28' }}>Kelezatan</span> Yang <br /> 
-              Tak <span style={{ color: '#F48E28' }}>Terlupakan</span>
+              Nikmati <br />
+              <span style={{ color: "#F48E28" }}>Kelezatan</span> Yang <br />
+              Tak <span style={{ color: "#F48E28" }}>Terlupakan</span>
             </h1>
             <div className="ftext-desc mt-5">
-              Kue-kue ini dibuat dengan teliti menggunakan bahan-bahan berkualitas pilihan. Proses pembuatannya menggabungkan keahlian tangan dan perhatian mendetail untuk menciptakan produk akhir yang istimewa
+              Kue-kue ini dibuat dengan teliti menggunakan bahan-bahan
+              berkualitas pilihan. Proses pembuatannya menggabungkan keahlian
+              tangan dan perhatian mendetail untuk menciptakan produk akhir yang
+              istimewa
             </div>
-            {errorMessage && <div className="error-message">{errorMessage}</div>}
+            {errorMessage && (
+              <div className="error-message">{errorMessage}</div>
+            )}
             <Row className="mt-5">
               <Col md={5} className="mb-3 mb-md-0">
                 <Button

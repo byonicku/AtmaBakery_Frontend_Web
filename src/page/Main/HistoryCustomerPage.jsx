@@ -6,11 +6,13 @@ import {
   Table,
   Spinner,
   Badge,
+  InputGroup,
+  Form,
 } from "react-bootstrap";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 
-import { BsInbox } from "react-icons/bs";
+import { BsInbox, BsSearch } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
 
@@ -20,12 +22,9 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 
 export default function HistoryCustomerPage() {
-  const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedHistory, setSelectedHistory] = useState([]);
   const [selectedNota, setSelectedNota] = useState(null);
-
-  const ref = useRef();
 
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
@@ -36,29 +35,26 @@ export default function HistoryCustomerPage() {
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
-  const fetchHistoryCust = useCallback(
-    async (id) => {
-      setIsLoading(true);
-      try {
-        const response = await APIHistory.getCustHistoryByPage(id, page);
-        setHistory(response.data);
-        console.log(response);
-        setLastPage(response.last_page);
-      } catch (error) {
-        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-          setHistory([]);
-        } else {
-          setPage(page - 1);
-        }
-        console.error(error);
-      } finally {
-        setIsLoading(false);
+  const fetchHistoryCust = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await APIHistory.getCustHistoryByPageSelf(page);
+      setHistory(response.data);
+      console.log(response);
+      setLastPage(response.last_page);
+    } catch (error) {
+      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+        setHistory([]);
+      } else {
+        setPage(page - 1);
       }
-    },
-    [page]
-  );
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page]);
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -66,8 +62,21 @@ export default function HistoryCustomerPage() {
 
   // Pas masuk load customer
   useEffect(() => {
-    fetchHistoryCust(id);
-  }, [fetchHistoryCust, id]);
+    fetchHistoryCust();
+  }, [fetchHistoryCust]);
+
+  const fetchHistorySearch = async () => {
+    setIsLoading(true);
+    try {
+      const response = await APIHistory.searchHistoryCustSelf(search);
+      setHistory(response);
+    } catch (error) {
+      setHistory([]);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -77,6 +86,54 @@ export default function HistoryCustomerPage() {
         breadcrumb="History Customer"
       />
       <section className="content px-3">
+        <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
+          <Col
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
+            className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
+          ></Col>
+          <Col
+            xs={12}
+            sm={12}
+            lg={6}
+            md={12}
+            className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
+          >
+            <InputGroup>
+              <Form.Control
+                type="text"
+                placeholder="Cari History disini"
+                name="search"
+                value={search || ""}
+                disabled={isLoading}
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    if (page !== 1) {
+                      setPage(1);
+                    } else {
+                      fetchHistoryCust();
+                    }
+                  }
+                  setSearch(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    fetchHistorySearch();
+                  }
+                }}
+              />
+              <Button
+                variant="secondary"
+                disabled={isLoading}
+                onClick={() => fetchHistorySearch()}
+              >
+                <BsSearch />
+              </Button>
+            </InputGroup>
+          </Col>
+        </Row>
         {isLoading ? (
           <div className="text-center">
             <Spinner
