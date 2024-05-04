@@ -152,6 +152,13 @@ export default function Profile() {
       }
 
       if (mode === "edit-profil") {
+        if (
+          formDataProfil.jenis_kelamin === "" ||
+          formDataProfil.jenis_kelamin === null
+        ) {
+          delete formDataProfil.jenis_kelamin;
+        }
+
         await editProfil.mutateAsync(formDataProfil);
         return;
       }
@@ -223,7 +230,7 @@ export default function Profile() {
       pattern: /^(?:\+?08)(?:\d{2,3})?[ -]?\d{3,4}[ -]?\d{4}$/,
     },
     jenis_kelamin: {
-      required: true,
+      required: false,
       alias: "Jenis Kelamin",
     },
   };
