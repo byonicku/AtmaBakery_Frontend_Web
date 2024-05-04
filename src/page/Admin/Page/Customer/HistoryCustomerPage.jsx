@@ -411,7 +411,7 @@ export default function HistoryCustomerPage() {
                         {new Intl.NumberFormat("id-ID", {
                           style: "currency",
                           currency: "IDR",
-                        }).format(selectedNota?.total_harga)}
+                        }).format(selectedNota?.total)}
                       </td>
                     </tr>
                   </tbody>
