@@ -421,7 +421,7 @@ export default function Profile() {
                 >
                   <BsPencilSquare className="mb-1" /> Ubah Profile
                 </Button>
-                {sessionStorage.getItem("role_id") !== "CUST" && (
+                {sessionStorage.getItem("role") !== "CUST" && (
                   <Button
                     variant="danger"
                     className="custom-agree-btn w-45"
