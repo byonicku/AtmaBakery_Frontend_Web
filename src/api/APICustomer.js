@@ -53,15 +53,26 @@ const getCustHistoryByPage = async (id_user, page = 0) => {
 
 const getNotaPesanan = async (no_nota) => {
   try {
-    const response = await useAxios.post(
-      `/get-nota`, no_nota ,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-        },
-      }
-    );
+    const response = await useAxios.post(`/get-nota`, no_nota, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const getNotaPesananSelf = async (no_nota) => {
+  try {
+    const response = await useAxios.post(`/get-nota/self`, no_nota, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
     return response.data.data;
   } catch (error) {
     throw error.response || error;
@@ -122,6 +133,7 @@ const APICust = {
   getCustHistoryByPage,
   searchCust,
   getCustHistoryByPageSelf,
+  getNotaPesananSelf,
   searchHistoryCustSelf,
   getNotaPesanan,
 };

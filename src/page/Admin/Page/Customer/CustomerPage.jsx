@@ -7,20 +7,10 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback, useRef  } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import InputHelper from "@/page/InputHelper";
-import {
-  BsSearch,
-  BsPlusSquare,
-  BsPencilSquare,
-  BsFillTrash3Fill,
-  BsPrinterFill,
-  BsInbox,
-} from "react-icons/bs";
+import { BsSearch, BsInbox } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
 
@@ -31,9 +21,6 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 
 export default function CustomerPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCust, setSelectedCust] = useState(null);
-
-  const ref = useRef();
 
   const [cust, setCust] = useState([]);
   const [page, setPage] = useState(1);
@@ -104,8 +91,7 @@ export default function CustomerPage() {
             lg={6}
             md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-          >
-          </Col>
+          ></Col>
           <Col
             xs={12}
             sm={12}
@@ -184,7 +170,9 @@ export default function CustomerPage() {
               <tbody>
                 {cust.map((cust, index) => (
                   <tr key={index}>
-                    <td style={{ fontWeight:"bolder", textAlign:"center"}}>{(page - 1) * 10 + index + 1}</td>
+                    <td style={{ fontWeight: "bolder", textAlign: "center" }}>
+                      {(page - 1) * 10 + index + 1}
+                    </td>
                     <td>{cust.nama}</td>
                     <td>{cust.email}</td>
                     <td>{cust.no_telp}</td>
@@ -195,10 +183,10 @@ export default function CustomerPage() {
                             to={`./history/${cust.id_user}`}
                             className={
                               isLoading
-                              ? "btn btn-danger custom-danger-btn w-100 me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2 disabled"
-                              : "btn btn-danger custom-danger-btn w-100 me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+                                ? "btn btn-danger custom-danger-btn w-100 me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2 disabled"
+                                : "btn btn-danger custom-danger-btn w-100 me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
                             }
-                          >                    
+                          >
                             <BsInbox className="mb-1" /> Lihat Detail
                           </Link>
                         </Col>
