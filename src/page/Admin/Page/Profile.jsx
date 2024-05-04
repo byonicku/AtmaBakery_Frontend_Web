@@ -23,7 +23,6 @@ export default function Profile() {
   const handleToggle1 = () => setEyeToggle1(!eyeToggle1);
   const handleToggle2 = () => setEyeToggle2(!eyeToggle2);
 
-  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [mode, setMode] = useState("edit");
 
   const [showAddEditModal, setShowAddEditModal] = useState(false);
@@ -455,7 +454,6 @@ export default function Profile() {
         title={"Ubah Password"}
         text={"Pastikan password yang Anda ubah benar"}
         edit={edit}
-        isLoadingModal={isLoadingModal}
         onSubmit={inputHelper.handleSubmit}
       >
         <Form.Group className="text-start mt-3">
@@ -470,7 +468,7 @@ export default function Profile() {
               name="old_password"
               value={formData.old_password}
               onChange={inputHelper.handleInputChange}
-              disabled={edit.isPending || isLoadingModal}
+              disabled={edit.isPending}
             />
             <InputGroup.Text
               style={{
@@ -496,7 +494,7 @@ export default function Profile() {
               name="password"
               value={formData.password}
               onChange={inputHelper.handleInputChange}
-              disabled={edit.isPending || isLoadingModal}
+              disabled={edit.isPending}
             />
             <InputGroup.Text
               style={{
@@ -522,7 +520,7 @@ export default function Profile() {
               name="password_confirmation"
               value={formData.password_confirmation}
               onChange={inputHelper.handleInputChange}
-              disabled={edit.isPending || isLoadingModal}
+              disabled={edit.isPending}
             />
             <InputGroup.Text
               style={{
@@ -549,7 +547,6 @@ export default function Profile() {
         title={"Ubah Foto"}
         text={"Pastikan foto profil yang Anda ubah benar"}
         edit={editGambar}
-        isLoadingModal={isLoadingModal}
         onSubmit={handleSubmitGambar}
       >
         <Image
@@ -587,7 +584,7 @@ export default function Profile() {
 
               setImage(e.target.files[0]);
             }}
-            disabled={editGambar.isPending || isLoadingModal}
+            disabled={editGambar.isPending}
           />
         </Form.Group>
       </AddEditModal>
@@ -600,7 +597,6 @@ export default function Profile() {
         del={delGambar}
         onHapus={handleCloseDeleteModal}
         onSubmit={onSubmit}
-        isLoadingModal={isLoadingModal}
       />
 
       <AddEditModal
@@ -620,7 +616,6 @@ export default function Profile() {
           "Pastikan data profil yang Anda ubah benar, hanya dapat mengganti nama, nomor telepon dan jenis kelamin."
         }
         edit={editProfil}
-        isLoadingModal={isLoadingModal}
         onSubmit={inputHelperProfil.handleSubmit}
       >
         <Form.Group className="text-start mt-3">
@@ -634,7 +629,7 @@ export default function Profile() {
             name="nama"
             value={formDataProfil.nama}
             onChange={inputHelperProfil.handleInputChange}
-            disabled={editProfil.isPending || isLoadingModal}
+            disabled={editProfil.isPending}
           />
         </Form.Group>
         <Form.Group className="text-start mt-3">
@@ -648,7 +643,7 @@ export default function Profile() {
             name="no_telp"
             value={formDataProfil.no_telp}
             onChange={inputHelperProfil.handleInputChange}
-            disabled={editProfil.isPending || isLoadingModal}
+            disabled={editProfil.isPending}
           />
         </Form.Group>
         <Form.Group className="text-start mt-3">
@@ -663,7 +658,7 @@ export default function Profile() {
               value="L"
               checked={formDataProfil.jenis_kelamin === "L"}
               onChange={inputHelperProfil.handleInputChange}
-              disabled={editProfil.isPending || isLoadingModal}
+              disabled={editProfil.isPending}
               className="me-3"
             />
             <Form.Check
@@ -673,7 +668,7 @@ export default function Profile() {
               value="P"
               checked={formDataProfil.jenis_kelamin === "P"}
               onChange={inputHelperProfil.handleInputChange}
-              disabled={editProfil.isPending || isLoadingModal}
+              disabled={editProfil.isPending}
             />
           </div>
         </Form.Group>
