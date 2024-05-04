@@ -20,6 +20,10 @@ useAxios.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (error.code === "ERR_CANCELED") {
+      throw error;
+    }
+
     if (!originalRequest._retry) {
       originalRequest._retry = true;
 
