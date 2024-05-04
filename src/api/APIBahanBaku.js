@@ -1,12 +1,13 @@
 import useAxios from "./APIConstant";
 
-const getAllBahanBaku = async () => {
+const getAllBahanBaku = async (signal) => {
   try {
     const response = await useAxios.get("/bahan_baku", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {
@@ -14,7 +15,7 @@ const getAllBahanBaku = async () => {
   }
 };
 
-const getBahanBakuByPage = async (page = 0) => {
+const getBahanBakuByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/bahan_baku", {
       params: {
@@ -24,6 +25,7 @@ const getBahanBakuByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

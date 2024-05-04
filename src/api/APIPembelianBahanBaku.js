@@ -14,7 +14,7 @@ const getAllPembelianBahanBaku = async () => {
   }
 };
 
-const getPembelianBahanBakuByPage = async (page = 0) => {
+const getPembelianBahanBakuByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/pembelian_bahan_baku", {
       params: {
@@ -24,6 +24,7 @@ const getPembelianBahanBakuByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

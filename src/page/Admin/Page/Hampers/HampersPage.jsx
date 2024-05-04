@@ -155,25 +155,28 @@ export default function HampersPage() {
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
 
-  const fetchHampers = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await APIHampers.getHampersByPage(page);
-      setHampers(response.data);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setHampers([]);
-      } else {
-        setPage(page - 1);
+  const fetchHampers = useCallback(
+    async (signal) => {
+      setIsLoading(true);
+      try {
+        const response = await APIHampers.getHampersByPage(page, signal);
+        setHampers(response.data);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setHampers([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const fetchProduk = useCallback(
     async (selectedAllProduk, selectedProdukEdit) => {
@@ -210,7 +213,14 @@ export default function HampersPage() {
 
   // Pas masuk load hampers
   useEffect(() => {
-    fetchHampers();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchHampers(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchHampers]);
 
   // CRUD Hampers

@@ -14,7 +14,7 @@ const getAllCust = async () => {
   }
 };
 
-const getCustByPage = async (page = 0) => {
+const getCustByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/users", {
       params: {
@@ -24,6 +24,7 @@ const getCustByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {
@@ -31,7 +32,7 @@ const getCustByPage = async (page = 0) => {
   }
 };
 
-const getCustHistoryByPage = async (id_user, page = 0) => {
+const getCustHistoryByPage = async (id_user, page = 0, signal) => {
   try {
     const response = await useAxios.get(
       `/paginate/transaksi/history/${id_user}`,
@@ -43,6 +44,7 @@ const getCustHistoryByPage = async (id_user, page = 0) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
+        signal: signal,
       }
     );
     return response.data.data;
@@ -93,7 +95,7 @@ const searchCust = async (search) => {
   }
 };
 
-const getCustHistoryByPageSelf = async (page = 0) => {
+const getCustHistoryByPageSelf = async (page = 0, signal) => {
   try {
     const response = await useAxios.get(`/paginate/transaksi/self/history`, {
       params: {
@@ -103,6 +105,7 @@ const getCustHistoryByPageSelf = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

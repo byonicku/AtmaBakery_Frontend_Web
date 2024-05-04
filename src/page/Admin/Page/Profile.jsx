@@ -1,12 +1,6 @@
 import { Spinner, Button, Form, InputGroup, Image } from "react-bootstrap";
 
-import {
-  BsSearch,
-  BsPlusSquare,
-  BsPencilSquare,
-  BsFillTrash3Fill,
-  // BsPrinterFill,
-} from "react-icons/bs";
+import { BsPencilSquare } from "react-icons/bs";
 
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 import { useState, useEffect, useCallback } from "react";
@@ -47,9 +41,9 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [image, setImage] = useState(null);
 
-  const fetchUser = useCallback(async () => {
+  const fetchUser = useCallback(async (signal) => {
     try {
-      const data = await APIUser.getSelf();
+      const data = await APIUser.getSelf(signal);
       sessionStorage.setItem("foto_profil", data.foto_profil);
       sessionStorage.setItem("nama", data.nama);
       setUser(data);
@@ -61,8 +55,15 @@ export default function Profile() {
   }, []);
 
   useEffect(() => {
-    fetchUser();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchUser(signal);
     setImage(null);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchUser]);
 
   const [formData, setFormData] = useState({
@@ -401,7 +402,7 @@ export default function Profile() {
                   type="text"
                   className="form-control"
                   value={
-                    user.jenis_kelamin === null
+                    user?.jenis_kelamin === null
                       ? ""
                       : user?.jenis_kelamin === "L"
                       ? "Laki-laki"

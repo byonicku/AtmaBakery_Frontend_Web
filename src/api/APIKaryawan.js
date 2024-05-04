@@ -14,7 +14,7 @@ const getAllKaryawan = async () => {
   }
 };
 
-const getKaryawanByPage = async (page = 0) => {
+const getKaryawanByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/karyawan", {
       params: {
@@ -24,6 +24,7 @@ const getKaryawanByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

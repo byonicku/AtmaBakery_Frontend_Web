@@ -1,12 +1,13 @@
 import useAxios from "./APIConstant.js";
 
-const getAllPenitip = async () => {
+const getAllPenitip = async (signal) => {
   try {
     const response = await useAxios.get("/penitip", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {
@@ -14,7 +15,7 @@ const getAllPenitip = async () => {
   }
 };
 
-const getPenitipByPage = async (page = 0) => {
+const getPenitipByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/penitip", {
       params: {
@@ -24,6 +25,7 @@ const getPenitipByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

@@ -14,7 +14,7 @@ const getAllProduk = async () => {
   }
 };
 
-const getProdukByPage = async (page = 0) => {
+const getProdukByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/produk", {
       params: {
@@ -24,6 +24,7 @@ const getProdukByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {
@@ -49,13 +50,14 @@ const searchProduk = async (search) => {
   }
 };
 
-const showProduk = async (id) => {
+const showProduk = async (id, signal) => {
   try {
     const response = await useAxios.get(`/produk/${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

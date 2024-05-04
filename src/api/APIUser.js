@@ -1,12 +1,13 @@
 import useAxios from "./APIConstant.js";
 
-const getSelf = async () => {
+const getSelf = async (signal) => {
   try {
     const response = await useAxios.get("/users/self", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

@@ -7,7 +7,7 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback, useRef  } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -59,25 +59,28 @@ export default function PenitipPage() {
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
 
-  const fetchPenitip = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await APIPenitip.getPenitipByPage(page);
-      setPenitip(response.data);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setPenitip([]);
-      } else {
-        setPage(page - 1);
+  const fetchPenitip = useCallback(
+    async (signal) => {
+      setIsLoading(true);
+      try {
+        const response = await APIPenitip.getPenitipByPage(page, signal);
+        setPenitip(response.data);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setPenitip([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -85,7 +88,14 @@ export default function PenitipPage() {
 
   // Pas masuk load penitip
   useEffect(() => {
-    fetchPenitip();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchPenitip(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchPenitip]);
 
   // CRUD Penitip

@@ -44,26 +44,32 @@ export default function HistoryCustomerPage() {
     setIsLoadingModal(false);
   }, []);
 
-  const fetchHistoryCust = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await APIHistory.getCustHistoryByPageSelf(page);
-      setHistory(response.data);
-      console.log(response);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setHistory([]);
-      } else {
-        setPage(page - 1);
+  const fetchHistoryCust = useCallback(
+    async (signal) => {
+      setIsLoading(true);
+      try {
+        const response = await APIHistory.getCustHistoryByPageSelf(
+          page,
+          signal
+        );
+        setHistory(response.data);
+        console.log(response);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setHistory([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -71,7 +77,14 @@ export default function HistoryCustomerPage() {
 
   // Pas masuk load customer
   useEffect(() => {
-    fetchHistoryCust();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchHistoryCust(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchHistoryCust]);
 
   const fetchHistorySearch = async () => {

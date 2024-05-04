@@ -46,9 +46,12 @@ export default function AddEditProdukPage({ isEdit }) {
   });
 
   useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
     const fetchPenitip = async () => {
       try {
-        const response = await APIPenitip.getAllPenitip();
+        const response = await APIPenitip.getAllPenitip(signal);
         setPenitip(response);
       } catch (error) {
         console.error(error);
@@ -56,14 +59,21 @@ export default function AddEditProdukPage({ isEdit }) {
     };
 
     fetchPenitip();
+
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   useEffect(() => {
     if (isEdit) {
+      const abortController = new AbortController();
+      const signal = abortController.signal;
+
       const fetchProduk = async (id) => {
         setIsLoading(true);
         try {
-          const response = await APIProduk.showProduk(id);
+          const response = await APIProduk.showProduk(id, signal);
 
           setIdProduk(response.id_produk);
 
@@ -92,6 +102,10 @@ export default function AddEditProdukPage({ isEdit }) {
       };
 
       fetchProduk(id);
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [isEdit, id, navigate]);
 

@@ -54,39 +54,48 @@ export default function BahanBakuPage() {
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
 
-  
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
 
   const startDateRef = useRef();
   const endDateRef = useRef();
 
-  const fetchBahanBaku = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await APIBahanBaku.getBahanBakuByPage(page);
-      setBahanBaku(response.data);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setBahanBaku([]);
-      } else {
-        setPage(page - 1);
+  const fetchBahanBaku = useCallback(
+    async (signal) => {
+      setIsLoading(true);
+      try {
+        const response = await APIBahanBaku.getBahanBakuByPage(page, signal);
+        setBahanBaku(response.data);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setBahanBaku([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
   }, []);
 
   useEffect(() => {
-    fetchBahanBaku();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchBahanBaku(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchBahanBaku]);
 
   const [formData, setFormData] = useState({
@@ -475,25 +484,23 @@ export default function BahanBakuPage() {
               disabled={edit.isPending || add.isPending}
             />
           </Form.Group>
-          {selectedBahanBaku ? 
-            null
-          :
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Stok
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              type="number"
-              placeholder="Masukkan stok bahan baku"
-              name="stok"
-              value={formData?.stok}
-              onChange={inputHelper.handleInputChange}
-              disabled={edit.isPending || add.isPending}
-            />
-          </Form.Group>
-          }
-          
+          {selectedBahanBaku ? null : (
+            <Form.Group className="text-start mt-3">
+              <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                Stok
+              </Form.Label>
+              <Form.Control
+                style={{ border: "1px solid #808080" }}
+                type="number"
+                placeholder="Masukkan stok bahan baku"
+                name="stok"
+                value={formData?.stok}
+                onChange={inputHelper.handleInputChange}
+                disabled={edit.isPending || add.isPending}
+              />
+            </Form.Group>
+          )}
+
           <Form.Group className="text-start my-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Satuan

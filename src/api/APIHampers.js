@@ -13,7 +13,7 @@ const getAllHampers = async () => {
   }
 };
 
-const getHampersByPage = async (page = 0) => {
+const getHampersByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/hampers", {
       params: {
@@ -23,6 +23,7 @@ const getHampersByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

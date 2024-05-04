@@ -54,32 +54,42 @@ export default function ProdukPage() {
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
 
-  const fetchProduk = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await APIProduk.getProdukByPage(page);
-      setProduk(response.data);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setProduk([]);
-      } else {
-        setPage(page - 1);
+  const fetchProduk = useCallback(
+    async (signal) => {
+      setIsLoading(true);
+      try {
+        const response = await APIProduk.getProdukByPage(page, signal);
+        setProduk(response.data);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setProduk([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
   }, []);
 
   useEffect(() => {
-    fetchProduk();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchProduk(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchProduk]);
 
   const handleMutationSuccess = () => {

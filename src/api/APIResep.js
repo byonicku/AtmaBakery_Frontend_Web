@@ -14,7 +14,7 @@ const getAllProduk = async () => {
   }
 };
 
-const getProdukByPage = async (page = 0) => {
+const getProdukByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/resep", {
       params: {
@@ -24,6 +24,7 @@ const getProdukByPage = async (page = 0) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

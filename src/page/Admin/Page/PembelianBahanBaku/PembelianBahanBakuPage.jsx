@@ -64,34 +64,43 @@ export default function PembelianBahanBakuPage() {
   const startDateRef = useRef();
   const endDateRef = useRef();
 
-  const fetchPembelianBahanBaku = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await APIPembelianBahanBaku.getPembelianBahanBakuByPage(
-        page
-      );
-      setPembelianBahanBaku(response.data);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setPembelianBahanBaku([]);
-      } else {
-        setPage(page - 1);
+  const fetchPembelianBahanBaku = useCallback(
+    async (signal) => {
+      setIsLoading(true);
+      try {
+        const response =
+          await APIPembelianBahanBaku.getPembelianBahanBakuByPage(page, signal);
+        setPembelianBahanBaku(response.data);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setPembelianBahanBaku([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
   }, []);
 
   useEffect(() => {
-    fetchPembelianBahanBaku();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchPembelianBahanBaku(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchPembelianBahanBaku]);
 
   const [formData, setFormData] = useState({

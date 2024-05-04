@@ -27,25 +27,28 @@ export default function CustomerPage() {
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
 
-  const fetchCust = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await APICust.getCustByPage(page);
-      setCust(response.data);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setCust([]);
-      } else {
-        setPage(page - 1);
+  const fetchCust = useCallback(
+    async (signal) => {
+      setIsLoading(true);
+      try {
+        const response = await APICust.getCustByPage(page, signal);
+        setCust(response.data);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setCust([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -53,7 +56,14 @@ export default function CustomerPage() {
 
   // Pas masuk load customer
   useEffect(() => {
-    fetchCust();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchCust(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchCust]);
 
   // Search Data

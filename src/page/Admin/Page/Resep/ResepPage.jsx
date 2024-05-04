@@ -61,32 +61,37 @@ export default function ResepPage() {
   const [bahanBakuOptions, setBahanBakuOptions] = useState([]);
   const [deleteResep, setDeleteResep] = useState(null);
 
-  const fetchResep = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await APIResep.getProdukByPage(page);
+  const fetchResep = useCallback(
+    async (signal) => {
+      try {
+        setIsLoading(true);
+        const response = await APIResep.getProdukByPage(page, signal);
 
-      setResep(response.data);
-      setLastPage(response.last_page);
-    } catch (error) {
-      // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
-      // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
-      if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-        setResep([]);
-      } else {
-        setPage(page - 1);
+        setResep(response.data);
+        setLastPage(response.last_page);
+      } catch (error) {
+        // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
+        // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
+        if (page - 1 === 0 || error.code === "ERR_NETWORK") {
+          setResep([]);
+        } else {
+          setPage(page - 1);
+        }
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page]
+  );
 
   const fetchDataBahanBaku = useCallback(
     async (selectedAllBahanBaku, selectedResep) => {
+      const abortController = new AbortController();
+      const signal = abortController.signal;
       try {
         setIsLoadingModal(true);
-        const bahanBakuResponse = await APIBahanBaku.getAllBahanBaku();
+        const bahanBakuResponse = await APIBahanBaku.getAllBahanBaku(signal);
 
         if (selectedAllBahanBaku) {
           const selectedBahanBaku = selectedAllBahanBaku.map(
@@ -110,6 +115,10 @@ export default function ResepPage() {
       } finally {
         setIsLoadingModal(false);
       }
+
+      return () => {
+        abortController.abort();
+      };
     },
     []
   );
@@ -119,7 +128,14 @@ export default function ResepPage() {
   }, []);
 
   useEffect(() => {
-    fetchResep();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchResep(signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchResep]);
 
   const [formData, setFormData] = useState({

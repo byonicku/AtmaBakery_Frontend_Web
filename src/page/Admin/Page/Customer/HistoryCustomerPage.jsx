@@ -44,10 +44,14 @@ export default function HistoryCustomerPage() {
   }, []);
 
   const fetchHistoryCust = useCallback(
-    async (id) => {
+    async (id, signal) => {
       setIsLoading(true);
       try {
-        const response = await APIHistory.getCustHistoryByPage(id, page);
+        const response = await APIHistory.getCustHistoryByPage(
+          id,
+          page,
+          signal
+        );
         setHistory(response);
         setLastPage(response.last_page);
       } catch (error) {
@@ -72,7 +76,14 @@ export default function HistoryCustomerPage() {
 
   // Pas masuk load customer
   useEffect(() => {
-    fetchHistoryCust(id);
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchHistoryCust(id, signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchHistoryCust, id]);
 
   return (
