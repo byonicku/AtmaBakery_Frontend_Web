@@ -303,7 +303,7 @@ export default function BahanBakuPage() {
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && search) {
                     fetchBahanBakuSearch();
                   }
                 }}

@@ -13,7 +13,7 @@ import Register from "@/page/Auth/Register";
 import ResetPass from "@/page/Auth/ResetPass";
 import ChangePass from "@/page/Auth/ChangePass";
 import Verify from "@/page/Auth/Verify";
-import HistoryCustomerPageSelf from "@/page/Main/HistoryCustomerPage";
+import HistoryCustomerPageSelf from "@/page/Main/HistoryCustomer/HistoryCustomerPage";
 
 import Produk from "@/page/Admin/Page/Produk/ProdukPage";
 import AddEditProdukPage from "@/page/Admin/Page/Produk/AddEditProdukPage";
@@ -32,6 +32,7 @@ import RoleRoute from "./page/Routes/RoleRoute";
 import PembelianBahanBakuPage from "./page/Admin/Page/PembelianBahanBaku/PembelianBahanBakuPage";
 import ErrorPage from "./page/Main/ErrorPage";
 import NotFound404 from "@/page/Admin/Page/NotFound404";
+import AlamatPemesananPage from "./page/Main/AlamatPemesanan/AlamatPemesananPage";
 
 const queryClient = new QueryClient();
 
@@ -175,6 +176,7 @@ export default function App() {
                 </RoleRoute>
               }
             >
+              <Route path="alamat" element={<AlamatPemesananPage />} />
               <Route path="pemesanan" element={<HistoryCustomerPageSelf />} />
               <Route index element={<AdminProfile />} />
               <Route path="*" element={<NotFound404 />} />

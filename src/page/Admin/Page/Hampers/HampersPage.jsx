@@ -603,7 +603,7 @@ export default function HampersPage() {
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && search) {
                     fetchHampersSearch();
                   }
                 }}

@@ -2,75 +2,62 @@ import {
   Button,
   Col,
   Row,
-  Form,
   Table,
-  InputGroup,
   Spinner,
+  InputGroup,
+  Form,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useState, useEffect, useCallback } from "react";
 
-import InputHelper from "@/page/InputHelper";
 import {
-  BsSearch,
-  BsPlusSquare,
-  BsPencilSquare,
   BsFillTrash3Fill,
-  BsPrinterFill,
+  BsPencilSquare,
+  BsPlusSquare,
+  BsSearch,
 } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
 
+import InputHelper from "@/page/InputHelper";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
-import APIPenitip from "@/api/APIPenitip";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
+import APIAlamat from "@/api/APIAlamat";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
-import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
-export default function PenitipPage() {
-  const [showDelModal, setShowDelModal] = useState(false);
-  const [showPrintModal, setshowPrintModal] = useState(false);
-  const [showAddEditModal, setShowAddEditModal] = useState(false);
+export default function AlamatPemesananPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedPenitip, setSelectedPenitip] = useState(null);
+  const [selectedAlamat, setSelectedAlamat] = useState(null);
+  const [mode, setMode] = useState(null);
 
-  const handleCloseDelModal = () => setShowDelModal(false);
-  const handleShowDelModal = () => setShowDelModal(true);
-
-  const handleCloseAddEditModal = () => setShowAddEditModal(false);
-  const handleShowAddEditModal = () => setShowAddEditModal(true);
-
-  const handleClosePrintModal = () => setshowPrintModal(false);
-  const handleShowPrintModal = () => setshowPrintModal(true);
-  const ref = useRef();
-
-  // Mode untuk CRD
-  // create -> "add"
-  // update -> "edit"
-  // delete -> "delete"
-  const [mode, setMode] = useState("add");
-
-  // Fetch penitip with pagination
-  const [penitip, setPenitip] = useState([]);
+  const [alamat, setAlamat] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showDelModal, setDelShowModal] = useState(false);
 
-  const fetchPenitip = useCallback(
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
+
+  const handleDelCloseModal = () => setDelShowModal(false);
+  const handleDelShowModal = () => setDelShowModal(true);
+
+  const fetchAlamat = useCallback(
     async (signal) => {
       setIsLoading(true);
       try {
-        const response = await APIPenitip.getPenitipByPage(page, signal);
-        setPenitip(response.data);
+        const response = await APIAlamat.getAlamatSelfByPage(page, signal);
+        setAlamat(response.data);
         setLastPage(response.last_page);
       } catch (error) {
         // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
         // Atau bakal di set ke array kosong kalo hapus semua data di page pertama
         if (page - 1 === 0 || error.code === "ERR_NETWORK") {
-          setPenitip([]);
+          setAlamat([]);
         } else {
           setPage(page - 1);
         }
@@ -86,29 +73,58 @@ export default function PenitipPage() {
     setPage(newPage);
   }, []);
 
-  // Pas masuk load penitip
+  // Pas masuk load customer
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    fetchPenitip(signal);
+    fetchAlamat(signal);
 
     return () => {
       abortController.abort();
     };
-  }, [fetchPenitip]);
+  }, [fetchAlamat]);
 
-  // CRUD Penitip
+  const fetchAlamatSearch = async () => {
+    setIsLoading(true);
+    try {
+      const response = await APIAlamat.searchAlamatSelf(search);
+      setAlamat(response);
+    } catch (error) {
+      setAlamat([]);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Wajib dipanggil abis mutation / query
+  const handleMutationSuccess = () => {
+    setIsLoading(true);
+    fetchAlamat();
+    setTimeout(() => {
+      setSelectedAlamat(null);
+      setFormData({
+        nama_lengkap: "",
+        no_telp: "",
+        lokasi: "",
+        keterangan: "",
+      });
+      setSearch(null);
+    }, 125);
+  };
+
   const [formData, setFormData] = useState({
-    nama: "",
+    nama_lengkap: "",
     no_telp: "",
+    lokasi: "",
+    keterangan: "",
   });
 
-  // Untuk validasi front-end (sebisa mungkin samain dengan backend ya)
   const validationSchema = {
-    nama: {
+    nama_lengkap: {
       required: true,
-      alias: "Nama Penitip",
+      alias: "Nama Lengkap",
     },
     no_telp: {
       required: true,
@@ -117,28 +133,22 @@ export default function PenitipPage() {
       maxLength: 13,
       pattern: /^(?:\+?08)(?:\d{2,3})?[ -]?\d{3,4}[ -]?\d{4}$/,
     },
-  };
-
-  // Wajib dipanggil abis mutation / query
-  const handleMutationSuccess = () => {
-    setIsLoading(true);
-    fetchPenitip();
-    setTimeout(() => {
-      setSelectedPenitip(null);
-      setFormData({
-        nama: "",
-        no_telp: "",
-      });
-      setSearch(null);
-    }, 125);
+    lokasi: {
+      required: true,
+      alias: "Alamat",
+    },
+    keterangan: {
+      required: false,
+      alias: "Keterangan",
+    },
   };
 
   // Add Data
   const add = useMutation({
-    mutationFn: (data) => APIPenitip.createPenitip(data),
+    mutationFn: (data) => APIAlamat.createAlamatSelf(data),
     onSuccess: async () => {
-      toast.success("Tambah Penitip berhasil!");
-      handleCloseAddEditModal();
+      toast.success("Tambah Alamat berhasil!");
+      handleCloseModal();
       handleMutationSuccess();
     },
     onError: (error) => {
@@ -149,10 +159,10 @@ export default function PenitipPage() {
   // Edit Data
   const edit = useMutation({
     mutationFn: (data) =>
-      APIPenitip.updatePenitip(data, selectedPenitip.id_penitip),
+      APIAlamat.updateAlamatSelf(data, selectedAlamat.id_alamat),
     onSuccess: async () => {
-      toast.success("Edit Penitip berhasil!");
-      handleCloseAddEditModal();
+      toast.success("Edit Alamat berhasil!");
+      handleCloseModal();
       handleMutationSuccess();
     },
     onError: (error) => {
@@ -162,10 +172,10 @@ export default function PenitipPage() {
 
   // Delete Data
   const del = useMutation({
-    mutationFn: (id) => APIPenitip.deletePenitip(id),
+    mutationFn: (id) => APIAlamat.deleteAlamat(id),
     onSuccess: async () => {
-      toast.success("Hapus Penitip berhasil!");
-      handleCloseDelModal();
+      toast.success("Hapus Alamat berhasil!");
+      handleDelCloseModal();
       handleMutationSuccess();
     },
     onError: (error) => {
@@ -188,7 +198,7 @@ export default function PenitipPage() {
       }
 
       if (mode === "delete") {
-        await del.mutateAsync(selectedPenitip.id_penitip);
+        await del.mutateAsync(selectedAlamat.id_alamat);
         return;
       }
     } catch (error) {
@@ -207,32 +217,12 @@ export default function PenitipPage() {
     onSubmit
   );
 
-  // Search Data
-  const fetchPenitipSearch = async () => {
-    if (search.trim() === "") {
-      // Kalo spasi doang bakal gabisa
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await APIPenitip.searchPenitip(search.trim());
-      setPenitip(response);
-    } catch (error) {
-      setPenitip([]); // Kalo error / tidak ditemukan set penitip jadi array kosong
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <>
       <OutlerHeader
-        title="Kelola Data Pentip"
-        desc="Lakukan pengelolaan data penitip Atma Bakery"
-        breadcrumb="Penitip"
+        title="Kelola Data Alamat Customer"
+        desc="Lakukan pengelolaan data alamat Atma Bakery"
+        breadcrumb="Alamat Customer"
       />
       <section className="content px-3">
         <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
@@ -246,27 +236,17 @@ export default function PenitipPage() {
             <Button
               variant="success"
               onClick={() => {
-                handleShowAddEditModal();
                 setMode("add");
                 setFormData({
-                  nama: "",
+                  nama_lengkap: "",
                   no_telp: "",
+                  lokasi: "",
+                  keterangan: "",
                 });
+                handleShowModal();
               }}
-              disabled={isLoading}
-              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
             >
-              <BsPlusSquare className="mb-1 me-2" />
-              Tambah Data
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={handleShowPrintModal}
-              disabled={isLoading}
-              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
-            >
-              <BsPrinterFill className="mb-1 me-2" />
-              Print Laporan
+              <BsPlusSquare className="mb-1 me-2" /> Tambah Alamat
             </Button>
           </Col>
           <Col
@@ -279,7 +259,7 @@ export default function PenitipPage() {
             <InputGroup>
               <Form.Control
                 type="text"
-                placeholder="Cari Penitip disini"
+                placeholder="Cari Alamat disini"
                 name="search"
                 value={search || ""}
                 disabled={isLoading}
@@ -288,21 +268,21 @@ export default function PenitipPage() {
                     if (page !== 1) {
                       setPage(1);
                     } else {
-                      fetchPenitip();
+                      fetchAlamat();
                     }
                   }
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && search) {
-                    fetchPenitipSearch();
+                    fetchAlamatSearch();
                   }
                 }}
               />
               <Button
                 variant="secondary"
                 disabled={isLoading}
-                onClick={() => fetchPenitipSearch()}
+                onClick={() => fetchAlamatSearch()}
               >
                 <BsSearch />
               </Button>
@@ -321,19 +301,22 @@ export default function PenitipPage() {
             />
             <h6 className="mt-2 mb-0">Loading...</h6>
           </div>
-        ) : penitip?.length > 0 ? (
+        ) : alamat?.length > 0 ? (
           <>
             <Table responsive striped>
               <thead>
                 <tr>
                   <th style={{ width: "20%" }} className="th-style">
-                    ID Penitip
+                    Nama Lengkap Penerima
                   </th>
-                  <th style={{ width: "25%" }} className="th-style">
-                    Nama
-                  </th>
-                  <th style={{ width: "25%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Nomor Telepon
+                  </th>
+                  <th style={{ width: "20%" }} className="th-style">
+                    Alamat
+                  </th>
+                  <th style={{ width: "15%" }} className="th-style">
+                    Keterangan
                   </th>
                   <th style={{ width: "30%" }} className="th-style">
                     Aksi
@@ -342,38 +325,41 @@ export default function PenitipPage() {
               </thead>
 
               <tbody>
-                {penitip.map((penitip, index) => (
+                {alamat.map((alamat, index) => (
                   <tr key={index}>
-                    <td>{penitip.id_penitip}</td>
-                    <td>{penitip.nama}</td>
-                    <td>{penitip.no_telp}</td>
+                    <td>{alamat.nama_lengkap}</td>
+                    <td>{alamat.no_telp}</td>
+                    <td>{alamat.lokasi}</td>
+                    <td>{alamat.keterangan ? alamat.keterangan : "-"}</td>
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-0">
-                        <Col xs={12} sm={12} md={6} lg={6}>
+                        <Col xs={12} sm={12} md={12} lg={6}>
                           <Button
                             variant="primary"
                             className="w-100"
                             onClick={() => {
-                              setSelectedPenitip(penitip);
+                              setSelectedAlamat(alamat);
                               setMode("edit");
                               setFormData({
-                                nama: penitip.nama,
-                                no_telp: penitip.no_telp,
+                                nama_lengkap: alamat.nama_lengkap,
+                                no_telp: alamat.no_telp,
+                                lokasi: alamat.lokasi,
+                                keterangan: alamat.keterangan,
                               });
-                              handleShowAddEditModal();
+                              handleShowModal();
                             }}
                           >
                             <BsPencilSquare className="mb-1" /> Ubah
                           </Button>
                         </Col>
-                        <Col xs={12} sm={12} md={6} lg={6}>
+                        <Col xs={12} sm={12} md={12} lg={6}>
                           <Button
                             variant="danger"
                             className="custom-danger-btn w-100"
                             onClick={() => {
-                              setSelectedPenitip(penitip);
+                              setSelectedAlamat(alamat);
                               setMode("delete");
-                              handleShowDelModal();
+                              handleDelShowModal();
                             }}
                           >
                             <BsFillTrash3Fill className="mb-1" /> Hapus
@@ -397,55 +383,25 @@ export default function PenitipPage() {
         ) : (
           <NotFound
             text={
-              search ? "Penitip Tidak Ditemukan" : "Belum Ada Penitip Disini"
+              search ? "History Tidak Ditemukan" : "Belum Ada History Disini"
             }
           />
         )}
 
-        {/* 
-          Modal - Modal dibawah
-          Notable note : 
-          jangan lupa setMode("add") atau setMode("edit") atau setMode("delete") ketika mau nampilin modal (set nya di button atas ye)
-          dan keluar modal di setMode("add")
-
-          add / edit / del .isPending itu ketika query sedang berjalan, mirip dengan isLoading tapi bawaan react querynya
-        */}
-        <PrintModal
-          show={showPrintModal}
-          onHide={handleClosePrintModal}
-          title="Print Laporan Bulanan Penitip"
-          text="Pilih bulan dan cetak laporan bulanan penitip"
-          onSubmit={() => {}} // Nanti diisi
-        >
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Pilih Bulan
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              ref={ref}
-              type="text"
-              onFocus={() => (ref.current.type = "month")}
-              onBlur={() => (ref.current.type = "month")}
-              placeholder="Month YYYY"
-            />
-          </Form.Group>
-        </PrintModal>
-
         <AddEditModal
-          show={showAddEditModal}
+          show={showModal}
           onHide={() => {
-            handleCloseAddEditModal();
+            handleCloseModal();
             setTimeout(() => {
-              setSelectedPenitip(null);
+              selectedAlamat(null);
             }, 125);
           }}
-          size="md"
-          title={selectedPenitip ? "Edit Data Penitip" : "Tambah Data Penitip"}
+          size="lg"
+          title={selectedAlamat ? "Edit Alamat" : "Tambah Alamat"}
           text={
-            selectedPenitip
-              ? "Pastikan data penitip yang Anda ubahkan benar"
-              : "Pastikan data penitip yang Anda tambahkan benar"
+            selectedAlamat
+              ? "Pastikan alamat yang Anda ubahkan benar"
+              : "Pastikan alamat yang Anda tambahkan benar"
           }
           onSubmit={inputHelper.handleSubmit}
           add={add}
@@ -454,14 +410,14 @@ export default function PenitipPage() {
         >
           <Form.Group className="text-start mt-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Nama
+              Nama Lengkap Penerima
             </Form.Label>
             <Form.Control
               style={{ border: "1px solid #808080" }}
               type="text"
-              placeholder="Masukkan nama penitip"
-              name="nama"
-              value={formData.nama}
+              placeholder="Masukkan nama lengkap penerima"
+              name="nama_lengkap"
+              value={formData.nama_lengkap}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
             />
@@ -480,6 +436,38 @@ export default function PenitipPage() {
               disabled={edit.isPending || add.isPending}
             />
           </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Alamat
+            </Form.Label>
+            <Form.Control
+              as={"textarea"}
+              rows={4}
+              style={{ border: "1px solid #808080", resize: "none" }}
+              type="text"
+              placeholder="Masukkan alamat"
+              name="lokasi"
+              value={formData.lokasi}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Keterangan
+            </Form.Label>
+            <Form.Control
+              as={"textarea"}
+              rows={4}
+              style={{ border: "1px solid #808080", resize: "none" }}
+              type="text"
+              placeholder="Masukkan keterangan"
+              name="keterangan"
+              value={formData.keterangan}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+            />
+          </Form.Group>
         </AddEditModal>
 
         <DeleteConfirmationModal
@@ -487,8 +475,8 @@ export default function PenitipPage() {
           secondP="Semua data yang terkait dengan penitip tersebut akan hilang."
           show={showDelModal}
           onHapus={() => {
-            handleCloseDelModal();
-            setSelectedPenitip(null);
+            handleDelCloseModal();
+            setSelectedAlamat(null);
           }}
           onSubmit={onSubmit}
           del={del}

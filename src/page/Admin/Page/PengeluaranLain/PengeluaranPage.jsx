@@ -310,7 +310,7 @@ export default function PengeluaranLainPage() {
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && search) {
                     fetchPengeluaranSearch();
                   }
                 }}

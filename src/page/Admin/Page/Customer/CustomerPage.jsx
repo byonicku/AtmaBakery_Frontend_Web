@@ -127,7 +127,7 @@ export default function CustomerPage() {
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && search) {
                     fetchCustSearch();
                   }
                 }}

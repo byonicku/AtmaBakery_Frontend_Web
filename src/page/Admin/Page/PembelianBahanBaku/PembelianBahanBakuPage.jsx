@@ -326,7 +326,7 @@ export default function PembelianBahanBakuPage() {
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && search) {
                     fetchPembelianBahanBakuSearch();
                   }
                 }}

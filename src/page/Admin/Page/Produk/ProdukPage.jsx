@@ -195,7 +195,7 @@ export default function ProdukPage() {
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && search) {
                     fetchProdukSearch();
                   }
                 }}

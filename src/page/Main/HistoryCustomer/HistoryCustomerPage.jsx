@@ -141,7 +141,7 @@ export default function HistoryCustomerPage() {
                   setSearch(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && search) {
                     fetchHistorySearch();
                   }
                 }}
