@@ -11,23 +11,28 @@ async function retryWithFallback(axiosInstance, originalRequest, error) {
 
   axiosInstance.defaults.baseURL = fallbackBaseUrl;
 
-  try {
-    const response = await axiosInstance(originalRequest);
-    return response;
-  } catch (error) {
-    console.error("Fallback base URL also failed:", error.message);
-    throw error;
-  }
+  const response = await axiosInstance(originalRequest);
+  return response;
 }
 
 useAxios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
     if (!originalRequest._retry) {
       originalRequest._retry = true;
-      return retryWithFallback(useAxios, originalRequest, error);
+
+      if (
+        (error.response &&
+          error.response.status >= 500 &&
+          error.response.status <= 599) ||
+        !error.response
+      ) {
+        return retryWithFallback(useAxios, originalRequest, error);
+      }
     }
+
     throw error;
   }
 );

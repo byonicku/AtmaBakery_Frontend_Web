@@ -9,8 +9,7 @@ import {
   InputGroup,
   Form,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
 
 import { BsInbox, BsSearch } from "react-icons/bs";
 
