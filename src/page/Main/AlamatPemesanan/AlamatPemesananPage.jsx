@@ -471,8 +471,8 @@ export default function AlamatPemesananPage() {
         </AddEditModal>
 
         <DeleteConfirmationModal
-          header="Anda Yakin Ingin Menghapus Data Penitip Ini?"
-          secondP="Semua data yang terkait dengan penitip tersebut akan hilang."
+          header="Anda Yakin Ingin Menghapus Alamat Ini?"
+          secondP="Semua data yang terkait dengan alamat tersebut akan hilang."
           show={showDelModal}
           onHapus={() => {
             handleDelCloseModal();
