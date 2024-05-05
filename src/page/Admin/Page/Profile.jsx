@@ -13,6 +13,8 @@ import APIUser from "@/api/APIUser";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
 
+import { useRefresh } from "@/component/RefreshProvider";
+
 export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [eyeToggle, setEyeToggle] = useState(true);
@@ -39,6 +41,8 @@ export default function Profile() {
 
   const [user, setUser] = useState(null);
   const [image, setImage] = useState(null);
+
+  const { handleRefresh } = useRefresh();
 
   const fetchUser = useCallback(async (signal) => {
     try {
@@ -118,6 +122,7 @@ export default function Profile() {
       toast.success("Edit Berhasil!");
       handleCloseAddEditModalGambar();
       handleMutationSuccess();
+      handleRefresh();
     },
     onError: (error) => {
       console.error(error);
@@ -131,6 +136,7 @@ export default function Profile() {
       handleCloseDeleteModal();
       handleMutationSuccess();
       sessionStorage.setItem("foto_profil", null);
+      handleRefresh();
     },
     onError: (error) => {
       console.error(error);
@@ -242,6 +248,7 @@ export default function Profile() {
       toast.success("Edit Profil Berhasil!");
       handleCloseAddEditModalProfil();
       handleMutationSuccess();
+      handleRefresh();
     },
     onError: (error) => {
       console.error(error);

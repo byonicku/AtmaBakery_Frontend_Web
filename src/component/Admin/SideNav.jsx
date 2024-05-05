@@ -9,6 +9,8 @@ import "./css/SideNav.css";
 import { useEffect, useState } from "react";
 import NavItem from "./component/NavItem";
 
+import { useRefresh } from "@/component/RefreshProvider";
+
 const role = {
   ADM: "Admin",
   MO: "MO",
@@ -20,8 +22,9 @@ export default function SideNav() {
   const location = useLocation();
   const roleId = sessionStorage.getItem("role") || "EMP";
   const roleName = role[roleId];
+  const [nama, setNama] = useState(sessionStorage.getItem("nama") || "User");
   const [image, setImage] = useState(getImageSrc());
-  const nama = sessionStorage.getItem("nama");
+  const { refresh } = useRefresh();
 
   useEffect(() => {
     const currentPath = location.pathname;
@@ -48,20 +51,9 @@ export default function SideNav() {
   }
 
   useEffect(() => {
-    function handleStorageEvent(event) {
-      if (event.storageArea === sessionStorage && event.key === "foto_profil") {
-        setImage(getImageSrc());
-      }
-    }
-
-    // Add the storage event listener
-    window.addEventListener("storage", handleStorageEvent);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("storage", handleStorageEvent);
-    };
-  }, []);
+    setImage(getImageSrc());
+    setNama(sessionStorage.getItem("nama") || "User");
+  }, [refresh]);
 
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
@@ -97,9 +89,7 @@ export default function SideNav() {
               className="d-block"
             >
               <span className="text-bold">
-                {nama == "null" || nama == null
-                  ? "User"
-                  : sessionStorage.getItem("nama")}
+                {nama == "null" || nama == null ? "User" : nama}
               </span>
               <p className="p-0 m-0">
                 {roleId === "CUST"
@@ -126,13 +116,9 @@ export default function SideNav() {
                 isActive={false}
               />
             ))}
-            {/* 
-                    Nanti bakal ada beberapa route disini tambahin aja ke AdminConstant
-                */}
           </ul>
         </nav>
       </div>
-      {/* /.sidebar */}
     </aside>
   );
 }

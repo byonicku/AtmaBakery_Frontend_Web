@@ -124,6 +124,8 @@ const updateUserSelf = async (data) => {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
+
+    sessionStorage.setItem("nama", response.data.data.nama);
     return response.data;
   } catch (error) {
     throw error.response || error;
@@ -134,7 +136,7 @@ const updateUserSelfGambar = async (image) => {
   const data = {
     foto_profil: image,
   };
-  console.log(data);
+
   try {
     const response = await useAxios.post(`/users/self`, data, {
       headers: {
@@ -142,6 +144,7 @@ const updateUserSelfGambar = async (image) => {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
+    sessionStorage.setItem("foto_profil", response.data.data.foto_profil);
     return response.data;
   } catch (error) {
     throw error.response || error;
