@@ -18,11 +18,6 @@ export default function Header() {
   const role = sessionStorage.getItem("role");
   const token = sessionStorage.getItem("token");
 
-  const scrollToTop = () => {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  };
-
   const mutation = useMutation({
     mutationFn: APIAuth.logout,
     onSuccess: () => {
@@ -58,7 +53,6 @@ export default function Header() {
         <Navbar.Brand
           style={{ cursor: "pointer" }}
           onClick={() => {
-            scrollToTop();
             navigate("/");
           }}
         >
@@ -79,7 +73,6 @@ export default function Header() {
           <Nav className="mx-auto">
             <Nav.Link
               onClick={() => {
-                scrollToTop();
                 navigate("/");
               }}
             >
@@ -87,7 +80,6 @@ export default function Header() {
             </Nav.Link>
             <Nav.Link
               onClick={() => {
-                scrollToTop();
                 navigate("/tentang");
               }}
             >
@@ -95,7 +87,6 @@ export default function Header() {
             </Nav.Link>
             <Nav.Link
               onClick={() => {
-                scrollToTop();
                 navigate("/produk");
               }}
             >
@@ -103,7 +94,6 @@ export default function Header() {
             </Nav.Link>
             <Nav.Link
               onClick={() => {
-                scrollToTop();
                 navigate("/pesan");
               }}
             >
@@ -111,7 +101,6 @@ export default function Header() {
             </Nav.Link>
             <Nav.Link
               onClick={() => {
-                scrollToTop();
                 navigate("/kontak");
               }}
             >
@@ -120,7 +109,6 @@ export default function Header() {
             {role !== null && role !== "CUST" && (
               <Nav.Link
                 onClick={() => {
-                  scrollToTop();
                   navigate("/admin");
                 }}
               >
@@ -130,7 +118,6 @@ export default function Header() {
             {role !== null && role === "CUST" && (
               <Nav.Link
                 onClick={() => {
-                  scrollToTop();
                   navigate("/profile");
                 }}
               >
@@ -143,7 +130,6 @@ export default function Header() {
               <Nav.Link
                 className="button-style"
                 onClick={() => {
-                  scrollToTop();
                   navigate("/login");
                 }}
               >
@@ -154,7 +140,6 @@ export default function Header() {
               <Nav.Link
                 className="button-style"
                 onClick={() => {
-                  scrollToTop();
                   handleLogout();
                 }}
               >

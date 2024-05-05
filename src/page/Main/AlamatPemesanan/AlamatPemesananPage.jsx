@@ -382,9 +382,7 @@ export default function AlamatPemesananPage() {
           </>
         ) : (
           <NotFound
-            text={
-              search ? "History Tidak Ditemukan" : "Belum Ada History Disini"
-            }
+            text={search ? "Alamat Tidak Ditemukan" : "Belum Ada Alamat Disini"}
           />
         )}
 
