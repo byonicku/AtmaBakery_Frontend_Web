@@ -171,6 +171,11 @@ export default function Profile() {
           password_confirmation: formData.password_confirmation,
         };
 
+        if (data.password !== data.password_confirmation) {
+          toast.error("Password baru dan konfirmasi password baru tidak sama!");
+          return;
+        }
+
         await edit.mutateAsync(data);
         return;
       }
