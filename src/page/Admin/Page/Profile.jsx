@@ -1,4 +1,12 @@
-import { Spinner, Button, Form, InputGroup, Image } from "react-bootstrap";
+import {
+  Spinner,
+  Button,
+  Form,
+  InputGroup,
+  Image,
+  Col,
+  Row,
+} from "react-bootstrap";
 
 import { BsPencilSquare } from "react-icons/bs";
 
@@ -14,9 +22,10 @@ import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
 
 import { useRefresh } from "@/component/RefreshProvider";
+import { FaCamera, FaTrash } from "react-icons/fa";
 
 export default function Profile() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [eyeToggle, setEyeToggle] = useState(true);
   const [eyeToggle1, setEyeToggle1] = useState(true);
   const [eyeToggle2, setEyeToggle2] = useState(true);
@@ -45,10 +54,15 @@ export default function Profile() {
   const { handleRefresh } = useRefresh();
 
   const fetchUser = useCallback(async (signal) => {
+    setIsLoading(true);
     try {
       const data = await APIUser.getSelf(signal);
-      sessionStorage.setItem("foto_profil", data.foto_profil);
       sessionStorage.setItem("nama", data.nama);
+      sessionStorage.setItem("tanggal_lahir", data.tanggal_lahir);
+      sessionStorage.setItem("email", data.email);
+      sessionStorage.setItem("no_telp", data.no_telp);
+      sessionStorage.setItem("jenis_kelamin", data.jenis_kelamin);
+      sessionStorage.setItem("foto_profil", data.foto_profil);
       setUser(data);
     } catch (error) {
       console.error(error);
@@ -58,16 +72,19 @@ export default function Profile() {
   }, []);
 
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    fetchUser(signal);
+    setUser({
+      nama: sessionStorage.getItem("nama"),
+      tanggal_lahir: sessionStorage.getItem("tanggal_lahir"),
+      email: sessionStorage.getItem("email"),
+      no_telp: sessionStorage.getItem("no_telp"),
+      jenis_kelamin: sessionStorage.getItem("jenis_kelamin"),
+      foto_profil:
+        sessionStorage.getItem("foto_profil") === "null"
+          ? null
+          : sessionStorage.getItem("foto_profil"),
+    });
     setImage(null);
-
-    return () => {
-      abortController.abort();
-    };
-  }, [fetchUser]);
+  }, []);
 
   const [formData, setFormData] = useState({
     old_password: "",
@@ -290,22 +307,22 @@ export default function Profile() {
             <h6 className="mt-2 mb-0">Loading...</h6>
           </div>
         ) : (
-          <div className="d-flex">
+          <Row>
             {/* Container Kiri */}
-            <div className="col-md-4">
+            <Col md={4}>
               {/* Photo Profil */}
-              <div className="text-center mb-5 ">
+              <div className="text-center mb-4 ">
                 <img
                   src={
                     user?.foto_profil ||
                     "https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/r1xujbu1yfoenzked4rc"
                   }
                   alt="Profile"
-                  className="img-fluid rounded-circle"
+                  className="img-fluid rounded-circle border border-black"
                   style={{
                     width: "200px",
-                    height: "200px",
                     objectFit: "cover",
+                    aspectRatio: "1/1",
                   }}
                 />
               </div>
@@ -313,144 +330,146 @@ export default function Profile() {
               <div className="text-center">
                 <Button
                   variant="primary"
-                  className="w-50 mb-3"
+                  className="mb-2"
                   onClick={() => {
                     setMode("edit-gambar");
                     setShowAddEditModalGambar(true);
                   }}
                 >
-                  Ubah Foto
+                  <FaCamera className="mb-1 me-1" /> Ubah Foto
                 </Button>
                 <br />
                 {user?.foto_profil && (
                   <Button
                     variant="danger"
-                    className="custom-danger-btn w-50 mt-2"
+                    className="custom-danger-btn"
                     onClick={() => {
                       setMode("delete");
                       setShowDeleteModal(true);
                     }}
                   >
-                    Hapus Foto
+                    <FaTrash className="mb-1 me-1" /> Hapus Foto
                   </Button>
                 )}
               </div>
-            </div>
+            </Col>
             {/* Container Kanan */}
-            <div className="col-md-6">
+            <Col md={8}>
               {/* Field Data Profil */}
-              <div className="text-start mt-3">
-                <label
-                  htmlFor="nama"
-                  style={{ fontWeight: "bold", fontSize: "1em" }}
-                >
-                  Nama
-                </label>
-                <input
-                  style={{ border: "1px solid #808080" }}
-                  id="nama"
-                  type="text"
-                  className="form-control"
-                  value={user?.nama || ""}
-                  disabled
-                />
-              </div>
-              <div className="text-start mt-3">
-                <label
-                  htmlFor="nama"
-                  style={{ fontWeight: "bold", fontSize: "1em" }}
-                >
-                  Tanggal Lahir
-                </label>
-                <input
-                  style={{ border: "1px solid #808080" }}
-                  id="tanggal_lahir"
-                  type="text"
-                  className="form-control"
-                  value={user?.tanggal_lahir || ""}
-                  disabled
-                />
-              </div>
-              <div className="text-start mt-3">
-                <label
-                  htmlFor="nama"
-                  style={{ fontWeight: "bold", fontSize: "1em" }}
-                >
-                  Nomor Telepon
-                </label>
-                <input
-                  style={{ border: "1px solid #808080" }}
-                  id="no_telp"
-                  type="text"
-                  className="form-control"
-                  value={user?.no_telp || ""}
-                  disabled
-                />
-              </div>
-              <div className="text-start mt-3">
-                <label
-                  htmlFor="nama"
-                  style={{ fontWeight: "bold", fontSize: "1em" }}
-                >
-                  Email
-                </label>
-                <input
-                  style={{ border: "1px solid #808080" }}
-                  id="email"
-                  type="text"
-                  className="form-control"
-                  value={user?.email || ""}
-                  disabled
-                />
-              </div>
-              <div className="text-start mt-3">
-                <label
-                  htmlFor="jenis_kelamin"
-                  style={{ fontWeight: "bold", fontSize: "1em" }}
-                >
-                  Jenis Kelamin
-                </label>
-                <input
-                  style={{ border: "1px solid #808080" }}
-                  id="jenis_kelamin"
-                  type="text"
-                  className="form-control"
-                  value={
-                    user?.jenis_kelamin === null
-                      ? ""
-                      : user?.jenis_kelamin === "L"
-                      ? "Laki-laki"
-                      : "Perempuan"
-                  }
-                  disabled
-                />
-              </div>
-              <div className="text-start mt-3 d-flex mb-3">
-                <Button
-                  variant="success"
-                  className="w-45 mr-2"
-                  onClick={() => {
-                    setMode("edit-profil");
-                    handleEditProfileClick(user);
-                  }}
-                >
-                  <BsPencilSquare className="mb-1" /> Ubah Profile
-                </Button>
-                {sessionStorage.getItem("role") !== "CUST" && (
+              <div className="pe-lg-5 pe-2 ps-2 pe-md-3">
+                <div className="text-start mt-3">
+                  <label
+                    htmlFor="nama"
+                    style={{ fontWeight: "bold", fontSize: "1em" }}
+                  >
+                    Nama
+                  </label>
+                  <input
+                    style={{ border: "1px solid #808080" }}
+                    id="nama"
+                    type="text"
+                    className="form-control"
+                    value={user?.nama || ""}
+                    disabled
+                  />
+                </div>
+                <div className="text-start mt-3">
+                  <label
+                    htmlFor="nama"
+                    style={{ fontWeight: "bold", fontSize: "1em" }}
+                  >
+                    Tanggal Lahir
+                  </label>
+                  <input
+                    style={{ border: "1px solid #808080" }}
+                    id="tanggal_lahir"
+                    type="text"
+                    className="form-control"
+                    value={user?.tanggal_lahir || ""}
+                    disabled
+                  />
+                </div>
+                <div className="text-start mt-3">
+                  <label
+                    htmlFor="nama"
+                    style={{ fontWeight: "bold", fontSize: "1em" }}
+                  >
+                    Nomor Telepon
+                  </label>
+                  <input
+                    style={{ border: "1px solid #808080" }}
+                    id="no_telp"
+                    type="text"
+                    className="form-control"
+                    value={user?.no_telp || ""}
+                    disabled
+                  />
+                </div>
+                <div className="text-start mt-3">
+                  <label
+                    htmlFor="nama"
+                    style={{ fontWeight: "bold", fontSize: "1em" }}
+                  >
+                    Email
+                  </label>
+                  <input
+                    style={{ border: "1px solid #808080" }}
+                    id="email"
+                    type="text"
+                    className="form-control"
+                    value={user?.email || ""}
+                    disabled
+                  />
+                </div>
+                <div className="text-start mt-3">
+                  <label
+                    htmlFor="jenis_kelamin"
+                    style={{ fontWeight: "bold", fontSize: "1em" }}
+                  >
+                    Jenis Kelamin
+                  </label>
+                  <input
+                    style={{ border: "1px solid #808080" }}
+                    id="jenis_kelamin"
+                    type="text"
+                    className="form-control"
+                    value={
+                      user?.jenis_kelamin === null
+                        ? ""
+                        : user?.jenis_kelamin === "L"
+                        ? "Laki-laki"
+                        : "Perempuan"
+                    }
+                    disabled
+                  />
+                </div>
+                <div className="text-start mt-3 d-flex mb-3">
                   <Button
-                    variant="danger"
-                    className="custom-agree-btn w-45"
+                    variant="success"
+                    className="w-45 mr-2"
                     onClick={() => {
-                      setMode("edit");
-                      handleEditPasswordClick(user);
+                      setMode("edit-profil");
+                      handleEditProfileClick(user);
                     }}
                   >
-                    <BsPencilSquare className="mb-1" /> Ubah Password
+                    <BsPencilSquare className="mb-1" /> Ubah Profile
                   </Button>
-                )}
+                  {sessionStorage.getItem("role") !== "CUST" && (
+                    <Button
+                      variant="danger"
+                      className="custom-agree-btn w-45"
+                      onClick={() => {
+                        setMode("edit");
+                        handleEditPasswordClick(user);
+                      }}
+                    >
+                      <BsPencilSquare className="mb-1" /> Ubah Password
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
+            </Col>
+          </Row>
         )}
       </section>
       {/* Modal */}

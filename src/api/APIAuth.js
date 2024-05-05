@@ -12,6 +12,10 @@ const login = async (data) => {
     sessionStorage.setItem("role", response.data.data.id_role);
     sessionStorage.setItem("foto_profil", response.data.data.foto_profil);
     sessionStorage.setItem("nama", response.data.data.nama);
+    sessionStorage.setItem("tanggal_lahir", response.data.data.tanggal_lahir);
+    sessionStorage.setItem("no_telp", response.data.data.no_telp);
+    sessionStorage.setItem("email", response.data.data.email);
+    sessionStorage.setItem("jenis_kelamin", response.data.data.jenis_kelamin);
 
     return response.data;
   } catch (error) {
@@ -32,10 +36,7 @@ const logout = async () => {
       }
     );
 
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("role");
-    sessionStorage.removeItem("foto_profil");
-    sessionStorage.removeItem("nama");
+    sessionStorage.clear();
 
     return response.data;
   } catch (error) {
