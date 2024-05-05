@@ -52,7 +52,7 @@ export default function ProdukPage() {
   const [produk, setProduk] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
 
   const fetchProduk = useCallback(
     async (signal) => {

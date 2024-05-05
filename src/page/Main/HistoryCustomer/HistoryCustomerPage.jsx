@@ -29,7 +29,7 @@ export default function HistoryCustomerPage() {
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -88,6 +88,11 @@ export default function HistoryCustomerPage() {
   }, [fetchHistoryCust]);
 
   const fetchHistorySearch = async () => {
+    if (search.trim() === "") {
+      // Kalo spasi doang bakal gabisa
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await APIHistory.searchHistoryCustSelf(search);

@@ -58,7 +58,7 @@ export default function KaryawanPage() {
   const [karyawan, setKaryawan] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const role = sessionStorage.getItem("role") || "";
@@ -328,7 +328,7 @@ export default function KaryawanPage() {
               <Button
                 variant="secondary"
                 disabled={isLoading}
-                onClick={() => fetchKaryawanSearch()}
+                onClick={fetchKaryawanSearch}
               >
                 <BsSearch />
               </Button>

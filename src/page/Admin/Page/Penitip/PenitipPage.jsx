@@ -57,7 +57,7 @@ export default function PenitipPage() {
   const [penitip, setPenitip] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
 
   const fetchPenitip = useCallback(
     async (signal) => {
@@ -302,7 +302,7 @@ export default function PenitipPage() {
               <Button
                 variant="secondary"
                 disabled={isLoading}
-                onClick={() => fetchPenitipSearch()}
+                onClick={fetchPenitipSearch}
               >
                 <BsSearch />
               </Button>

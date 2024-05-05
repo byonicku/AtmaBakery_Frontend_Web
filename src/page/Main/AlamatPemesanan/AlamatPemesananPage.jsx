@@ -36,7 +36,7 @@ export default function AlamatPemesananPage() {
   const [alamat, setAlamat] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showDelModal, setDelShowModal] = useState(false);
 
@@ -86,6 +86,10 @@ export default function AlamatPemesananPage() {
   }, [fetchAlamat]);
 
   const fetchAlamatSearch = async () => {
+    if (search.trim() === "") {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await APIAlamat.searchAlamatSelf(search);
@@ -282,7 +286,7 @@ export default function AlamatPemesananPage() {
               <Button
                 variant="secondary"
                 disabled={isLoading}
-                onClick={() => fetchAlamatSearch()}
+                onClick={fetchAlamatSearch}
               >
                 <BsSearch />
               </Button>

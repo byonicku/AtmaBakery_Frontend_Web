@@ -153,7 +153,7 @@ export default function HampersPage() {
   const [hampers, setHampers] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
 
   const fetchHampers = useCallback(
     async (signal) => {
@@ -611,7 +611,7 @@ export default function HampersPage() {
               <Button
                 variant="secondary"
                 disabled={isLoading}
-                onClick={() => fetchHampersSearch()}
+                onClick={fetchHampersSearch}
               >
                 <BsSearch />
               </Button>

@@ -25,7 +25,7 @@ export default function CustomerPage() {
   const [cust, setCust] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
 
   const fetchCust = useCallback(
     async (signal) => {
@@ -135,7 +135,7 @@ export default function CustomerPage() {
               <Button
                 variant="secondary"
                 disabled={isLoading}
-                onClick={() => fetchCustSearch()}
+                onClick={fetchCustSearch}
               >
                 <BsSearch />
               </Button>

@@ -51,7 +51,7 @@ export default function ResepPage() {
   const [resep, setResep] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
 
   const [selectedProduk, setSelectedProduk] = useState(null);
   const [selectedAllBahanBaku, setSelectedAllBahanBaku] = useState(null);
@@ -382,7 +382,7 @@ export default function ResepPage() {
               <Button
                 variant="secondary"
                 disabled={isLoading}
-                onClick={() => fetchResepSearch()}
+                onClick={fetchResepSearch}
               >
                 <BsSearch />
               </Button>

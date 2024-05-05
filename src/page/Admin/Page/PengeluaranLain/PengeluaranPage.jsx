@@ -52,7 +52,7 @@ export default function PengeluaranLainPage() {
   const [pengeluaran, setPengeluaran] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
 
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
