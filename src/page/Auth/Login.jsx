@@ -21,6 +21,7 @@ import APIAuth from "@/api/APIAuth";
 import "./css/Auth.css";
 import imageBg from "@/assets/images/bg.png";
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
+import Header from "@/component/Auth/Header";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -82,114 +83,110 @@ export default function Login() {
   );
 
   return (
-    <div className="bg-half">
-      <Navbar className="navbarLogin" expand="lg" fixed="top" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', paddingLeft: '10rem'}}>
-        <Navbar.Brand
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          <div className="logo">
-            <img src={logo} alt="logo" />
-          </div>
-        </Navbar.Brand>
-      </Navbar>
+    <>
+      <Header />
 
-      <Container className="container-setting">
-        <Row className="no-gutters shadow-lg rounded h-auto">
-          <Col
-            className="remove p-0 m-0"
-            style={{ backgroundColor: "#FFEDDB" }}
-          >
-            <Image src={imageBg} className="p-0 m-0 rounded left-img" />
-          </Col>
-          <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
-            <div style={{ color: "black" }}>
-              <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                <span>Selamat</span>
-                <span style={{ color: "#F48E28" }}> Datang</span>
-                <span> Kembali</span>
-              </h1>
-              <p className="py-2" style={{ fontSize: "1em" }}>
-                Masuk ke akun untuk melanjutkan
-              </p>
-            </div>
+      <div className="bg-half">
+        <Container className="container-setting">
+          <Row className="no-gutters shadow-lg rounded h-auto">
+            <Col
+              className="remove p-0 m-0"
+              style={{ backgroundColor: "#FFEDDB" }}
+            >
+              <Image src={imageBg} className="p-0 m-0 rounded left-img" />
+            </Col>
+            <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
+              <div style={{ color: "black" }}>
+                <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                  <span>Selamat</span>
+                  <span style={{ color: "#F48E28" }}> Datang</span>
+                  <span> Kembali</span>
+                </h1>
+                <p className="py-2" style={{ fontSize: "1em" }}>
+                  Masuk ke akun untuk melanjutkan
+                </p>
+              </div>
 
-            <Form onSubmit={inputHelper.handleSubmit}>
-              <Form.Group>
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Email
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
-                  type="email"
-                  placeholder="Masukkan alamat email"
-                  name="email"
-                  onChange={inputHelper.handleInputChange}
-                  disabled={result.isPending}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mt-4">
-                <Form.Label style={{ fontWeight: "bold" }}>Password</Form.Label>
-                <InputGroup>
+              <Form onSubmit={inputHelper.handleSubmit}>
+                <Form.Group>
+                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    Email
+                  </Form.Label>
                   <Form.Control
-                    type={eyeToggle ? "password" : "text"}
                     style={{
                       border: "1px #E5E5E5",
                       backgroundColor: "#F2F2F2",
                     }}
-                    placeholder="Masukkan kata sandi"
-                    name="password"
+                    type="email"
+                    placeholder="Masukkan alamat email"
+                    name="email"
                     onChange={inputHelper.handleInputChange}
                     disabled={result.isPending}
                     required
                   />
-                  <InputGroup.Text
-                    style={{
-                      border: "1px #E5E5E5",
-                      backgroundColor: "#F2F2F2",
-                      userSelect: "none",
-                    }}
-                    onClick={handleToggle}
-                  >
-                    {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
-                  </InputGroup.Text>
-                </InputGroup>
-              </Form.Group>
-              <Container className="my-3 d-flex justify-content-end">
-                <Link to="/reset" style={{ textDecoration: "none" }}>
-                  Lupa Kata Sandi?
-                </Link>
-              </Container>
+                </Form.Group>
+                <Form.Group className="mt-4">
+                  <Form.Label style={{ fontWeight: "bold" }}>
+                    Password
+                  </Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type={eyeToggle ? "password" : "text"}
+                      style={{
+                        border: "1px #E5E5E5",
+                        backgroundColor: "#F2F2F2",
+                      }}
+                      placeholder="Masukkan kata sandi"
+                      name="password"
+                      onChange={inputHelper.handleInputChange}
+                      disabled={result.isPending}
+                      required
+                    />
+                    <InputGroup.Text
+                      style={{
+                        border: "1px #E5E5E5",
+                        backgroundColor: "#F2F2F2",
+                        userSelect: "none",
+                      }}
+                      onClick={handleToggle}
+                    >
+                      {eyeToggle ? <BsEyeFill /> : <BsEyeSlashFill />}
+                    </InputGroup.Text>
+                  </InputGroup>
+                </Form.Group>
+                <Container className="my-3 d-flex justify-content-end">
+                  <Link to="/reset" style={{ textDecoration: "none" }}>
+                    Lupa Kata Sandi?
+                  </Link>
+                </Container>
 
-              <Container className="text-center pb-2">
-                <Button
-                  className="button-custom"
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Loading..." : "Masuk"}
-                </Button>
+                <Container className="text-center pb-2">
+                  <Button
+                    className="button-custom"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Loading..." : "Masuk"}
+                  </Button>
+                </Container>
+              </Form>
+              <Container className="text-center">
+                <div style={{ color: "black" }}>
+                  <p style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    <span>Belum memiliki akun?</span>
+                    <span>
+                      {" "}
+                      <Link to="/register" style={{ textDecoration: "none" }}>
+                        Daftar Sekarang
+                      </Link>
+                    </span>
+                  </p>
+                </div>
               </Container>
-            </Form>
-            <Container className="text-center">
-              <div style={{ color: "black" }}>
-                <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  <span>Belum memiliki akun?</span>
-                  <span>
-                    {" "}
-                    <Link to="/register" style={{ textDecoration: "none" }}>
-                      Daftar Sekarang
-                    </Link>
-                  </span>
-                </p>
-              </div>
-            </Container>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </>
   );
 }

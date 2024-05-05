@@ -1,20 +1,33 @@
 .button-style {
-    display: inline-block;
-    padding: 0.625rem 1.25rem; 
-    background-color: #ffff;
-    color: #000000;
-    border: none;
-    border-radius: 0.3125rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2); 
-    transition: box-shadow 0.3s ease;
-}  
-  
+  display: inline-block;
+  padding: 0.625rem 1.25rem;
+  background-color: #ffff;
+  color: #000000;
+  border: none;
+  border-radius: 0.3125rem;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
 .button-style:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2); 
-  }
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
 
 .navbarHome {
-    background-color: #ffffff;
-    padding-left: 10rem;
-    padding-right: 10rem;
+  background-color: #ffffff;
+}
+
+@media screen and (max-width: 912px) {
+  .button-style {
+    padding: 0.625rem 1.25rem;
+  }
+
+  .main-title {
+    font-size: 3.125rem;
+  }
+
+  a.button-style.nav-link {
+    padding: 0.625rem 1.25rem;
+    margin: auto;
+  }
 }

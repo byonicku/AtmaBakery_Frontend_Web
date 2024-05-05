@@ -1,67 +1,85 @@
 .bg-half {
-    background: linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.5) 50%, #EFAB68 50%, #EFAB68 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    #efab68 50%,
+    #efab68 100%
+  );
+  min-height: 86.5vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.button-custom {
+  background: linear-gradient(to bottom, #efab68, #f48e28 75%);
+  background-size: 20px 75px;
+  font-size: 1em;
+  border: none;
+  padding: 10px 125px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.button-custom:hover {
+  background-position: 100px;
+}
+
+.button-custom:active {
+  background-position: 20px;
+}
+
+.button-custom {
+  user-select: none;
+}
+
+.left-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.container-setting {
+  padding-top: 0px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 100px;
+}
+
+@media screen and (max-width: 912px) {
+  .bg-half {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.5) 50%,
+      #efab68 50%,
+      #efab68 100%
+    );
     min-height: 100vh;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     vertical-align: middle;
+  }
+
+  .button-custom {
+    padding: 10px 50px;
+  }
+
+  .container-setting {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  .loading {
+    min-height: 50vh;
+  }
+
+  .remove {
+    display: none;
+  }
 }
-
-.button-custom {
-    background: linear-gradient(to bottom, #EFAB68, #F48E28 75%);
-    background-size: 20px 75px;
-    font-size: 1em;
-    border: none;
-    padding: 10px 125px;
-    cursor: pointer; 
-    transition: background 0.3s ease-in-out; 
-}
-
-.button-custom:hover {
-    background-position: 100px;
-}
-
-.button-custom:active {
-    background-position: 20px;
-}
-
-.button-custom {
-    user-select: none;
-}
-
-.left-img {
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain;
-}
-
-@media screen and (max-width: 912px) {
-    .bg-half {
-        background: linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.5) 50%, #EFAB68 50%, #EFAB68 100%);
-        min-height: 100vh;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        vertical-align: middle;
-    }
-
-    .button-custom {
-        padding: 10px 50px;
-    }
-
-    .container-setting {
-        padding-left: 25px;
-        padding-right: 25px;
-    }
-    
-    .loading {
-        min-height: 50vh;
-    }
-    
-    .remove {
-        display: none;
-    }
-}
-

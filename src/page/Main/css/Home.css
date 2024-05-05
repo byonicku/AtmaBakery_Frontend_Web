@@ -1,86 +1,83 @@
 .content-main {
   width: 100%;
   height: 100%;
-  font-size: 1.5rem; 
+  font-size: 1.5rem;
   margin: 0;
   overflow-x: hidden;
   min-height: 100vh;
   padding-top: 10rem;
-  padding-left: 10rem; 
-  padding-right: 10rem; 
 }
 
 .ellipse-container {
   width: 13.75rem;
-  height: 3.125rem; 
-  background-color: #F5DDC4;
+  height: 3.125rem;
+  background-color: #f5ddc4;
   display: flex;
   align-items: center;
-  border-radius: 1.25rem; 
+  border-radius: 1.25rem;
 }
 
 .ellipse-text {
-  color: #F48E28;
+  color: #f48e28;
   font-size: 1.25rem;
-  padding-left: 0.625rem; 
+  padding-left: 0.625rem;
 }
 
 .btn-circleLanding {
   width: 1.875rem;
   height: 1.875rem;
   padding: 0.375rem 0rem;
-  border-radius: 0.9375rem; 
+  border-radius: 0.9375rem;
   text-align: center;
-  font-size: 0.75rem; 
+  font-size: 0.75rem;
   line-height: 1.42857;
   background-color: #ffffff;
 }
 
 .main-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 4.375rem;
   text-align: left;
-  margin-top: 1.25rem; 
+  margin-top: 1.25rem;
 }
 
 .text-desc {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 0.625rem;
   text-align: left;
 }
 
 .button-landing {
-  width: 15rem; 
+  width: 15rem;
   height: 3.75rem;
-  background: linear-gradient(180deg, #EFAB68, #F48E28);
-  font-size: 1.125rem; 
-  color: #FFFFFF;
+  background: linear-gradient(180deg, #efab68, #f48e28);
+  font-size: 1.125rem;
+  color: #ffffff;
   font-weight: bold;
 }
 
 .button-landing-border {
-  width: 15rem; 
-  height: 3.75rem; 
-  background-color: #FFFFFF; 
-  border: 0.125rem solid #F48E28; 
-  font-size: 1.125rem; 
+  width: 15rem;
+  height: 3.75rem;
+  background-color: #ffffff;
+  border: 0.125rem solid #f48e28;
+  font-size: 1.125rem;
   color: #000000;
   font-weight: bold;
 }
 
 .button-style:hover {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
 }
 
 .rectangleLanding {
-  margin-left: 40%; 
+  margin-left: 40%;
   left: 0;
   width: 60%;
   height: 100%;
-  background: linear-gradient(180deg, #D9D9D9 0%, #f4f2f2 100%);
+  background: linear-gradient(180deg, #d9d9d9 0%, #f4f2f2 100%);
   border-radius: 1.25rem;
 }
-
 
 /* Just For Desain Fitur Belum Tersedia*/
 .error-message {
@@ -89,34 +86,33 @@
 }
 
 .error-title {
-  color: #F48E28;
+  color: #f48e28;
   font-size: 3.75rem;
-  font-weight: bold; 
-  font-family: 'Montserrat', sans-serif; 
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
 }
 
 .error-description {
   color: #666666;
   font-size: 2rem;
-  font-family: 'Montserrat', sans-serif; 
+  font-family: "Montserrat", sans-serif;
 }
 
 .error-info {
   color: #000000;
   font-size: 1rem;
-  font-family: 'Montserrat', sans-serif; 
+  font-family: "Montserrat", sans-serif;
   margin-top: 1.25rem;
 }
 
 .error-button {
   margin-top: 1.25rem;
-  font-family: 'Montserrat', sans-serif; 
+  font-family: "Montserrat", sans-serif;
 }
 
-
-
-
-
-
-
-
+@media screen and (max-width: 912px) {
+  .content-main {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}

@@ -10,6 +10,7 @@ import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
 import imageBg from "@/assets/images/bg.png";
+import Header from "@/component/Auth/Header";
 
 export default function ResetPass() {
   const [isLoading, setIsLoading] = useState(false);
@@ -62,68 +63,74 @@ export default function ResetPass() {
   );
 
   return (
-    <div className="bg-half">
-      <Container className="container-setting">
-        <Row className="no-gutters shadow-lg rounded h-auto">
-          <Col
-            className="remove p-0 m-0"
-            style={{ backgroundColor: "#FFEDDB" }}
-          >
-            <Image src={imageBg} className="p-0 m-0 rounded left-img" />
-          </Col>
-          <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
-            <div style={{ color: "black" }}>
-              <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                <span style={{ color: "#F48E28" }}>Lupa</span>
-                <span> Kata Sandi</span>
-              </h1>
-              <p className="py-2" style={{ fontSize: "1em" }}>
-                Mohon masukkan alamat email yang terhubung dengan akun Anda.
-                Kami akan mengirimkan instruksi ubah kata sandi ke email
-                tersebut.
-              </p>
-            </div>
-
-            <Form onSubmit={inputHelper.handleSubmit}>
-              <Form.Group className="pb-3">
-                <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  Email
-                </Form.Label>
-                <Form.Control
-                  style={{ border: "1px #E5E5E5", backgroundColor: "#F2F2F2" }}
-                  type="email"
-                  placeholder="Masukkan alamat email"
-                  name="email"
-                  onChange={inputHelper.handleInputChange}
-                  required
-                />
-              </Form.Group>
-              <Container className="text-center pb-2">
-                <Button
-                  className="button-custom"
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Loading..." : "Kirim"}
-                </Button>
-              </Container>
-            </Form>
-            <Container className="text-center">
+    <>
+      <Header />
+      <div className="bg-half">
+        <Container className="container-setting">
+          <Row className="no-gutters shadow-lg rounded h-auto">
+            <Col
+              className="remove p-0 m-0"
+              style={{ backgroundColor: "#FFEDDB" }}
+            >
+              <Image src={imageBg} className="p-0 m-0 rounded left-img" />
+            </Col>
+            <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
               <div style={{ color: "black" }}>
-                <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                  <span>Batalkan permintaan lupa kata sandi?</span>
-                  <span>
-                    {" "}
-                    <Link to="/login" style={{ textDecoration: "none" }}>
-                      Masuk Sekarang
-                    </Link>
-                  </span>
+                <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                  <span style={{ color: "#F48E28" }}>Lupa</span>
+                  <span> Kata Sandi</span>
+                </h1>
+                <p className="py-2" style={{ fontSize: "1em" }}>
+                  Mohon masukkan alamat email yang terhubung dengan akun Anda.
+                  Kami akan mengirimkan instruksi ubah kata sandi ke email
+                  tersebut.
                 </p>
               </div>
-            </Container>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+
+              <Form onSubmit={inputHelper.handleSubmit}>
+                <Form.Group className="pb-3">
+                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    Email
+                  </Form.Label>
+                  <Form.Control
+                    style={{
+                      border: "1px #E5E5E5",
+                      backgroundColor: "#F2F2F2",
+                    }}
+                    type="email"
+                    placeholder="Masukkan alamat email"
+                    name="email"
+                    onChange={inputHelper.handleInputChange}
+                    required
+                  />
+                </Form.Group>
+                <Container className="text-center pb-2">
+                  <Button
+                    className="button-custom"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Loading..." : "Kirim"}
+                  </Button>
+                </Container>
+              </Form>
+              <Container className="text-center">
+                <div style={{ color: "black" }}>
+                  <p style={{ fontWeight: "bold", fontSize: "1em" }}>
+                    <span>Batalkan permintaan lupa kata sandi?</span>
+                    <span>
+                      {" "}
+                      <Link to="/login" style={{ textDecoration: "none" }}>
+                        Masuk Sekarang
+                      </Link>
+                    </span>
+                  </p>
+                </div>
+              </Container>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </>
   );
 }

@@ -54,115 +54,119 @@ export default function Header() {
 
   return (
     <Navbar className="navbarHome" expand="lg" fixed="top">
-      <Navbar.Brand
-        style={{ cursor: "pointer" }}
-        onClick={() => {
-          scrollToTop();
-          navigate("/");
-        }}
-      >
-        <div className="logo">
-          <img src={logo} alt="logo" />
-        </div>
-      </Navbar.Brand>
-      <Navbar.Toggle
-        aria-controls="navbarNavDropdown"
-        onClick={() => setExpanded(!expanded)}
-      >
-        <div className="navbar-toggler-icon" />
-      </Navbar.Toggle>
-      <Navbar.Collapse
-        id="navbarNavDropdown"
-        className="justify-content-center"
-      >
-        <Nav className="mx-auto">
-          <Nav.Link
-            onClick={() => {
-              scrollToTop();
-              navigate("/");
-            }}
-          >
-            Beranda
-          </Nav.Link>
-          <Nav.Link
-            onClick={() => {
-              scrollToTop();
-              navigate("/tentang");
-            }}
-          >
-            Tentang Kami
-          </Nav.Link>
-          <Nav.Link
-            onClick={() => {
-              scrollToTop();
-              navigate("/produk");
-            }}
-          >
-            Produk
-          </Nav.Link>
-          <Nav.Link
-            onClick={() => {
-              scrollToTop();
-              navigate("/pesan");
-            }}
-          >
-            Pesan
-          </Nav.Link>
-          <Nav.Link
-            onClick={() => {
-              scrollToTop();
-              navigate("/kontak");
-            }}
-          >
-            Kontak
-          </Nav.Link>
-          {role !== null && role !== "CUST" && (
+      <Container>
+        <Navbar.Brand
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            scrollToTop();
+            navigate("/");
+          }}
+        >
+          <div className="logo">
+            <img src={logo} alt="logo" />
+          </div>
+        </Navbar.Brand>
+        <Navbar.Toggle
+          aria-controls="navbarNavDropdown"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <div className="navbar-toggler-icon" />
+        </Navbar.Toggle>
+        <Navbar.Collapse
+          id="navbarNavDropdown"
+          className="justify-content-center"
+        >
+          <Nav className="mx-auto">
             <Nav.Link
               onClick={() => {
                 scrollToTop();
-                navigate("/admin");
+                navigate("/");
               }}
             >
-              Dashboard
+              Beranda
             </Nav.Link>
-          )}
-          {role !== null && role === "CUST" && (
             <Nav.Link
               onClick={() => {
                 scrollToTop();
-                navigate("/profile");
+                navigate("/tentang");
               }}
             >
-              Profile
+              Tentang Kami
             </Nav.Link>
-          )}
-        </Nav>
-        <Nav className="ml-auto">
-          {token === null ? (
             <Nav.Link
-              className="button-style"
               onClick={() => {
                 scrollToTop();
-                navigate("/login");
+                navigate("/produk");
               }}
             >
-              <FaRegUser style={{ marginRight: "10px", color: "#F48E28" }} />
-              Masuk ke Akun
+              Produk
             </Nav.Link>
-          ) : (
             <Nav.Link
-              className="button-style"
               onClick={() => {
                 scrollToTop();
-                handleLogout();
+                navigate("/pesan");
               }}
             >
-              <IoIosLogOut style={{ marginRight: "10px", color: "#F48E28" }} />
-              {isLoading ? "Loading..." : "Logout"}
+              Pesan
             </Nav.Link>
-          )}
-        </Nav>
-      </Navbar.Collapse>
+            <Nav.Link
+              onClick={() => {
+                scrollToTop();
+                navigate("/kontak");
+              }}
+            >
+              Kontak
+            </Nav.Link>
+            {role !== null && role !== "CUST" && (
+              <Nav.Link
+                onClick={() => {
+                  scrollToTop();
+                  navigate("/admin");
+                }}
+              >
+                Dashboard
+              </Nav.Link>
+            )}
+            {role !== null && role === "CUST" && (
+              <Nav.Link
+                onClick={() => {
+                  scrollToTop();
+                  navigate("/profile");
+                }}
+              >
+                Profile
+              </Nav.Link>
+            )}
+          </Nav>
+          <Nav className="ml-auto">
+            {token === null ? (
+              <Nav.Link
+                className="button-style"
+                onClick={() => {
+                  scrollToTop();
+                  navigate("/login");
+                }}
+              >
+                <FaRegUser style={{ marginRight: "10px", color: "#F48E28" }} />
+                Masuk ke Akun
+              </Nav.Link>
+            ) : (
+              <Nav.Link
+                className="button-style"
+                onClick={() => {
+                  scrollToTop();
+                  handleLogout();
+                }}
+              >
+                <IoIosLogOut
+                  style={{ marginRight: "10px", color: "#F48E28" }}
+                />
+                {isLoading ? "Loading..." : "Logout"}
+              </Nav.Link>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
     </Navbar>
   );
 }
