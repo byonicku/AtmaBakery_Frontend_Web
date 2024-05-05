@@ -1,7 +1,6 @@
 import { Row, Col, Button, Container } from "react-bootstrap";
 import { MdOutlinePlayCircleFilled } from "react-icons/md";
 
-import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 

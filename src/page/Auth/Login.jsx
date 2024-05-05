@@ -1,4 +1,3 @@
-import logo from "@/assets/images/atma-bakery.png";
 import { useState } from "react";
 import {
   Button,
@@ -8,7 +7,6 @@ import {
   Image,
   Col,
   InputGroup,
-  Navbar,
 } from "react-bootstrap";
 import { useMutation } from "@tanstack/react-query";
 
