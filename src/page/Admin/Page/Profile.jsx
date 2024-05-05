@@ -79,6 +79,7 @@ export default function Profile() {
     password: {
       required: true,
       alias: "Password Baru",
+      minLength: 8,
     },
     password_confirmation: {
       required: true,
