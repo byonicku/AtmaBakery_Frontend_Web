@@ -69,7 +69,7 @@ export default function ResetPass() {
   const result = useMutation({
     mutationFn: (data) => APIAuth.resetPassword(data),
     onSuccess: () => {
-      toast.success("Ganti password berhasil!");
+      toast.success("Ganti password berhasil! Silahkan login kembali!");
       setStatus(0);
     },
     onError: (error) => {

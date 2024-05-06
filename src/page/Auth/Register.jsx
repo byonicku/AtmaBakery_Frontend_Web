@@ -57,7 +57,9 @@ export default function Register() {
   const result = useMutation({
     mutationFn: (data) => APIAuth.register(data),
     onSuccess: () => {
-      toast.success("Registrasi berhasil!");
+      toast.success(
+        "Registrasi berhasil!, silakan cek email Anda untuk verifikasi!"
+      );
       setTimeout(() => {
         navigate("/login");
       }, 250);
