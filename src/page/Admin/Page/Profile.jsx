@@ -439,7 +439,8 @@ export default function Profile() {
                     type="text"
                     className="form-control"
                     value={
-                      user?.jenis_kelamin === null
+                      user?.jenis_kelamin === null ||
+                      user?.jenis_kelamin === "null"
                         ? ""
                         : user?.jenis_kelamin === "L"
                         ? "Laki-laki"
