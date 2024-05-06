@@ -7,6 +7,7 @@ import Pesan from "@/page/Main/Pesan";
 import Kontak from "@/page/Main/Kontak";
 
 import Wrapper from "@/page/Main/Wrapper";
+import ErrorPage from "../Main/ErrorPage";
 
 export default function getPublicRoutes() {
   return (
@@ -16,6 +17,7 @@ export default function getPublicRoutes() {
       <Route path="pesan" element={<Pesan />} />
       <Route path="kontak" element={<Kontak />} />
       <Route index element={<Home />} />
+      <Route path="*" element={<ErrorPage />} />
     </Route>
   );
 }
