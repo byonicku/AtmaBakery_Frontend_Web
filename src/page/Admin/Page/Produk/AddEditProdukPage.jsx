@@ -499,14 +499,36 @@ export default function AddEditProdukPage({ isEdit }) {
                     <Form.Select
                       name="id_kategori"
                       onChange={(e) => {
-                        inputHelper.handleInputChange(e);
+                        let change = {
+                          status: "",
+                          ukuran: "",
+                          stok: "",
+                          limit: "",
+                          harga: "",
+                          id_kategori: e.target.value,
+                        };
+
                         if (e.target.value === "TP") {
                           setIsTitipan(true);
+                          change = {
+                            ...change,
+                            status: "READY",
+                          };
+                        } else if (e.target.value === "CK") {
+                          setIsTitipan(false);
+                          document.getElementsByName("id_penitip")[0].value =
+                            "";
                         } else {
                           setIsTitipan(false);
                           document.getElementsByName("id_penitip")[0].value =
                             "";
+                          change = {
+                            ...change,
+                            ukuran: "1",
+                          };
                         }
+
+                        setFormData(change);
                       }}
                       defaultValue={formData.id_kategori}
                       disabled={isLoading || add.isPending || edit.isPending}
@@ -528,8 +550,15 @@ export default function AddEditProdukPage({ isEdit }) {
                     <Form.Select
                       name="ukuran"
                       defaultValue={formData.ukuran}
+                      value={formData.ukuran}
                       onChange={inputHelper.handleInputChange}
-                      disabled={isLoading || add.isPending || edit.isPending}
+                      disabled={
+                        isLoading ||
+                        add.isPending ||
+                        edit.isPending ||
+                        formData.id_kategori === "MNM" ||
+                        formData.id_kategori === "RT"
+                      }
                       required
                     >
                       <option value="" disabled selected hidden>
@@ -546,6 +575,7 @@ export default function AddEditProdukPage({ isEdit }) {
                     <Form.Control
                       type="number"
                       name="harga"
+                      value={formData.harga}
                       defaultValue={formData.harga}
                       onChange={inputHelper.handleInputChange}
                       placeholder="Masukkan Harga produk"
