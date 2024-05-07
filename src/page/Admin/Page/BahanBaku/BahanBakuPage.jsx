@@ -29,13 +29,19 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
+import { FaArrowCircleLeft } from "react-icons/fa";
 
 export default function BahanBakuPage() {
   const [showDelModal, setShowDelModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [showPrintModal, setshowPrintModal] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [selectedBahanBaku, setSelectedBahanBaku] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingModal, setIsLoadingModal] = useState(true);
+  const [bahanBakuOptions, setBahanBakuOptions] = useState([]);
+  const [selectedIdBahanBakuTrash, setSelectedIdBahanBakuTrash] =
+    useState(null);
 
   const handleCloseDelModal = () => setShowDelModal(false);
   const handleShowDelModal = () => setShowDelModal(true);
@@ -45,6 +51,9 @@ export default function BahanBakuPage() {
 
   const handleClosePrintModal = () => setshowPrintModal(false);
   const handleShowPrintModal = () => setshowPrintModal(true);
+
+  const handleCloseRestoreModal = () => setShowRestoreModal(false);
+  const handleShowRestoreModal = () => setShowRestoreModal(true);
 
   const [mode, setMode] = useState("add");
 
@@ -82,6 +91,19 @@ export default function BahanBakuPage() {
     },
     [page]
   );
+
+  const fetchTrashedBahanBaku = useCallback(async () => {
+    setIsLoadingModal(true);
+    try {
+      const response = await APIBahanBaku.getAllTrashedBahanBaku();
+      setBahanBakuOptions(response);
+    } catch (error) {
+      setBahanBakuOptions([]);
+      console.error(error);
+    } finally {
+      setIsLoadingModal(false);
+    }
+  }, []);
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -129,6 +151,7 @@ export default function BahanBakuPage() {
         stok: "",
         satuan: "",
       });
+      setSelectedIdBahanBakuTrash(null);
       setSearch(null);
     }, 125);
   };
@@ -172,6 +195,18 @@ export default function BahanBakuPage() {
     },
   });
 
+  const restore = useMutation({
+    mutationFn: (id) => APIBahanBaku.restoreBahanBaku(id),
+    onSuccess: async () => {
+      toast.success("Restore Bahan Baku berhasil!");
+      handleMutationSuccess();
+      handleCloseRestoreModal();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
@@ -193,6 +228,16 @@ export default function BahanBakuPage() {
 
       if (mode === "delete") {
         await del.mutateAsync(selectedBahanBaku.id_bahan_baku);
+        return;
+      }
+
+      if (mode === "restore") {
+        if (!selectedIdBahanBakuTrash) {
+          toast.error("Pilih Bahan Baku yang akan direstore!");
+          return;
+        }
+
+        await restore.mutateAsync(selectedIdBahanBakuTrash);
         return;
       }
     } catch (error) {
@@ -265,6 +310,21 @@ export default function BahanBakuPage() {
             >
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                handleShowRestoreModal();
+                setMode("restore");
+                setSelectedIdBahanBakuTrash(null);
+              }}
+              disabled={
+                isLoading || add.isPending || edit.isPending || del.isPending
+              }
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+            >
+              <FaArrowCircleLeft className="mb-1 me-2" />
+              Restore Data
             </Button>
             <Button
               variant="secondary"
@@ -514,6 +574,60 @@ export default function BahanBakuPage() {
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
             />
+          </Form.Group>
+        </AddEditModal>
+
+        <AddEditModal
+          show={showRestoreModal}
+          onHide={() => {
+            handleCloseRestoreModal();
+            setTimeout(() => {
+              setSelectedIdBahanBakuTrash(null);
+            }, 125);
+          }}
+          title="Restore Data Bahan Baku"
+          text="Pastikan data bahan baku yang Anda restore benar"
+          onEnter={async () => {
+            await fetchTrashedBahanBaku();
+          }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+          add={restore}
+          isLoadingModal={isLoadingModal}
+        >
+          <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Bahan Baku
+            </Form.Label>
+            <Form.Select
+              style={{ border: "1px solid #808080" }}
+              name="id_bahan_baku"
+              onChange={(e) => {
+                setSelectedIdBahanBakuTrash(e.target.value);
+              }}
+              disabled={
+                edit.isPending ||
+                add.isPending ||
+                isLoadingModal ||
+                bahanBakuOptions?.length === 0
+              }
+              required
+            >
+              <option value="" disabled selected hidden>
+                {isLoadingModal
+                  ? "Loading..."
+                  : bahanBakuOptions?.length > 0
+                  ? "Pilih Bahan Baku yang akan direstore"
+                  : "Tidak ada data Bahan Baku yang bisa direstore"}
+              </option>
+              {bahanBakuOptions?.map((option) => (
+                <option key={option.id_bahan_baku} value={option.id_bahan_baku}>
+                  {option.nama_bahan_baku}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
         </AddEditModal>
 
