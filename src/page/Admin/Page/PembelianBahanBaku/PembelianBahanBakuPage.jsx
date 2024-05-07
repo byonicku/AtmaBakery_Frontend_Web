@@ -30,6 +30,7 @@ import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import APIBahanBaku from "@/api/APIBahanBaku";
+import Formatter from "@/assets/Formatter";
 
 export default function PembelianBahanBakuPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -50,6 +51,7 @@ export default function PembelianBahanBakuPage() {
   const handleShowPrintModal = () => setshowPrintModal(true);
 
   const [mode, setMode] = useState("add");
+  const ref = useRef();
 
   // Fetch pembelian bahan baku lain with pagination
   const [pembelian_bahan_baku, setPembelianBahanBaku] = useState([]);
@@ -399,12 +401,13 @@ export default function PembelianBahanBakuPage() {
                     <td>{pembelian_bahan_baku.stok}</td>
                     <td>{pembelian_bahan_baku.bahan_baku?.satuan}</td>
                     <td>
-                      {new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      }).format(pembelian_bahan_baku.harga)}
+                      {Formatter.moneyFormatter(pembelian_bahan_baku.harga)}
                     </td>
-                    <td>{pembelian_bahan_baku.tanggal_pembelian}</td>
+                    <td>
+                      {Formatter.dateFormatter(
+                        pembelian_bahan_baku.tanggal_pembelian
+                      )}
+                    </td>
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-0">
                         <Col xs={12} sm={12} md={6} lg={6}>
@@ -595,12 +598,16 @@ export default function PembelianBahanBakuPage() {
             </Form.Label>
             <Form.Control
               style={{ border: "1px solid #808080" }}
-              type="date"
+              type="text"
               name="tanggal_pembelian"
               max={new Date().toISOString().split("T")[0]}
               value={formData?.tanggal_pembelian}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending || isLoadingModal}
+              ref={ref}
+              onFocus={() => (ref.current.type = "date")}
+              onBlur={() => (ref.current.type = "date")}
+              placeholder="dd-mm-yyyy"
               required
             />
           </Form.Group>

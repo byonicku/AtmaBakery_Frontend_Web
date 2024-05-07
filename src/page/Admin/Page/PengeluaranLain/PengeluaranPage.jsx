@@ -29,6 +29,7 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
+import Formatter from "@/assets/Formatter";
 
 export default function PengeluaranLainPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -361,7 +362,9 @@ export default function PengeluaranLainPage() {
                     <td>{pengeluaran.nama}</td>
                     <td>{pengeluaran.total}</td>
                     <td>{pengeluaran.satuan}</td>
-                    <td>{pengeluaran.tanggal_pengeluaran}</td>
+                    <td>
+                      {Formatter.dateFormatter(pengeluaran.tanggal_pengeluaran)}
+                    </td>
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-0">
                         <Col xs={12} sm={12} md={6} lg={6}>

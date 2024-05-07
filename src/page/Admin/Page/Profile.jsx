@@ -23,6 +23,7 @@ import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 
 import { useRefresh } from "@/component/RefreshProvider";
 import { FaCamera, FaTrash } from "react-icons/fa";
+import Formatter from "@/assets/Formatter";
 
 export default function Profile() {
   const [isLoading, setIsLoading] = useState(false);
@@ -389,7 +390,7 @@ export default function Profile() {
                     id="tanggal_lahir"
                     type="text"
                     className="form-control"
-                    value={user?.tanggal_lahir || ""}
+                    value={Formatter.dateFormatter(user?.tanggal_lahir) || ""}
                     disabled
                   />
                 </div>
