@@ -30,14 +30,19 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
+import { FaArrowCircleLeft } from "react-icons/fa";
 
 export default function KaryawanPage() {
   const [userRole, setUserRole] = useState("");
   const [showDelModal, setShowDelModal] = useState(false);
   const [showPrintModal, setshowPrintModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingModal, setIsLoadingModal] = useState(true);
+  const [karyawanOptions, setKaryawanOptions] = useState([]);
   const [selectedKaryawan, setSelectedKaryawan] = useState(null);
+  const [selectedIdKaryawan, setSelectedIdKaryawan] = useState(null);
 
   const handleCloseDelModal = () => setShowDelModal(false);
   const handleShowDelModal = () => setShowDelModal(true);
@@ -47,6 +52,9 @@ export default function KaryawanPage() {
 
   const handleClosePrintModal = () => setshowPrintModal(false);
   // const handleShowPrintModal = () => setshowPrintModal(true);
+
+  const handleCloseRestoreModal = () => setShowRestoreModal(false);
+  const handleShowRestoreModal = () => setShowRestoreModal(true);
 
   // Mode untuk CRD
   // create -> "add"
@@ -87,6 +95,19 @@ export default function KaryawanPage() {
     },
     [page]
   );
+
+  const fetchTrashedKaryawan = useCallback(async () => {
+    setIsLoadingModal(true);
+    try {
+      const response = await APIKaryawan.getAllTrashedKaryawan();
+      setKaryawanOptions(response);
+    } catch (error) {
+      setKaryawanOptions([]);
+      console.error(error);
+    } finally {
+      setIsLoadingModal(false);
+    }
+  }, []);
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -192,6 +213,18 @@ export default function KaryawanPage() {
     },
   });
 
+  const restore = useMutation({
+    mutationFn: (id) => APIKaryawan.restoreKaryawan(id),
+    onSuccess: async () => {
+      toast.success("Restore Karyawan berhasil!");
+      handleCloseRestoreModal();
+      handleMutationSuccess();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
@@ -218,6 +251,16 @@ export default function KaryawanPage() {
 
       if (mode === "delete") {
         await del.mutateAsync(selectedKaryawan.id_karyawan);
+        return;
+      }
+
+      if (mode === "restore") {
+        if (!selectedIdKaryawan) {
+          toast.error("Karyawan tidak ditemukan!");
+          return;
+        }
+
+        await restore.mutateAsync(selectedIdKaryawan);
         return;
       }
     } catch (error) {
@@ -273,26 +316,46 @@ export default function KaryawanPage() {
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             {userRole === "MO" && (
-              <Button
-                variant="success"
-                onClick={() => {
-                  handleShowAddEditModal();
-                  setMode("add");
-                  setFormData({
-                    nama: "",
-                    no_telp: "",
-                    email: "",
-                    hire_date: new Date().toISOString().split("T")[0],
-                    gaji: 0,
-                    bonus: 0,
-                  });
-                }}
-                disabled={isLoading}
-                className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
-              >
-                <BsPlusSquare className="mb-1 me-2" />
-                Tambah Data
-              </Button>
+              <>
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    handleShowAddEditModal();
+                    setMode("add");
+                    setFormData({
+                      nama: "",
+                      no_telp: "",
+                      email: "",
+                      hire_date: new Date().toISOString().split("T")[0],
+                      gaji: 0,
+                      bonus: 0,
+                    });
+                  }}
+                  disabled={isLoading}
+                  className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+                >
+                  <BsPlusSquare className="mb-1 me-2" />
+                  Tambah Data
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    handleShowRestoreModal();
+                    setMode("restore");
+                    setSelectedIdKaryawan(null);
+                  }}
+                  disabled={
+                    isLoading ||
+                    add.isPending ||
+                    edit.isPending ||
+                    del.isPending
+                  }
+                  className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+                >
+                  <FaArrowCircleLeft className="mb-1 me-2" />
+                  Restore Data
+                </Button>
+              </>
             )}
           </Col>
           <Col
@@ -598,6 +661,59 @@ export default function KaryawanPage() {
               </Form.Group>
             </>
           )}
+        </AddEditModal>
+
+        <AddEditModal
+          show={showRestoreModal}
+          onHide={() => {
+            handleCloseRestoreModal();
+            setTimeout(() => {
+              setSelectedIdKaryawan(null);
+            }, 125);
+          }}
+          title="Restore Data Karyawan"
+          text="Pastikan data karyawan yang Anda restore benar"
+          onEnter={async () => {
+            await fetchTrashedKaryawan();
+          }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+          add={restore}
+          isLoadingModal={isLoadingModal}
+        >
+          <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Bahan Baku
+            </Form.Label>
+            <Form.Select
+              style={{ border: "1px solid #808080" }}
+              name="id_bahan_baku"
+              onChange={(e) => {
+                setSelectedIdKaryawan(e.target.value);
+              }}
+              disabled={
+                restore.isPending ||
+                isLoadingModal ||
+                karyawanOptions?.length === 0
+              }
+              required
+            >
+              <option value="" disabled selected hidden>
+                {isLoadingModal
+                  ? "Loading..."
+                  : karyawanOptions?.length > 0
+                  ? "Pilih Karyawan yang akan direstore"
+                  : "Tidak ada data karyawan yang bisa direstore"}
+              </option>
+              {karyawanOptions?.map((option) => (
+                <option key={option.id_karyawan} value={option.id_karyawan}>
+                  {option.nama}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
         </AddEditModal>
 
         <DeleteConfirmationModal

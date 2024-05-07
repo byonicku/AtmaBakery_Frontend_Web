@@ -13,6 +13,20 @@ const getAllHampers = async () => {
   }
 };
 
+const getAllHampersTrashed = async () => {
+  try {
+    const response = await useAxios.get("/trash/hampers", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const getHampersByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/hampers", {
@@ -40,6 +54,20 @@ const searchHampers = async (search) => {
       },
     });
     return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const restoreHampers = async (id) => {
+  try {
+    const response = await useAxios.get(`/hampers/restore/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
   } catch (error) {
     throw error.response || error;
   }
@@ -102,6 +130,8 @@ const deleteHampers = async (id) => {
 
 const APIHampers = {
   getAllHampers,
+  getAllHampersTrashed,
+  restoreHampers,
   getHampersByPage,
   searchHampers,
   createHampers,

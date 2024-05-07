@@ -14,6 +14,20 @@ const getAllKaryawan = async () => {
   }
 };
 
+const getAllTrashedKaryawan = async () => {
+  try {
+    const response = await useAxios.get("/trash/karyawan", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const getKaryawanByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/karyawan", {
@@ -27,6 +41,20 @@ const getKaryawanByPage = async (page = 0, signal) => {
       signal: signal,
     });
     return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const restoreKaryawan = async (id) => {
+  try {
+    const response = await useAxios.get(`/karyawan/restore/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
   } catch (error) {
     throw error.response || error;
   }
@@ -90,6 +118,8 @@ const deleteKaryawan = async (id) => {
 
 const APIKaryawan = {
   getAllKaryawan,
+  getAllTrashedKaryawan,
+  restoreKaryawan,
   getKaryawanByPage,
   searchKaryawan,
   createKaryawan,

@@ -21,7 +21,7 @@ import InputHelper from "@/page/InputHelper";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import { FaTrash } from "react-icons/fa";
+import { FaArrowCircleLeft, FaTrash } from "react-icons/fa";
 
 import "./css/Hampers.css";
 import "@/page/Admin/Page/css/Admin.css";
@@ -36,9 +36,12 @@ export default function HampersPage() {
   const [showDelModal, setShowDelModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [showDelProdModal, setShowDelProdModal] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [showAddEditProdModal, setShowAddEditProdModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingModal, setIsLoadingModal] = useState(false);
+  const [isLoadingModal, setIsLoadingModal] = useState(true);
+  const [hampersOptions, setHampersOptions] = useState([]);
+  const [selectedIdHampers, setSelectedIdHampers] = useState(null);
 
   const [selectedAllHampers, setSelectedAllHampers] = useState(null);
   const [selectedHampers, setSelectedHampers] = useState(null);
@@ -60,6 +63,9 @@ export default function HampersPage() {
 
   const handleCloseAddEditProdModal = () => setShowAddEditProdModal(false);
   const handleShowAddEditProdModal = () => setShowAddEditProdModal(true);
+
+  const handleCloseRestoreModal = () => setShowRestoreModal(false);
+  const handleShowRestoreModal = () => setShowRestoreModal(true);
 
   const handleAddClick = (event) => {
     // Prevent event propagation to the row click handler
@@ -177,6 +183,19 @@ export default function HampersPage() {
     },
     [page]
   );
+
+  const fetchTrashedHampers = useCallback(async () => {
+    setIsLoadingModal(true);
+    try {
+      const response = await APIHampers.getAllHampersTrashed();
+      setHampersOptions(response);
+    } catch (error) {
+      setHampersOptions([]);
+      console.error(error);
+    } finally {
+      setIsLoadingModal(false);
+    }
+  }, []);
 
   const fetchProduk = useCallback(
     async (selectedAllProduk, selectedProdukEdit) => {
@@ -384,6 +403,18 @@ export default function HampersPage() {
     },
   });
 
+  const restore = useMutation({
+    mutationFn: (id) => APIHampers.restoreHampers(id),
+    onSuccess: async () => {
+      toast.success("Restore Bahan Baku berhasil!");
+      handleMutationSuccess();
+      handleCloseRestoreModal();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   // Add Produk
   const addProd = useMutation({
     mutationFn: (data) => APIDetailHampers.createDetailHampers(data),
@@ -454,6 +485,16 @@ export default function HampersPage() {
 
       if (mode === "delete") {
         await del.mutateAsync(selectedHampers.id_hampers);
+        return;
+      }
+
+      if (mode === "restore") {
+        if (!selectedIdHampers) {
+          toast.error("Pilih Hampers yang akan direstore!");
+          return;
+        }
+
+        await restore.mutateAsync(selectedIdHampers);
         return;
       }
 
@@ -563,6 +604,21 @@ export default function HampersPage() {
             >
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                handleShowRestoreModal();
+                setMode("restore");
+                setSelectedIdHampers(null);
+              }}
+              disabled={
+                isLoading || add.isPending || edit.isPending || del.isPending
+              }
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+            >
+              <FaArrowCircleLeft className="mb-1 me-2" />
+              Restore Data
             </Button>
             <Button
               variant="primary"
@@ -998,6 +1054,59 @@ export default function HampersPage() {
                 </>
               ))}
           </Row>
+        </AddEditModal>
+
+        <AddEditModal
+          show={showRestoreModal}
+          onHide={() => {
+            handleCloseRestoreModal();
+            setTimeout(() => {
+              setSelectedIdHampers(null);
+            }, 125);
+          }}
+          title="Restore Data Hampers"
+          text="Pastikan data hampers yang Anda restore benar"
+          onEnter={async () => {
+            await fetchTrashedHampers();
+          }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+          add={restore}
+          isLoadingModal={isLoadingModal}
+        >
+          <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Bahan Baku
+            </Form.Label>
+            <Form.Select
+              style={{ border: "1px solid #808080" }}
+              name="id_bahan_baku"
+              onChange={(e) => {
+                setSelectedIdHampers(e.target.value);
+              }}
+              disabled={
+                restore.isPending ||
+                isLoadingModal ||
+                hampersOptions?.length === 0
+              }
+              required
+            >
+              <option value="" disabled selected hidden>
+                {isLoadingModal
+                  ? "Loading..."
+                  : hampersOptions?.length > 0
+                  ? "Pilih Hampers yang akan direstore"
+                  : "Tidak ada data Hampers yang bisa direstore"}
+              </option>
+              {hampersOptions?.map((option) => (
+                <option key={option.id_hampers} value={option.id_hampers}>
+                  {option.nama_hampers}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
         </AddEditModal>
 
         <DeleteConfirmationModal
