@@ -2,7 +2,7 @@ import { Modal, Button, Row, Col } from "react-bootstrap";
 import propTypes from "prop-types";
 import "./ConfirmationModal.css";
 
-const ConfrmationModal = ({
+const ConfirmationModal = ({
   header,
   secondP,
   show,
@@ -61,7 +61,7 @@ const ConfrmationModal = ({
   );
 };
 
-ConfrmationModal.propTypes = {
+ConfirmationModal.propTypes = {
   header: propTypes.string,
   secondP: propTypes.string,
   show: propTypes.bool,
@@ -76,4 +76,4 @@ ConfrmationModal.propTypes = {
   cancelBtnText: propTypes.string,
 };
 
-export default ConfrmationModal;
+export default ConfirmationModal;

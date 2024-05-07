@@ -26,7 +26,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIBahanBaku from "@/api/APIBahanBaku";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
@@ -646,7 +646,7 @@ export default function BahanBakuPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Bahan Baku Ini?"
           secondP="Semua data yang terkait dengan Bahan Baku tersebut akan hilang."
           show={showDelModal}

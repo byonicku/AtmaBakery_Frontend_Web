@@ -28,7 +28,7 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIResep from "@/api/APIResep";
 import APIBahanBaku from "@/api/APIBahanBaku";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function ResepPage() {
@@ -650,7 +650,7 @@ export default function ResepPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Resep Ini?"
           secondP="Semua data yang terkait dengan resep tersebut akan hilang."
           show={showDelModal}

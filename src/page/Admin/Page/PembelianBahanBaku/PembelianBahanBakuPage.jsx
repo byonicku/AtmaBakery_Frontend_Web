@@ -26,7 +26,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIPembelianBahanBaku from "@/api/APIPembelianBahanBaku";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import APIBahanBaku from "@/api/APIBahanBaku";
@@ -606,7 +606,7 @@ export default function PembelianBahanBakuPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Pembelian Bahan Baku Ini?"
           secondP="Semua data yang terkait dengan Pembelian Bahan Baku tersebut akan hilang."
           show={showDelModal}

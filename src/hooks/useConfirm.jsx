@@ -1,4 +1,4 @@
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import { useState, useRef } from "react";
 
 export function useConfirm() {
@@ -29,7 +29,7 @@ export function useConfirm() {
   return {
     confirm: showModal,
     modalElement: (
-      <ConfrmationModal
+      <ConfirmationModal
         header={modalContent.header}
         secondP={modalContent.secondP}
         show={isModalVisible}

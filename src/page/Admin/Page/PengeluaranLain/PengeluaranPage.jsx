@@ -26,7 +26,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIPengeluaran from "@/api/APIPengeluaranLain";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
@@ -547,7 +547,7 @@ export default function PengeluaranLainPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Pengeluaran Ini?"
           secondP="Semua data yang terkait dengan pengeluaran tersebut akan hilang."
           show={showDelModal}

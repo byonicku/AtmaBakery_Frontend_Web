@@ -26,7 +26,7 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import APIProduk from "@/api/APIProduk";
 import { Link } from "react-router-dom";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
 
@@ -439,7 +439,7 @@ export default function ProdukPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Produk Ini?"
           secondP="Semua data yang terkait dengan produk tersebut akan hilang."
           show={show}

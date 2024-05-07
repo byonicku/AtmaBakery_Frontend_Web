@@ -29,7 +29,7 @@ import "@/page/Admin/Page/css/Admin.css";
 import APIProduk from "@/api/APIProduk";
 import APIDetailHampers from "@/api/APIDetailHampers";
 import APIGambar from "@/api/APIGambar";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function HampersPage() {
@@ -1124,7 +1124,7 @@ export default function HampersPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Hampers Ini?"
           secondP="Semua data yang terkait dengan Hampers tersebut akan hilang."
           show={showDelModal}
@@ -1219,7 +1219,7 @@ export default function HampersPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Data Isi Hampers Ini?"
           secondP="Semua data yang terkait dengan isi hampers tersebut akan hilang."
           show={showDelProdModal}

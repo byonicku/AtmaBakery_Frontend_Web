@@ -25,7 +25,7 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import APIAlamat from "@/api/APIAlamat";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function AlamatPemesananPage() {
@@ -476,7 +476,7 @@ export default function AlamatPemesananPage() {
           </Form.Group>
         </AddEditModal>
 
-        <ConfrmationModal
+        <ConfirmationModal
           header="Anda Yakin Ingin Menghapus Alamat Ini?"
           secondP="Semua data yang terkait dengan alamat tersebut akan hilang."
           show={showDelModal}

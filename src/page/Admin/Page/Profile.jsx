@@ -19,7 +19,7 @@ import InputHelper from "@/page/InputHelper";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIUser from "@/api/APIUser";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
-import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 
 import { useRefresh } from "@/component/RefreshProvider";
 import { FaCamera, FaTrash } from "react-icons/fa";
@@ -632,7 +632,7 @@ export default function Profile() {
         </Form.Group>
       </AddEditModal>
 
-      <ConfrmationModal
+      <ConfirmationModal
         show={showDeleteModal}
         onHide={handleCloseDeleteModal}
         header={"Hapus Foto"}
