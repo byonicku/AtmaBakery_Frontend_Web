@@ -31,6 +31,7 @@ import APIDetailHampers from "@/api/APIDetailHampers";
 import APIGambar from "@/api/APIGambar";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
+import Formatter from "@/assets/Formatter";
 
 export default function HampersPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -764,10 +765,7 @@ export default function HampersPage() {
                                   {hampers.nama_hampers}
                                 </td>
                                 <td rowSpan={hampers.detail_hampers.length + 1}>
-                                  {new Intl.NumberFormat("id-ID", {
-                                    style: "currency",
-                                    currency: "IDR",
-                                  }).format(hampers.harga)}
+                                  {Formatter.moneyFormatter(hampers.harga)}
                                 </td>
                               </>
                             )}
@@ -843,12 +841,7 @@ export default function HampersPage() {
                         {hampers.detail_hampers.length == 0 ? (
                           <>
                             <td>{hampers.nama_hampers}</td>
-                            <td>
-                              {new Intl.NumberFormat("id-ID", {
-                                style: "currency",
-                                currency: "IDR",
-                              }).format(hampers.harga)}
-                            </td>
+                            <td>{Formatter.moneyFormatter(hampers.harga)}</td>
                           </>
                         ) : null}
                         <td>

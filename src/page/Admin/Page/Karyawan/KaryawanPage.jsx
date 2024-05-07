@@ -31,6 +31,7 @@ import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
+import Formatter from "@/assets/Formatter";
 
 export default function KaryawanPage() {
   const [userRole, setUserRole] = useState("");
@@ -450,18 +451,8 @@ export default function KaryawanPage() {
                     <td>{karyawan.nama}</td>
                     <td>{karyawan.no_telp}</td>
                     <td>{karyawan.email}</td>
-                    <td>
-                      {new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      }).format(karyawan.gaji)}
-                    </td>
-                    <td>
-                      {new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      }).format(karyawan.bonus)}
-                    </td>
+                    <td>{Formatter.moneyFormatter(karyawan.gaji)}</td>
+                    <td>{Formatter.moneyFormatter(karyawan.bonus)}</td>
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-1">
                         {userRole === "MO" && (

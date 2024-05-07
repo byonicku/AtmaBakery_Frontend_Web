@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
+import Formatter from "@/assets/Formatter";
 
 const category = {
   CK: "Cake",
@@ -317,12 +318,7 @@ export default function ProdukPage() {
                     <td>{produk.deskripsi}</td>
                     <td>{category[produk.id_kategori]}</td>
                     <td>{produk.ukuran}</td>
-                    <td>
-                      {new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      }).format(produk.harga)}
-                    </td>
+                    <td>{Formatter.moneyFormatter(produk.harga)}</td>
                     <td>{produk.limit}</td>
                     <td>
                       {produk.status == "PO" ? (

@@ -366,10 +366,9 @@ export default function HistoryCustomerPage() {
                           <td>{detail.nama_produk} </td>
                           <td>{detail.jumlah}</td>
                           <td>
-                            {new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(detail.jumlah * detail.harga_saat_beli)}
+                            {Formatter.moneyFormatter(
+                              detail.jumlah * detail.harga_saat_beli
+                            )}
                           </td>
                         </tr>
                       );
@@ -380,10 +379,7 @@ export default function HistoryCustomerPage() {
                           Ongkos Kirim (rad. {selectedNota?.radius} km) :
                         </td>
                         <td>
-                          {new Intl.NumberFormat("id-ID", {
-                            style: "currency",
-                            currency: "IDR",
-                          }).format(selectedNota?.ongkir)}
+                          {Formatter.moneyFormatter(selectedNota?.ongkir)}
                         </td>
                       </tr>
                     ) : null}
@@ -393,22 +389,16 @@ export default function HistoryCustomerPage() {
                       </td>
                       <td>
                         -{" "}
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                        }).format(selectedNota?.penggunaan_poin * 100)}
+                        {Formatter.moneyFormatter(
+                          selectedNota?.penggunaan_poin * 100
+                        )}
                       </td>
                     </tr>
                     <tr>
                       <td className="text-end" colSpan={3}>
                         Total :
                       </td>
-                      <td>
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                        }).format(selectedNota?.total)}
-                      </td>
+                      <td>{Formatter.moneyFormatter(selectedNota?.total)}</td>
                     </tr>
                   </tbody>
                 </Table>
