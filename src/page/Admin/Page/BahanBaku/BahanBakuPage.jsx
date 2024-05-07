@@ -608,8 +608,7 @@ export default function BahanBakuPage() {
                 setSelectedIdBahanBakuTrash(e.target.value);
               }}
               disabled={
-                edit.isPending ||
-                add.isPending ||
+                restore.isPending ||
                 isLoadingModal ||
                 bahanBakuOptions?.length === 0
               }

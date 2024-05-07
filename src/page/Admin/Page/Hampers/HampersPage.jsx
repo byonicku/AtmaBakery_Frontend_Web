@@ -433,6 +433,11 @@ export default function HampersPage() {
           return;
         }
 
+        if (image_preview?.length === 0 || image?.length === 0) {
+          toast.error("Gambar tidak boleh kosong!");
+          return;
+        }
+
         await add.mutateAsync(formData);
         return;
       }

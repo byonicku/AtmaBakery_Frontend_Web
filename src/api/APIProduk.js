@@ -14,6 +14,34 @@ const getAllProduk = async () => {
   }
 };
 
+const getAllProdukTrashed = async () => {
+  try {
+    const response = await useAxios.get("/trash/produk", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const restoreProduk = async (id) => {
+  try {
+    const response = await useAxios.get(`/produk/restore/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const getProdukByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/produk", {
@@ -117,6 +145,8 @@ const deleteProduk = async (id) => {
 
 const APIProduk = {
   getAllProduk,
+  getAllProdukTrashed,
+  restoreProduk,
   getProdukByPage,
   showProduk,
   searchProduk,

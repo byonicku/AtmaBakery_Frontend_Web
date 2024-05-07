@@ -27,6 +27,8 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import APIProduk from "@/api/APIProduk";
 import { Link } from "react-router-dom";
 import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import AddEditModal from "@/component/Admin/Modal/AddEditModal";
+import { FaArrowCircleLeft } from "react-icons/fa";
 
 const category = {
   CK: "Cake",
@@ -37,7 +39,10 @@ const category = {
 
 export default function ProdukPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [selectedProduk, setSelectedProduk] = useState(null);
+  const [selectedProdukTrashed, setSelectedProdukTrashed] = useState(null);
+  const [produkOptions, setProdukOptions] = useState([]);
 
   const [show, setShow] = useState(false);
 
@@ -47,6 +52,11 @@ export default function ProdukPage() {
   };
 
   const handleShow = () => setShow(true);
+
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
+
+  const handleCloseRestoreModal = () => setShowRestoreModal(false);
+  const handleShowRestoreModal = () => setShowRestoreModal(true);
 
   // Fetch bahan baku with pagination
   const [produk, setProduk] = useState([]);
@@ -76,6 +86,19 @@ export default function ProdukPage() {
     },
     [page]
   );
+
+  const fetchTrashedProduk = useCallback(async () => {
+    setIsLoadingModal(true);
+    try {
+      const response = await APIProduk.getAllProdukTrashed();
+      setProdukOptions(response);
+    } catch (error) {
+      setProdukOptions([]);
+      console.error(error);
+    } finally {
+      setIsLoadingModal(false);
+    }
+  }, []);
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -109,6 +132,36 @@ export default function ProdukPage() {
       console.error(error);
     },
   });
+
+  const restore = useMutation({
+    mutationFn: () => APIProduk.restoreProduk(selectedProdukTrashed),
+    onSuccess: async () => {
+      toast.success("Restore Produk berhasil!");
+      handleMutationSuccess();
+      handleCloseRestoreModal();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const onSubmit = async () => {
+    if (isLoadingModal) return;
+
+    try {
+      if (!selectedProdukTrashed) {
+        toast.error("Pilih produk yang akan direstore!");
+      }
+
+      await restore.mutateAsync();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
 
   const onDelete = async () => {
     if (isLoading) return;
@@ -171,6 +224,15 @@ export default function ProdukPage() {
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
             </Link>
+            <Button
+              variant="primary"
+              onClick={handleShowRestoreModal}
+              disabled={isLoading}
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+            >
+              <FaArrowCircleLeft className="mb-1 me-2" />
+              Restore Data
+            </Button>
           </Col>
           <Col
             xs={12}
@@ -315,6 +377,59 @@ export default function ProdukPage() {
             text={search ? "Produk Tidak Ditemukan" : "Belum Ada Produk Disini"}
           />
         )}
+
+        <AddEditModal
+          show={showRestoreModal}
+          onHide={() => {
+            handleCloseRestoreModal();
+            setTimeout(() => {
+              setSelectedProdukTrashed(null);
+            }, 125);
+          }}
+          title="Restore Data Produk"
+          text="Pastikan data produk yang Anda restore benar"
+          onEnter={async () => {
+            await fetchTrashedProduk();
+          }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+          add={restore}
+          isLoadingModal={isLoadingModal}
+        >
+          <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Bahan Baku
+            </Form.Label>
+            <Form.Select
+              style={{ border: "1px solid #808080" }}
+              name="id_produk"
+              onChange={(e) => {
+                setSelectedProdukTrashed(e.target.value);
+              }}
+              disabled={
+                restore.isPending ||
+                isLoadingModal ||
+                produkOptions?.length === 0
+              }
+              required
+            >
+              <option value="" disabled selected hidden>
+                {isLoadingModal
+                  ? "Loading..."
+                  : produkOptions?.length > 0
+                  ? "Pilih Produk yang akan direstore"
+                  : "Tidak ada data Produk yang bisa direstore"}
+              </option>
+              {produkOptions?.map((option) => (
+                <option key={option.id_produk} value={option.id_produk}>
+                  {option.nama_produk}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </AddEditModal>
 
         <DeleteConfirmationModal
           header="Anda Yakin Ingin Menghapus Produk Ini?"
