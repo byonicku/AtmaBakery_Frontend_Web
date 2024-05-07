@@ -18,6 +18,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIHistory from "@/api/APICustomer";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
+import Formatter from "@/assets/Formatter";
 
 export default function HistoryCustomerPage() {
   const { id } = useParams();
@@ -159,12 +160,7 @@ export default function HistoryCustomerPage() {
                         <Badge bg="secondary">{history.status}</Badge>
                       )}
                     </td>
-                    <td>
-                      {new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      }).format(history.total)}
-                    </td>
+                    <td>{Formatter.moneyFormatter(history.total)}</td>
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-0">
                         <Col xs={12} sm={12} md={11} lg={11}>

@@ -6,12 +6,11 @@ import {
   Table,
   Spinner,
   Badge,
-  InputGroup,
-  Form,
 } from "react-bootstrap";
 import { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
 
-import { BsInbox, BsSearch } from "react-icons/bs";
+import { BsInbox } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
 
@@ -19,17 +18,18 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIHistory from "@/api/APICustomer";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
+import Formatter from "@/assets/Formatter";
 
 export default function HistoryCustomerPage() {
+  const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingModal, setIsLoadingModal] = useState(true);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState([]);
   const [selectedNota, setSelectedNota] = useState(null);
 
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-  const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -39,20 +39,21 @@ export default function HistoryCustomerPage() {
 
   const handleShowModal = useCallback(async (data) => {
     setShowModal(true);
-    const response = await APIHistory.getNotaPesananSelf(data);
+    const response = await APIHistory.getNotaPesanan(data);
     setSelectedNota(response);
     setIsLoadingModal(false);
   }, []);
 
   const fetchHistoryCust = useCallback(
-    async (signal) => {
+    async (id, signal) => {
       setIsLoading(true);
       try {
-        const response = await APIHistory.getCustHistoryByPageSelf(
+        const response = await APIHistory.getCustHistoryByPage(
+          id,
           page,
           signal
         );
-        setHistory(response.data);
+        setHistory(response);
         setLastPage(response.last_page);
       } catch (error) {
         // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
@@ -79,30 +80,12 @@ export default function HistoryCustomerPage() {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    fetchHistoryCust(signal);
+    fetchHistoryCust(id, signal);
 
     return () => {
       abortController.abort();
     };
-  }, [fetchHistoryCust]);
-
-  const fetchHistorySearch = async () => {
-    if (search.trim() === "") {
-      // Kalo spasi doang bakal gabisa
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await APIHistory.searchHistoryCustSelf(search);
-      setHistory(response);
-    } catch (error) {
-      setHistory([]);
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [fetchHistoryCust, id]);
 
   return (
     <>
@@ -112,54 +95,6 @@ export default function HistoryCustomerPage() {
         breadcrumb="History Customer"
       />
       <section className="content px-3">
-        <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
-          <Col
-            xs={12}
-            sm={12}
-            lg={6}
-            md={12}
-            className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-          ></Col>
-          <Col
-            xs={12}
-            sm={12}
-            lg={6}
-            md={12}
-            className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-          >
-            <InputGroup>
-              <Form.Control
-                type="text"
-                placeholder="Cari History disini"
-                name="search"
-                value={search || ""}
-                disabled={isLoading}
-                onChange={(e) => {
-                  if (e.target.value === "") {
-                    if (page !== 1) {
-                      setPage(1);
-                    } else {
-                      fetchHistoryCust();
-                    }
-                  }
-                  setSearch(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && search) {
-                    fetchHistorySearch();
-                  }
-                }}
-              />
-              <Button
-                variant="secondary"
-                disabled={isLoading}
-                onClick={() => fetchHistorySearch()}
-              >
-                <BsSearch />
-              </Button>
-            </InputGroup>
-          </Col>
-        </Row>
         {isLoading ? (
           <div className="text-center">
             <Spinner
@@ -180,19 +115,22 @@ export default function HistoryCustomerPage() {
                   <th style={{ width: "10%" }} className="th-style">
                     Nomor Nota
                   </th>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Tanggal Pesan
                   </th>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Tanggal Ambil
                   </th>
-                  <th style={{ width: "13%" }} className="th-style">
+                  <th style={{ width: "10%" }} className="th-style">
+                    Tipe Delivery
+                  </th>
+                  <th style={{ width: "10%" }} className="th-style">
                     Status
                   </th>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Total
                   </th>
-                  <th style={{ width: "13%" }} className="th-style">
+                  <th style={{ width: "15%" }} className="th-style">
                     Aksi
                   </th>
                 </tr>
@@ -205,6 +143,15 @@ export default function HistoryCustomerPage() {
                     <td>{history.tanggal_pesan}</td>
                     <td>{history.tanggal_ambil}</td>
                     <td>
+                      {history.tipe_delivery == "Ojol" ? (
+                        <Badge bg="success">{history.tipe_delivery}</Badge>
+                      ) : history.tipe_delivery === "Kurir" ? (
+                        <Badge bg="primary">{history.tipe_delivery}</Badge>
+                      ) : (
+                        <Badge bg="dark">{history.tipe_delivery}</Badge>
+                      )}
+                    </td>
+                    <td>
                       {history.status == "Terkirim" ? (
                         <Badge bg="success">{history.status}</Badge>
                       ) : history.status === "Dibatalkan" ? (
@@ -213,18 +160,14 @@ export default function HistoryCustomerPage() {
                         <Badge bg="secondary">{history.status}</Badge>
                       )}
                     </td>
-                    <td>
-                      {new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                      }).format(history.total)}
-                    </td>
+                    <td>{Formatter.moneyFormatter(history.total)}</td>
                     <td>
                       <Row className="gap-1 gap-lg-0 gap-md-0">
                         <Col xs={12} sm={12} md={11} lg={11}>
                           <Button
                             variant="danger"
                             className="custom-danger-btn w-100"
+                            disabled={isLoadingModal}
                             onClick={() => {
                               setSelectedNota(history);
                               setSelectedHistory(history.detail_transaksi);
@@ -242,7 +185,7 @@ export default function HistoryCustomerPage() {
               </tbody>
             </Table>
             {/* Udah pasti kayak gini untuk pagination, jangan diotak atik :V */}
-            {lastPage > 1 && !search && (
+            {lastPage > 1 && (
               <CustomPagination
                 totalPage={lastPage}
                 currentPage={page}
@@ -251,11 +194,7 @@ export default function HistoryCustomerPage() {
             )}
           </>
         ) : (
-          <NotFound
-            text={
-              search ? "History Tidak Ditemukan" : "Belum Ada History Disini"
-            }
-          />
+          <NotFound text={"Belum Ada History Disini"} />
         )}
 
         <Modal show={showModal} onHide={handleCloseModal} size="xl">
@@ -427,10 +366,9 @@ export default function HistoryCustomerPage() {
                           <td>{detail.nama_produk} </td>
                           <td>{detail.jumlah}</td>
                           <td>
-                            {new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                            }).format(detail.jumlah * detail.harga_saat_beli)}
+                            {Formatter.moneyFormatter(
+                              detail.jumlah * detail.harga_saat_beli
+                            )}
                           </td>
                         </tr>
                       );
@@ -441,10 +379,7 @@ export default function HistoryCustomerPage() {
                           Ongkos Kirim (rad. {selectedNota?.radius} km) :
                         </td>
                         <td>
-                          {new Intl.NumberFormat("id-ID", {
-                            style: "currency",
-                            currency: "IDR",
-                          }).format(selectedNota?.ongkir)}
+                          {Formatter.moneyFormatter(selectedNota?.ongkir)}
                         </td>
                       </tr>
                     ) : null}
@@ -454,22 +389,16 @@ export default function HistoryCustomerPage() {
                       </td>
                       <td>
                         -{" "}
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                        }).format(selectedNota?.penggunaan_poin * 100)}
+                        {Formatter.moneyFormatter(
+                          selectedNota?.penggunaan_poin * 100
+                        )}
                       </td>
                     </tr>
                     <tr>
                       <td className="text-end" colSpan={3}>
                         Total :
                       </td>
-                      <td>
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                        }).format(selectedNota?.total)}
-                      </td>
+                      <td>{Formatter.moneyFormatter(selectedNota?.total)}</td>
                     </tr>
                   </tbody>
                 </Table>
