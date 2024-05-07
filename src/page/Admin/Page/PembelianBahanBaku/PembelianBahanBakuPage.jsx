@@ -242,10 +242,25 @@ export default function PembelianBahanBakuPage() {
     }
   };
 
-  const fetchDataBahanBaku = useCallback(async () => {
+  const fetchDataBahanBaku = useCallback(async (selectedPembelianBahanBaku) => {
     try {
       setIsLoadingModal(true);
       const bahanBakuResponse = await APIBahanBaku.getAllBahanBaku();
+
+      const isFound = bahanBakuResponse.some(
+        (element) =>
+          element.id_bahan_baku ===
+          selectedPembelianBahanBaku.bahan_baku.id_bahan_baku
+      );
+
+      if (!isFound) {
+        bahanBakuResponse.unshift({
+          id_bahan_baku: selectedPembelianBahanBaku.bahan_baku.id_bahan_baku,
+          nama_bahan_baku:
+            selectedPembelianBahanBaku.bahan_baku.nama_bahan_baku,
+        });
+      }
+
       setBahanBakuOptions(bahanBakuResponse);
     } catch (error) {
       console.error(error);
@@ -517,7 +532,7 @@ export default function PembelianBahanBakuPage() {
           edit={edit}
           isLoadingModal={isLoadingModal}
           onEnter={async () => {
-            await fetchDataBahanBaku();
+            await fetchDataBahanBaku(selectedPembelianBahanBaku);
           }}
         >
           <Form.Group className="text-start mt-3">
