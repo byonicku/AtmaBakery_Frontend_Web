@@ -26,7 +26,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIPenitip from "@/api/APIPenitip";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
@@ -464,6 +464,7 @@ export default function PenitipPage() {
               value={formData.nama}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -478,15 +479,16 @@ export default function PenitipPage() {
               value={formData.no_telp}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Data Penitip Ini?"
           secondP="Semua data yang terkait dengan penitip tersebut akan hilang."
           show={showDelModal}
-          onHapus={() => {
+          onCancel={() => {
             handleCloseDelModal();
             setSelectedPenitip(null);
           }}

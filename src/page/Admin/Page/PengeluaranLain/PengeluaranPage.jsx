@@ -26,7 +26,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIPengeluaran from "@/api/APIPengeluaranLain";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
@@ -443,6 +443,7 @@ export default function PengeluaranLainPage() {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               ref={startDateRef}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -457,6 +458,7 @@ export default function PengeluaranLainPage() {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               ref={endDateRef}
+              required
             />
           </Form.Group>
         </PrintModal>
@@ -495,6 +497,7 @@ export default function PengeluaranLainPage() {
               value={formData?.nama}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -509,6 +512,7 @@ export default function PengeluaranLainPage() {
               value={formData?.total}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
 
@@ -524,6 +528,7 @@ export default function PengeluaranLainPage() {
               value={formData?.satuan}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -537,15 +542,16 @@ export default function PengeluaranLainPage() {
               max={new Date().toISOString().split("T")[0]}
               value={formData?.tanggal_pengeluaran}
               onChange={inputHelper.handleInputChange}
+              required
             />
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Data Pengeluaran Ini?"
           secondP="Semua data yang terkait dengan pengeluaran tersebut akan hilang."
           show={showDelModal}
-          onHapus={() => {
+          onCancel={() => {
             handleCloseDelModal();
             setSelectedPengeluaran(null);
           }}

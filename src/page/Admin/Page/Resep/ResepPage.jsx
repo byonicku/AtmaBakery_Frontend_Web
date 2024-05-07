@@ -28,7 +28,7 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIResep from "@/api/APIResep";
 import APIBahanBaku from "@/api/APIBahanBaku";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function ResepPage() {
@@ -97,7 +97,6 @@ export default function ResepPage() {
           const selectedBahanBaku = selectedAllBahanBaku.map(
             (item) => item.id_bahan_baku
           );
-          console.log(bahanBakuResponse);
           const filteredBahanBaku = bahanBakuResponse.filter(
             (item) => !selectedBahanBaku.includes(item.id_bahan_baku)
           );
@@ -233,11 +232,6 @@ export default function ResepPage() {
 
     try {
       if (mode === "add") {
-        if (parseInt(formData?.kuantitas) < 0) {
-          toast.error("Kuantitas boleh negatif!");
-          return;
-        }
-
         const data = {
           id_produk: selectedProduk.id_produk,
           id_bahan_baku: formData.id_bahan_baku,
@@ -574,6 +568,14 @@ export default function ResepPage() {
               selectedResep || ""
             );
           }}
+          validate={() => {
+            if (parseInt(formData?.kuantitas) < 0) {
+              toast.error("Kuantitas tidak boleh negatif!");
+              return 0;
+            }
+
+            return 1;
+          }}
         >
           <Form.Group className="text-start mt-3" controlId="formNamaProduk">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -609,7 +611,7 @@ export default function ResepPage() {
               required
             >
               <option value="" disabled selected hidden>
-                Pilih Bahan Baku
+                {isLoadingModal ? "Loading..." : "Pilih Bahan Baku"}
               </option>
               {bahanBakuOptions?.map((option) => (
                 <option key={option.id_bahan_baku} value={option.id_bahan_baku}>
@@ -648,11 +650,11 @@ export default function ResepPage() {
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Data Resep Ini?"
           secondP="Semua data yang terkait dengan resep tersebut akan hilang."
           show={showDelModal}
-          onHapus={handleCloseDeleteModal}
+          onCancel={handleCloseDeleteModal}
           onSubmit={onSubmit}
           del={del}
         />

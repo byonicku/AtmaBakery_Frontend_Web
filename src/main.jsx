@@ -5,10 +5,10 @@ import { BrowserRouter } from "react-router-dom";
 import ScrollToTop from "@/component/ScrollToTop";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ScrollToTop />
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <BrowserRouter>
+    <ScrollToTop />
+    <App />
+  </BrowserRouter>
+  // </React.StrictMode>
 );

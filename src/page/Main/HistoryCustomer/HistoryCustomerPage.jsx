@@ -53,7 +53,6 @@ export default function HistoryCustomerPage() {
           signal
         );
         setHistory(response.data);
-        console.log(response);
         setLastPage(response.last_page);
       } catch (error) {
         // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya

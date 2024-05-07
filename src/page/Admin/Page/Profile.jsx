@@ -19,7 +19,7 @@ import InputHelper from "@/page/InputHelper";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIUser from "@/api/APIUser";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 
 import { useRefresh } from "@/component/RefreshProvider";
 import { FaCamera, FaTrash } from "react-icons/fa";
@@ -232,7 +232,6 @@ export default function Profile() {
     }
 
     if (image?.size > 1000000) {
-      console.log(image.size);
       toast.error("Ukuran foto profil tidak boleh lebih dari 1MB!");
       return;
     }
@@ -509,6 +508,7 @@ export default function Profile() {
               value={formData.old_password}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending}
+              required
             />
             <InputGroup.Text
               style={{
@@ -535,6 +535,7 @@ export default function Profile() {
               value={formData.password}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending}
+              required
             />
             <InputGroup.Text
               style={{
@@ -561,6 +562,7 @@ export default function Profile() {
               value={formData.password_confirmation}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending}
+              required
             />
             <InputGroup.Text
               style={{
@@ -597,7 +599,7 @@ export default function Profile() {
                 "https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/r1xujbu1yfoenzked4rc"
           }
           alt="Profile"
-          className="img-fluid rounded-circle"
+          className="img-fluid rounded-circle border"
           style={{ width: "200px", height: "200px", objectFit: "cover" }}
         />
 
@@ -625,17 +627,18 @@ export default function Profile() {
               setImage(e.target.files[0]);
             }}
             disabled={editGambar.isPending}
+            required
           />
         </Form.Group>
       </AddEditModal>
 
-      <DeleteConfirmationModal
+      <ConfrmationModal
         show={showDeleteModal}
         onHide={handleCloseDeleteModal}
         header={"Hapus Foto"}
         text={"Apakah Anda yakin ingin menghapus foto profil?"}
         del={delGambar}
-        onHapus={handleCloseDeleteModal}
+        onCancel={handleCloseDeleteModal}
         onSubmit={onSubmit}
       />
 
@@ -670,6 +673,7 @@ export default function Profile() {
             value={formDataProfil.nama}
             onChange={inputHelperProfil.handleInputChange}
             disabled={editProfil.isPending}
+            required
           />
         </Form.Group>
         <Form.Group className="text-start mt-3">
@@ -684,6 +688,7 @@ export default function Profile() {
             value={formDataProfil.no_telp}
             onChange={inputHelperProfil.handleInputChange}
             disabled={editProfil.isPending}
+            required
           />
         </Form.Group>
         <Form.Group className="text-start mt-3">

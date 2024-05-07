@@ -25,7 +25,7 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import APIAlamat from "@/api/APIAlamat";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function AlamatPemesananPage() {
@@ -422,6 +422,7 @@ export default function AlamatPemesananPage() {
               value={formData.nama_lengkap}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -436,6 +437,7 @@ export default function AlamatPemesananPage() {
               value={formData.no_telp}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -452,6 +454,7 @@ export default function AlamatPemesananPage() {
               value={formData.lokasi}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -468,15 +471,16 @@ export default function AlamatPemesananPage() {
               value={formData.keterangan}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Alamat Ini?"
           secondP="Semua data yang terkait dengan alamat tersebut akan hilang."
           show={showDelModal}
-          onHapus={() => {
+          onCancel={() => {
             handleDelCloseModal();
             setSelectedAlamat(null);
           }}

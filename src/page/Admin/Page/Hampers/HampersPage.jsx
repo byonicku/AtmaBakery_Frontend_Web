@@ -29,7 +29,7 @@ import "@/page/Admin/Page/css/Admin.css";
 import APIProduk from "@/api/APIProduk";
 import APIDetailHampers from "@/api/APIDetailHampers";
 import APIGambar from "@/api/APIGambar";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function HampersPage() {
@@ -265,7 +265,7 @@ export default function HampersPage() {
       alias: "Harga",
     },
     foto: {
-      required: mode === "add" ? true : false,
+      required: false,
       alias: "Gambar",
     },
   };
@@ -305,7 +305,6 @@ export default function HampersPage() {
       if (image_preview == null) return result;
 
       for (const image of image_preview) {
-        console.log(image);
         const formData = new FormData();
         const filename = new Date().getTime() + "-hampers";
         formData.append("file", image);
@@ -454,31 +453,60 @@ export default function HampersPage() {
     },
   });
 
+  function validate() {
+    if (mode === "add") {
+      if (parseInt(formData?.harga) <= 0) {
+        toast.error("Harga harus lebih dari 0!");
+        return 0;
+      }
+    }
+
+    if (mode === "edit") {
+      if (parseInt(formData?.harga) <= 0) {
+        toast.error("Harga harus lebih dari 0!");
+        return 0;
+      }
+    }
+
+    if (mode === "restore") {
+      if (hampersOptions.length === 0) {
+        toast.error("Tidak ada Hampers yang bisa direstore!");
+        return 0;
+      }
+
+      if (!selectedIdHampers) {
+        toast.error("Pilih Hampers yang akan direstore!");
+        return 0;
+      }
+    }
+
+    if (mode === "add-produk") {
+      if (parseInt(formDataProd?.jumlah) <= 0) {
+        toast.error("Jumlah produk harus lebih dari 0!");
+        return 0;
+      }
+    }
+
+    if (mode === "edit-produk") {
+      if (parseInt(formDataProd?.jumlah) <= 0) {
+        toast.error("Jumlah produk harus lebih dari 0!");
+        return 0;
+      }
+    }
+
+    return 1;
+  }
+
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
     try {
       if (mode === "add") {
-        if (parseInt(formData?.harga) <= 0) {
-          toast.error("Harga harus lebih dari 0!");
-          return;
-        }
-
-        if (image_preview?.length === 0 || image?.length === 0) {
-          toast.error("Gambar tidak boleh kosong!");
-          return;
-        }
-
         await add.mutateAsync(formData);
         return;
       }
 
       if (mode === "edit") {
-        if (parseInt(formData?.harga) <= 0) {
-          toast.error("Harga harus lebih dari 0!");
-          return;
-        }
-
         await edit.mutateAsync(formData);
         return;
       }
@@ -489,31 +517,16 @@ export default function HampersPage() {
       }
 
       if (mode === "restore") {
-        if (!selectedIdHampers) {
-          toast.error("Pilih Hampers yang akan direstore!");
-          return;
-        }
-
         await restore.mutateAsync(selectedIdHampers);
         return;
       }
 
       if (mode === "add-produk") {
-        if (parseInt(formDataProd?.jumlah) <= 0) {
-          toast.error("Jumlah produk harus lebih dari 0!");
-          return;
-        }
-
         await addProd.mutateAsync(formDataProd);
         return;
       }
 
       if (mode === "edit-produk") {
-        if (parseInt(formDataProd?.jumlah) <= 0) {
-          toast.error("Jumlah produk harus lebih dari 0!");
-          return;
-        }
-
         await editProd.mutateAsync(formDataProd);
         return;
       }
@@ -907,6 +920,7 @@ export default function HampersPage() {
               : "Pastikan data Hampers yang Anda hapus benar"
           }
           onSubmit={inputHelper.handleSubmit}
+          validate={validate}
         >
           <Form.Group className="text-start mt-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -1075,6 +1089,7 @@ export default function HampersPage() {
           }}
           add={restore}
           isLoadingModal={isLoadingModal}
+          validate={validate}
         >
           <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -1109,12 +1124,12 @@ export default function HampersPage() {
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Data Hampers Ini?"
           secondP="Semua data yang terkait dengan Hampers tersebut akan hilang."
           show={showDelModal}
           onClick={(e) => e.stopPropagation()}
-          onHapus={() => {
+          onCancel={() => {
             handleCloseDelModal();
             setSelectedHampers(null);
             setInModal(false);
@@ -1204,12 +1219,12 @@ export default function HampersPage() {
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Data Isi Hampers Ini?"
           secondP="Semua data yang terkait dengan isi hampers tersebut akan hilang."
           show={showDelProdModal}
           onClick={(e) => e.stopPropagation()}
-          onHapus={() => {
+          onCancel={() => {
             handleCloseDelProdModal();
             setIdDetailHampers(null);
             setProduk(null);

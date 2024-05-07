@@ -27,7 +27,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIKaryawan from "@/api/APIKaryawan";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
@@ -225,18 +225,31 @@ export default function KaryawanPage() {
     },
   });
 
+  function validate() {
+    if (mode === "add" || mode === "edit") {
+      if (parseFloat(formData?.gaji) < 0) {
+        toast.error("Gaji tidak boleh negatif!");
+        return 0;
+      }
+
+      if (parseFloat(formData?.bonus) < 0) {
+        toast.error("Bonus tidak boleh negatif!");
+        return 0;
+      }
+    }
+
+    if (mode === "restore") {
+      if (!selectedIdKaryawan) {
+        toast.error("Karyawan tidak ditemukan!");
+        return 0;
+      }
+    }
+
+    return 1;
+  }
+
   const onSubmit = async (formData) => {
     if (isLoading) return;
-
-    if (parseFloat(formData?.gaji) < 0) {
-      toast.error("Gaji tidak boleh negatif!");
-      return;
-    }
-
-    if (parseFloat(formData?.bonus) < 0) {
-      toast.error("Bonus tidak boleh negatif!");
-      return;
-    }
 
     try {
       if (mode === "add") {
@@ -255,11 +268,6 @@ export default function KaryawanPage() {
       }
 
       if (mode === "restore") {
-        if (!selectedIdKaryawan) {
-          toast.error("Karyawan tidak ditemukan!");
-          return;
-        }
-
         await restore.mutateAsync(selectedIdKaryawan);
         return;
       }
@@ -582,6 +590,7 @@ export default function KaryawanPage() {
           add={add}
           edit={edit}
           isLoadingModal={isLoading}
+          validate={validate}
         >
           {userRole === "MO" && (
             <>
@@ -597,6 +606,7 @@ export default function KaryawanPage() {
                   value={formData.nama}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
+                  required
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
@@ -611,6 +621,7 @@ export default function KaryawanPage() {
                   value={formData.no_telp}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
+                  required
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
@@ -625,6 +636,7 @@ export default function KaryawanPage() {
                   value={formData.email}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
+                  required
                 />
               </Form.Group>
             </>
@@ -643,6 +655,7 @@ export default function KaryawanPage() {
                   value={formData.gaji}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
+                  required
                 />
               </Form.Group>
               <Form.Group className="text-start mt-3">
@@ -657,6 +670,7 @@ export default function KaryawanPage() {
                   value={formData.bonus}
                   onChange={inputHelper.handleInputChange}
                   disabled={edit.isPending || add.isPending}
+                  required
                 />
               </Form.Group>
             </>
@@ -682,6 +696,7 @@ export default function KaryawanPage() {
           }}
           add={restore}
           isLoadingModal={isLoadingModal}
+          validate={validate}
         >
           <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -716,11 +731,11 @@ export default function KaryawanPage() {
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Data Karyawan Ini?"
           secondP="Semua data yang terkait dengan karyawan tersebut akan hilang."
           show={showDelModal}
-          onHapus={() => {
+          onCancel={() => {
             handleCloseDelModal();
             setSelectedKaryawan(null);
           }}

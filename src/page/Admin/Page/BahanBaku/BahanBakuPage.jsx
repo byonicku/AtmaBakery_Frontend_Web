@@ -26,7 +26,7 @@ import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIBahanBaku from "@/api/APIBahanBaku";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
@@ -207,13 +207,31 @@ export default function BahanBakuPage() {
     },
   });
 
+  function validate() {
+    if (mode === "add" || mode === "edit") {
+      if (parseInt(formData?.stok) < 0) {
+        toast.error("Stok tidak boleh kurang dari 0!");
+        return 0;
+      }
+    }
+
+    if (mode === "restore") {
+      if (bahanBakuOptions?.length === 0) {
+        toast.error("Tidak ada data Bahan Baku yang bisa direstore!");
+        return 0;
+      }
+
+      if (!selectedIdBahanBakuTrash) {
+        toast.error("Pilih Bahan Baku yang akan direstore!");
+        return 0;
+      }
+    }
+
+    return 1;
+  }
+
   const onSubmit = async (formData) => {
     if (isLoading) return;
-
-    if (parseInt(formData?.stok) < 0) {
-      toast.error("Stok tidak boleh kurang dari 0!");
-      return;
-    }
 
     try {
       if (mode === "add") {
@@ -232,11 +250,6 @@ export default function BahanBakuPage() {
       }
 
       if (mode === "restore") {
-        if (!selectedIdBahanBakuTrash) {
-          toast.error("Pilih Bahan Baku yang akan direstore!");
-          return;
-        }
-
         await restore.mutateAsync(selectedIdBahanBakuTrash);
         return;
       }
@@ -542,24 +555,25 @@ export default function BahanBakuPage() {
               value={formData?.nama_bahan_baku}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
-          {selectedBahanBaku ? null : (
-            <Form.Group className="text-start mt-3">
-              <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                Stok
-              </Form.Label>
-              <Form.Control
-                style={{ border: "1px solid #808080" }}
-                type="number"
-                placeholder="Masukkan stok bahan baku"
-                name="stok"
-                value={formData?.stok}
-                onChange={inputHelper.handleInputChange}
-                disabled={edit.isPending || add.isPending}
-              />
-            </Form.Group>
-          )}
+
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Stok
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="number"
+              placeholder="Masukkan stok bahan baku"
+              name="stok"
+              value={formData?.stok}
+              onChange={inputHelper.handleInputChange}
+              disabled={edit.isPending || add.isPending}
+              required
+            />
+          </Form.Group>
 
           <Form.Group className="text-start my-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -573,6 +587,7 @@ export default function BahanBakuPage() {
               value={formData?.satuan}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
+              required
             />
           </Form.Group>
         </AddEditModal>
@@ -594,6 +609,7 @@ export default function BahanBakuPage() {
             e.preventDefault();
             onSubmit();
           }}
+          validate={validate}
           add={restore}
           isLoadingModal={isLoadingModal}
         >
@@ -630,11 +646,11 @@ export default function BahanBakuPage() {
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Data Bahan Baku Ini?"
           secondP="Semua data yang terkait dengan Bahan Baku tersebut akan hilang."
           show={showDelModal}
-          onHapus={() => {
+          onCancel={() => {
             handleCloseDelModal();
             setSelectedBahanBaku(null);
           }}

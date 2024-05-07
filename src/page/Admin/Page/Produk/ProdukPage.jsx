@@ -26,7 +26,7 @@ import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import APIProduk from "@/api/APIProduk";
 import { Link } from "react-router-dom";
-import DeleteConfirmationModal from "@/component/Admin/Modal/DeleteConfirmationModal";
+import ConfrmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
 
@@ -149,10 +149,6 @@ export default function ProdukPage() {
     if (isLoadingModal) return;
 
     try {
-      if (!selectedProdukTrashed) {
-        toast.error("Pilih produk yang akan direstore!");
-      }
-
       await restore.mutateAsync();
     } catch (error) {
       toast.error(
@@ -397,6 +393,18 @@ export default function ProdukPage() {
           }}
           add={restore}
           isLoadingModal={isLoadingModal}
+          validate={() => {
+            if (produkOptions?.length === 0) {
+              toast.error("Tidak ada data Produk yang bisa direstore");
+              return 0;
+            }
+
+            if (!selectedProdukTrashed) {
+              toast.error("Pilih produk yang akan direstore terlebih dahulu!");
+              return 0;
+            }
+            return 1;
+          }}
         >
           <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
@@ -431,11 +439,11 @@ export default function ProdukPage() {
           </Form.Group>
         </AddEditModal>
 
-        <DeleteConfirmationModal
+        <ConfrmationModal
           header="Anda Yakin Ingin Menghapus Produk Ini?"
           secondP="Semua data yang terkait dengan produk tersebut akan hilang."
           show={show}
-          onHapus={handleClose}
+          onCancel={handleClose}
           onSubmit={onDelete}
           del={del}
         />

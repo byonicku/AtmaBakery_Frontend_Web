@@ -1,20 +1,24 @@
 import { Modal, Button, Row, Col } from "react-bootstrap";
 import propTypes from "prop-types";
+import "./ConfirmationModal.css";
 
-const DeleteConfirmationModal = ({
+const ConfrmationModal = ({
   header,
   secondP,
   show,
   onClick,
-  onHapus,
+  onCancel,
   onSubmit,
+  size,
   del,
+  submitBtnText = "Hapus",
+  cancelBtnText = "Batal",
 }) => {
   return (
     <Modal
       show={show}
       centered
-      size="lg"
+      size={size || "lg"}
       keyboard={false}
       backdrop="static"
       onClick={onClick}
@@ -36,17 +40,19 @@ const DeleteConfirmationModal = ({
               onClick={onSubmit}
               disabled={del.isPending}
             >
-              <h5 className="mt-2">{del.isPending ? "Loading..." : "Hapus"}</h5>
+              <h5 className="mt-2">
+                {del.isPending ? "Loading..." : submitBtnText}
+              </h5>
             </Button>
           </Col>
           <Col xs={12} sm={12} md={6} lg={6}>
             <Button
               variant="danger"
               className="custom-danger-btn w-100 p-1"
-              onClick={onHapus}
+              onClick={onCancel}
               disabled={del.isPending}
             >
-              <h5 className="mt-2">Batal</h5>
+              <h5 className="mt-2">{cancelBtnText}</h5>
             </Button>
           </Col>
         </Row>
@@ -55,15 +61,19 @@ const DeleteConfirmationModal = ({
   );
 };
 
-DeleteConfirmationModal.propTypes = {
+ConfrmationModal.propTypes = {
   header: propTypes.string,
   secondP: propTypes.string,
   show: propTypes.bool,
+  size: propTypes.string,
   onClick: propTypes.func,
-  onHapus: propTypes.func,
+  onCancel: propTypes.func,
   onSubmit: propTypes.func,
   selectedPenitip: propTypes.object,
   del: propTypes.object,
+  confirm: propTypes.bool,
+  submitBtnText: propTypes.string,
+  cancelBtnText: propTypes.string,
 };
 
-export default DeleteConfirmationModal;
+export default ConfrmationModal;

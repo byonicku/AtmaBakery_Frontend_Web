@@ -15,6 +15,7 @@ import "./css/Produk.css";
 import "@/page/Admin/Page/css/Admin.css";
 
 import { FaTrash } from "react-icons/fa";
+import { useConfirm } from "@/hooks/useConfirm";
 
 AddEditProdukPage.propTypes = {
   isEdit: PropTypes.bool,
@@ -239,11 +240,6 @@ export default function AddEditProdukPage({ isEdit }) {
       return;
     }
 
-    if ((image_preview?.length === 0 || image?.length === 0) && !isEdit) {
-      toast.error("Gambar tidak boleh kosong!");
-      return;
-    }
-
     if (parseInt(formData.limit) < 0) {
       toast.error("Limit tidak boleh kurang dari 0!");
       return;
@@ -272,18 +268,26 @@ export default function AddEditProdukPage({ isEdit }) {
         formData.status = "READY";
       }
 
-      if (isEdit) {
-        if (formData.id_kategori !== "TP") {
-          formData.id_penitip = "";
-        }
+      if (
+        await confirm(
+          "Apakah anda yakin ingin menyimpan data ini?",
+          "Pastikan data yang anda masukkan sudah benar",
+          "Simpan"
+        )
+      ) {
+        if (isEdit) {
+          if (formData.id_kategori !== "TP") {
+            formData.id_penitip = "";
+          }
 
-        await edit.mutateAsync(formData, id_produk);
-      } else {
-        if (formData.id_penitip === "") {
-          delete formData.id_penitip;
-        }
+          await edit.mutateAsync(formData, id_produk);
+        } else {
+          if (formData.id_penitip === "") {
+            delete formData.id_penitip;
+          }
 
-        await add.mutateAsync(formData);
+          await add.mutateAsync(formData);
+        }
       }
     } catch (error) {
       toast.error(
@@ -300,6 +304,8 @@ export default function AddEditProdukPage({ isEdit }) {
     validationSchema,
     onSubmit
   );
+
+  const { confirm, modalElement } = useConfirm();
 
   return (
     <>
@@ -500,6 +506,7 @@ export default function AddEditProdukPage({ isEdit }) {
                       name="id_kategori"
                       onChange={(e) => {
                         let change = {
+                          ...formData,
                           status: "",
                           ukuran: "",
                           stok: "",
@@ -694,7 +701,7 @@ export default function AddEditProdukPage({ isEdit }) {
                     >
                       {isLoading || add.isPending || edit.isPending
                         ? "Loading"
-                        : "Simpan Produk"}
+                        : "Simpan"}
                     </Button>
                   </Col>
                   <Col xs={12} sm={12} md={12} lg={12} className="m-0 p-0">
@@ -714,6 +721,7 @@ export default function AddEditProdukPage({ isEdit }) {
             )}
           </Row>
         </Form>
+        {modalElement}
       </section>
     </>
   );
