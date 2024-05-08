@@ -1,8 +1,6 @@
 import { Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import logo from "@/assets/images/atma-bakery.png";
-
 export default function Header() {
   const navigate = useNavigate();
 
@@ -20,7 +18,10 @@ export default function Header() {
         }}
       >
         <div className="logo">
-          <img src={logo} alt="logo" />
+          <img
+            src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/kgpbuy3s9vgdkdaheeo0"
+            alt="logo"
+          />
         </div>
       </Navbar.Brand>
     </Navbar>

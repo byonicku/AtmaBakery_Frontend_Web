@@ -3,13 +3,9 @@ import { Container, Row, Image, Col, Spinner } from "react-bootstrap";
 
 import { useParams, Link } from "react-router-dom";
 
-import notVerified from "@/assets/images/notVerified.png";
-import verified from "@/assets/images/verified.png";
-import invalid from "@/assets/images/invalid.png";
 import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
-import imageBg from "@/assets/images/bg.png";
 import { toast } from "sonner";
 import Header from "@/component/Auth/Header";
 
@@ -49,7 +45,10 @@ export default function Verify() {
               className="remove p-0 m-0"
               style={{ backgroundColor: "#FFEDDB" }}
             >
-              <Image src={imageBg} className="p-0 m-0 rounded left-img" />
+              <Image
+                src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/mg1vcigtrnlhkajqc545"
+                className="p-0 m-0 rounded left-img"
+              />
             </Col>
 
             <Col
@@ -76,7 +75,7 @@ export default function Verify() {
                 ) : status == 1 ? (
                   <>
                     <Image
-                      src={verified}
+                      src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/ykrflyipbmac9qmgzsdf"
                       style={{ width: "45%", height: "45%" }}
                       className="mt-3"
                     />
@@ -105,7 +104,7 @@ export default function Verify() {
                 ) : status == 0 ? (
                   <>
                     <Image
-                      src={invalid}
+                      src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/gcsnfvflvrwfgs9fhdn7"
                       style={{ width: "45%", height: "45%" }}
                       className="mt-3"
                     />
@@ -139,7 +138,7 @@ export default function Verify() {
                 ) : (
                   <>
                     <Image
-                      src={notVerified}
+                      src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/mdiw9berqgsq0pnqktir"
                       style={{ width: "45%", height: "45%" }}
                       className="mt-3"
                     />

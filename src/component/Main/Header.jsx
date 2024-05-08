@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 
-import logo from "@/assets/images/atma-bakery.png";
 import { useState } from "react";
 
 import "./css/Header.css";
@@ -57,7 +56,10 @@ export default function Header() {
           }}
         >
           <div className="logo">
-            <img src={logo} alt="logo" />
+            <img
+              src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/kgpbuy3s9vgdkdaheeo0"
+              alt="logo"
+            />
           </div>
         </Navbar.Brand>
         <Navbar.Toggle

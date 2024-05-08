@@ -9,7 +9,6 @@ import InputHelper from "@/page/InputHelper";
 import APIAuth from "@/api/APIAuth";
 
 import "./css/Auth.css";
-import imageBg from "@/assets/images/bg.png";
 import Header from "@/component/Auth/Header";
 
 export default function ResetPass() {
@@ -72,7 +71,11 @@ export default function ResetPass() {
               className="remove p-0 m-0"
               style={{ backgroundColor: "#FFEDDB" }}
             >
-              <Image src={imageBg} className="p-0 m-0 rounded left-img" />
+              <Image
+                src="
+              https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/mg1vcigtrnlhkajqc545"
+                className="p-0 m-0 rounded left-img"
+              />
             </Col>
             <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
               <div style={{ color: "black" }}>

@@ -7,8 +7,6 @@ import {
 import { Col, Container, Row } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 
-import logo from "@/assets/images/atma-bakery.png";
-
 import "./css/Footer.css";
 
 export default function Footer() {
@@ -17,7 +15,11 @@ export default function Footer() {
       <Container>
         <Row>
           <Col lg={3} md={6} sm={6} className="mb-4 mt-4">
-            <img src={logo} alt="Logo" className="footer-logo" />
+            <img
+              src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/kgpbuy3s9vgdkdaheeo0"
+              alt="Logo"
+              className="footer-logo"
+            />
             <ul className="list-unstyled footer-contact mb-0">
               <li>
                 <div className="footer-text desc">
