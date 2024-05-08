@@ -255,17 +255,20 @@ export default function HistoryCustomerPage() {
                       style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
                       className="mt-3"
                     >
-                      Tanggal Pesan : {selectedNota?.tanggal_pesan}
+                      Tanggal Pesan :{" "}
+                      {Formatter.dateTimeFormatter(selectedNota?.tanggal_pesan)}
                     </h5>
                     <h5
                       style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
                     >
-                      Lunas Pada : {selectedNota?.tanggal_lunas}
+                      Lunas Pada :{" "}
+                      {Formatter.dateTimeFormatter(selectedNota?.tanggal_lunas)}
                     </h5>
                     <h5
                       style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
                     >
-                      Tanggal Ambil : {selectedNota?.tanggal_ambil}
+                      Tanggal Ambil :{" "}
+                      {Formatter.dateTimeFormatter(selectedNota?.tanggal_ambil)}
                     </h5>
                   </Col>
                 </Row>
