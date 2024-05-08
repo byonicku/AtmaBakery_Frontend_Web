@@ -24,7 +24,6 @@ export default function HistoryCustomerPage() {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
-  const [selectedHistory, setSelectedHistory] = useState([]);
   const [selectedNota, setSelectedNota] = useState(null);
 
   const [history, setHistory] = useState([]);
@@ -170,7 +169,7 @@ export default function HistoryCustomerPage() {
                             disabled={isLoadingModal}
                             onClick={() => {
                               setSelectedNota(history);
-                              setSelectedHistory(history.detail_transaksi);
+
                               handleShowModal(history);
                               setIsLoadingModal(true);
                             }}
@@ -362,11 +361,18 @@ export default function HistoryCustomerPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedHistory.map(function (detail, idx) {
+                    {selectedNota?.produk?.map(function (detail, idx) {
                       return (
                         <tr key={idx}>
                           <td>{idx + 1}</td>
-                          <td>{detail.nama_produk} </td>
+                          <td>
+                            {detail.id_kategori === "CK"
+                              ? detail.nama_produk +
+                                " " +
+                                detail.ukuran +
+                                " Loyang"
+                              : detail.nama_produk}{" "}
+                          </td>
                           <td>{detail.jumlah}</td>
                           <td>
                             {Formatter.moneyFormatter(
