@@ -360,7 +360,7 @@ export default function PengeluaranLainPage() {
                 {pengeluaran.map((pengeluaran, index) => (
                   <tr key={index}>
                     <td>{pengeluaran.nama}</td>
-                    <td>{pengeluaran.total}</td>
+                    <td>{Formatter.moneyFormatter(pengeluaran.total)}</td>
                     <td>{pengeluaran.satuan}</td>
                     <td>
                       {Formatter.dateFormatter(pengeluaran.tanggal_pengeluaran)}

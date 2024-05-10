@@ -632,6 +632,7 @@ export default function ResepPage() {
               value={formData.kuantitas}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending || isLoadingModal}
+              required
             />
           </Form.Group>
           <Form.Group className="text-start mt-3" controlId="formSatuan">

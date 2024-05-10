@@ -513,6 +513,7 @@ export default function AddEditProdukPage({ isEdit }) {
                           limit: "",
                           harga: "",
                           id_kategori: e.target.value,
+                          id_penitip: "",
                         };
 
                         if (e.target.value === "TP") {
