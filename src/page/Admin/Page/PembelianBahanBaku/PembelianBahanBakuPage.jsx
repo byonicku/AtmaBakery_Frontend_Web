@@ -249,6 +249,11 @@ export default function PembelianBahanBakuPage() {
       setIsLoadingModal(true);
       const bahanBakuResponse = await APIBahanBaku.getAllBahanBaku();
 
+      if (selectedPembelianBahanBaku === null) {
+        setBahanBakuOptions(bahanBakuResponse);
+        return;
+      }
+
       const isFound = bahanBakuResponse.some(
         (element) =>
           element.id_bahan_baku ===
@@ -297,6 +302,7 @@ export default function PembelianBahanBakuPage() {
                   stok: "",
                   satuan: "",
                 });
+                setSelectedPembelianBahanBaku(null);
               }}
               disabled={
                 isLoading || add.isPending || edit.isPending || del.isPending
