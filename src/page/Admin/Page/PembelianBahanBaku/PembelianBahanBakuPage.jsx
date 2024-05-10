@@ -252,14 +252,14 @@ export default function PembelianBahanBakuPage() {
       const isFound = bahanBakuResponse.some(
         (element) =>
           element.id_bahan_baku ===
-          selectedPembelianBahanBaku.bahan_baku.id_bahan_baku
+          selectedPembelianBahanBaku?.bahan_baku.id_bahan_baku
       );
 
       if (!isFound) {
         bahanBakuResponse.unshift({
-          id_bahan_baku: selectedPembelianBahanBaku.bahan_baku.id_bahan_baku,
+          id_bahan_baku: selectedPembelianBahanBaku?.bahan_baku.id_bahan_baku,
           nama_bahan_baku:
-            selectedPembelianBahanBaku.bahan_baku.nama_bahan_baku,
+            selectedPembelianBahanBaku?.bahan_baku.nama_bahan_baku,
         });
       }
 
