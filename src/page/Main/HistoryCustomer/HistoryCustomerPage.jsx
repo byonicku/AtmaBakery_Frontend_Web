@@ -489,6 +489,13 @@ export default function HistoryCustomerPage() {
           </Modal.Body>
           {isLoadingModal ? null : (
             <Modal.Footer>
+              {selectedNota?.status == "Menunggu Pembayaran" ?
+                <Button variant="primary">
+                  Bayar
+                </Button>
+              :
+                null  
+              }
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
               </Button>
