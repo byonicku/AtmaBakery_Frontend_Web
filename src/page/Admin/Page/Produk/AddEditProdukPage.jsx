@@ -520,6 +520,7 @@ export default function AddEditProdukPage({ isEdit }) {
                           setIsTitipan(true);
                           change = {
                             ...change,
+                            ukuran: "1",
                             status: "READY",
                           };
                         } else if (e.target.value === "CK") {
@@ -564,8 +565,7 @@ export default function AddEditProdukPage({ isEdit }) {
                         isLoading ||
                         add.isPending ||
                         edit.isPending ||
-                        formData.id_kategori === "MNM" ||
-                        formData.id_kategori === "RT"
+                        formData.id_kategori !== "CK"
                       }
                       required
                     >
