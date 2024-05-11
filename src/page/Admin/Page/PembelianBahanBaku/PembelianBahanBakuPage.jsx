@@ -470,7 +470,7 @@ export default function PembelianBahanBakuPage() {
                                 handleShowDelModal();
                               }}
                             >
-                              <BsFillTrash3Fill className="mb-1" /> Hapus
+                              <BsFillTrash3Fill className="mb-1" /> Retur
                             </Button>
                           </Col>
                         </Row>
@@ -660,7 +660,7 @@ export default function PembelianBahanBakuPage() {
         </AddEditModal>
 
         <ConfirmationModal
-          header="Anda Yakin Ingin Menghapus Data Pembelian Bahan Baku Ini?"
+          header="Anda Yakin Ingin Meretur Pembelian Bahan Baku Ini?"
           secondP="Semua data yang terkait dengan Pembelian Bahan Baku tersebut akan hilang."
           show={showDelModal}
           onCancel={() => {
@@ -669,6 +669,7 @@ export default function PembelianBahanBakuPage() {
           }}
           onSubmit={onSubmit}
           del={del}
+          submitBtnText="Retur"
         />
       </section>
     </>

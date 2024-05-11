@@ -30,6 +30,7 @@ import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import Formatter from "@/assets/Formatter";
+import Checker from "@/assets/Checker";
 
 export default function PengeluaranLainPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -371,63 +372,67 @@ export default function PengeluaranLainPage() {
                       {Formatter.dateFormatter(pengeluaran.tanggal_pengeluaran)}
                     </td>
                     <td>
-                      <Row className="gap-1 gap-lg-0 gap-md-0">
-                        <Col xs={12} sm={12} md={6} lg={6}>
-                          <Button
-                            variant="primary"
-                            className="w-100"
-                            onClick={() => {
-                              setSelectedPengeluaran(pengeluaran);
-                              setMode("edit");
+                      {Checker.isCurrentMonthYear(
+                        pengeluaran.tanggal_pengeluaran
+                      ) && (
+                        <Row className="gap-1 gap-lg-0 gap-md-0">
+                          <Col xs={12} sm={12} md={6} lg={6}>
+                            <Button
+                              variant="primary"
+                              className="w-100"
+                              onClick={() => {
+                                setSelectedPengeluaran(pengeluaran);
+                                setMode("edit");
 
-                              let pengeluaranNama = "";
+                                let pengeluaranNama = "";
 
-                              switch (pengeluaran.nama) {
-                                case "Iuran RT":
-                                  pengeluaranNama = "Iuran RT";
-                                  break;
-                                case "Bensin":
-                                  pengeluaranNama = "Bensin";
-                                  break;
-                                case "Listrik":
-                                  pengeluaranNama = "Listrik";
-                                  break;
-                                case "Gas":
-                                  pengeluaranNama = "Gas";
-                                  break;
-                                default:
-                                  pengeluaranNama = "Other";
-                                  break;
-                              }
+                                switch (pengeluaran.nama) {
+                                  case "Iuran RT":
+                                    pengeluaranNama = "Iuran RT";
+                                    break;
+                                  case "Bensin":
+                                    pengeluaranNama = "Bensin";
+                                    break;
+                                  case "Listrik":
+                                    pengeluaranNama = "Listrik";
+                                    break;
+                                  case "Gas":
+                                    pengeluaranNama = "Gas";
+                                    break;
+                                  default:
+                                    pengeluaranNama = "Other";
+                                    break;
+                                }
 
-                              setFormData({
-                                nama: pengeluaranNama,
-                                other: pengeluaran.nama,
-                                total: pengeluaran.total,
-                                tanggal_pengeluaran:
-                                  pengeluaran.tanggal_pengeluaran,
-                              });
+                                setFormData({
+                                  nama: pengeluaranNama,
+                                  other: pengeluaran.nama,
+                                  total: pengeluaran.total,
+                                  tanggal_pengeluaran:
+                                    pengeluaran.tanggal_pengeluaran,
+                                });
 
-                              handleShowAddEditModal();
-                            }}
-                          >
-                            <BsPencilSquare className="mb-1" /> Ubah
-                          </Button>
-                        </Col>
-                        <Col xs={12} sm={12} md={6} lg={6}>
-                          <Button
-                            variant="danger"
-                            className="custom-danger-btn w-100"
-                            onClick={() => {
-                              setSelectedPengeluaran(pengeluaran);
-                              setMode("delete");
-                              handleShowDelModal();
-                            }}
-                          >
-                            <BsFillTrash3Fill className="mb-1" /> Hapus
-                          </Button>
-                        </Col>
-                      </Row>
+                                handleShowAddEditModal();
+                              }}
+                            >
+                              <BsPencilSquare className="mb-1" /> Ubah
+                            </Button>
+                          </Col>
+                          <Col xs={12} sm={12} md={6} lg={6}>
+                            <Button
+                              variant="danger"
+                              className="custom-danger-btn w-100"
+                              onClick={() => {
+                                setSelectedPengeluaran(pengeluaran);
+                                setMode("delete");
+                                handleShowDelModal();
+                              }}
+                            >
+                              <BsFillTrash3Fill className="mb-1" /> Hapus
+                            </Button>
+                          </Col>
+                        </Row>
+                      )}
                     </td>
                   </tr>
                 ))}

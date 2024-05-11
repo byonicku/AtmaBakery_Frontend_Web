@@ -14,6 +14,20 @@ const getAllPengeluaran = async () => {
   }
 };
 
+const getAllTrashedPengeluaran = async () => {
+  try {
+    const response = await useAxios.get("/trash/pengeluaran_lain", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const getPengeluaranByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/pengeluaran_lain", {
@@ -41,6 +55,20 @@ const searchPengeluaran = async (search) => {
       },
     });
     return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const restorePengeluaran = async (id) => {
+  try {
+    const response = await useAxios.get(`/restore/pengeluaran_lain/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
   } catch (error) {
     throw error.response || error;
   }
@@ -94,8 +122,10 @@ const deletePengeluaran = async (id) => {
 
 const APIPengeluaran = {
   getAllPengeluaran,
+  getAllTrashedPengeluaran,
   getPengeluaranByPage,
   searchPengeluaran,
+  restorePengeluaran,
   createPengeluaran,
   updatePengeluaran,
   deletePengeluaran,

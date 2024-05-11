@@ -15,6 +15,20 @@ const getAllPenitip = async (signal) => {
   }
 };
 
+const getAllTrashedPenitip = async () => {
+  try {
+    const response = await useAxios.get("/trash/penitip", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const getPenitipByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/penitip", {
@@ -42,6 +56,20 @@ const searchPenitip = async (search) => {
       },
     });
     return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const restorePenitip = async (id) => {
+  try {
+    const response = await useAxios.get(`/penitip/restore/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
   } catch (error) {
     throw error.response || error;
   }
@@ -92,7 +120,9 @@ const deletePenitip = async (id) => {
 const APIPenitip = {
   getAllPenitip,
   getPenitipByPage,
+  getAllTrashedPenitip,
   searchPenitip,
+  restorePenitip,
   createPenitip,
   updatePenitip,
   deletePenitip,

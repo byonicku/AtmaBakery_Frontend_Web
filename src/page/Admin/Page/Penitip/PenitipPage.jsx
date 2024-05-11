@@ -29,13 +29,17 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
+import { FaArrowCircleLeft } from "react-icons/fa";
 
 export default function PenitipPage() {
   const [showDelModal, setShowDelModal] = useState(false);
   const [showPrintModal, setshowPrintModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [selectedPenitip, setSelectedPenitip] = useState(null);
+  const [penitipOptions, setPenitipOptions] = useState([]);
 
   const handleCloseDelModal = () => setShowDelModal(false);
   const handleShowDelModal = () => setShowDelModal(true);
@@ -45,6 +49,10 @@ export default function PenitipPage() {
 
   const handleClosePrintModal = () => setshowPrintModal(false);
   const handleShowPrintModal = () => setshowPrintModal(true);
+
+  const handleCloseRestoreModal = () => setShowRestoreModal(false);
+  const handleShowRestoreModal = () => setShowRestoreModal(true);
+
   const ref = useRef();
 
   // Mode untuk CRD
@@ -81,6 +89,19 @@ export default function PenitipPage() {
     },
     [page]
   );
+
+  const fetchTrashedPenitip = useCallback(async () => {
+    setIsLoadingModal(true);
+    try {
+      const response = await APIPenitip.getAllTrashedPenitip();
+      setPenitipOptions(response);
+    } catch (error) {
+      setPenitipOptions([]);
+      console.error(error);
+    } finally {
+      setIsLoadingModal(false);
+    }
+  }, []);
 
   const handleChangePage = useCallback((newPage) => {
     setPage(newPage);
@@ -177,6 +198,34 @@ export default function PenitipPage() {
     },
   });
 
+  const restore = useMutation({
+    mutationFn: (id) => APIPenitip.restorePenitip(id),
+    onSuccess: async () => {
+      toast.success("Restore Penitip berhasil!");
+      handleMutationSuccess();
+      handleCloseRestoreModal();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  function validate() {
+    if (mode === "restore") {
+      if (penitipOptions?.length === 0) {
+        toast.error("Tidak ada data Penitip yang bisa direstore!");
+        return 0;
+      }
+
+      if (!selectedPenitip) {
+        toast.error("Pilih Penitip yang akan direstore!");
+        return 0;
+      }
+    }
+
+    return 1;
+  }
+
   const onSubmit = async (formData) => {
     if (isLoading) return;
 
@@ -193,6 +242,11 @@ export default function PenitipPage() {
 
       if (mode === "delete") {
         await del.mutateAsync(selectedPenitip.id_penitip);
+        return;
+      }
+
+      if (mode === "restore") {
+        await restore.mutateAsync(selectedPenitip);
         return;
       }
     } catch (error) {
@@ -262,6 +316,21 @@ export default function PenitipPage() {
             >
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                handleShowRestoreModal();
+                setMode("restore");
+                setSelectedPenitip(null);
+              }}
+              disabled={
+                isLoading || add.isPending || edit.isPending || del.isPending
+              }
+              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+            >
+              <FaArrowCircleLeft className="mb-1 me-2" />
+              Restore Data
             </Button>
             <Button
               variant="secondary"
@@ -485,6 +554,60 @@ export default function PenitipPage() {
               disabled={edit.isPending || add.isPending}
               required
             />
+          </Form.Group>
+        </AddEditModal>
+
+        <AddEditModal
+          show={showRestoreModal}
+          onHide={() => {
+            handleCloseRestoreModal();
+            setTimeout(() => {
+              setSelectedPenitip(null);
+            }, 125);
+          }}
+          title="Restore Data Penitip"
+          text="Pastikan data penitip yang Anda restore benar"
+          onEnter={async () => {
+            await fetchTrashedPenitip();
+          }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+          validate={validate}
+          add={restore}
+          isLoadingModal={isLoadingModal}
+        >
+          <Form.Group className="text-start mt-3" controlId="formNamaBahanBaku">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Nama Bahan Baku
+            </Form.Label>
+            <Form.Select
+              style={{ border: "1px solid #808080" }}
+              name="id_penitip"
+              onChange={(e) => {
+                setSelectedPenitip(e.target.value);
+              }}
+              disabled={
+                restore.isPending ||
+                isLoadingModal ||
+                penitipOptions?.length === 0
+              }
+              required
+            >
+              <option value="" disabled selected hidden>
+                {isLoadingModal
+                  ? "Loading..."
+                  : penitipOptions?.length > 0
+                  ? "Pilih Penitip yang akan direstore"
+                  : "Tidak ada data Penitip yang bisa direstore"}
+              </option>
+              {penitipOptions?.map((option) => (
+                <option key={option.id_penitip} value={option.id_penitip}>
+                  {option.id_penitip + " - " + option.nama}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
         </AddEditModal>
 
