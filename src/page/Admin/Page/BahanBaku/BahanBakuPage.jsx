@@ -583,16 +583,23 @@ export default function BahanBakuPage() {
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Satuan
             </Form.Label>
-            <Form.Control
+            <Form.Select
               style={{ border: "1px solid #808080" }}
               type="text"
-              placeholder="Masukkan satuan bahan baku"
               name="satuan"
               value={formData?.satuan}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
               required
-            />
+            >
+              <option value="" disabled selected hidden>
+                Pilih Satuan
+              </option>
+              <option value="gram">gram</option>
+              <option value="butir">butir</option>
+              <option value="buah">buah</option>
+              <option value="ml">ml</option>
+            </Form.Select>
           </Form.Group>
         </AddEditModal>
 
