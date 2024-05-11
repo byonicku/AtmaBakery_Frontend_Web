@@ -38,6 +38,7 @@ export default function PembelianBahanBakuPage() {
   const [showPrintModal, setshowPrintModal] = useState(false);
   const [selectedPembelianBahanBaku, setSelectedPembelianBahanBaku] =
     useState(null);
+  const [selectedSatuan, setSelectedSatuan] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
 
@@ -280,6 +281,22 @@ export default function PembelianBahanBakuPage() {
     }
   }, []);
 
+  const currentDate = new Date();
+  const firstDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  );
+
+  const isCurrentMonthYear = (date) => {
+    const currentDate = new Date();
+    const dateConvert = new Date(date);
+    return (
+      dateConvert.getMonth() === currentDate.getMonth() &&
+      dateConvert.getFullYear() === currentDate.getFullYear()
+    );
+  };
+
   return (
     <>
       <OutlerHeader
@@ -419,46 +436,53 @@ export default function PembelianBahanBakuPage() {
                       )}
                     </td>
                     <td>
-                      <Row className="gap-1 gap-lg-0 gap-md-0">
-                        <Col xs={12} sm={12} md={6} lg={6}>
-                          <Button
-                            variant="primary"
-                            className="w-100"
-                            onClick={() => {
-                              setSelectedPembelianBahanBaku(
-                                pembelian_bahan_baku
-                              );
-                              setMode("edit");
-                              setFormData({
-                                id_bahan_baku:
-                                  pembelian_bahan_baku.id_bahan_baku,
-                                stok: pembelian_bahan_baku.stok,
-                                harga: pembelian_bahan_baku.harga,
-                                tanggal_pembelian:
-                                  pembelian_bahan_baku.tanggal_pembelian,
-                              });
-                              handleShowAddEditModal();
-                            }}
-                          >
-                            <BsPencilSquare className="mb-1" /> Ubah
-                          </Button>
-                        </Col>
-                        <Col xs={12} sm={12} md={6} lg={6}>
-                          <Button
-                            variant="danger"
-                            className="custom-danger-btn w-100"
-                            onClick={() => {
-                              setSelectedPembelianBahanBaku(
-                                pembelian_bahan_baku
-                              );
-                              setMode("delete");
-                              handleShowDelModal();
-                            }}
-                          >
-                            <BsFillTrash3Fill className="mb-1" /> Hapus
-                          </Button>
-                        </Col>
-                      </Row>
+                      {isCurrentMonthYear(
+                        pembelian_bahan_baku.tanggal_pembelian
+                      ) && (
+                        <Row className="gap-1 gap-lg-0 gap-md-0">
+                          <Col xs={12} sm={12} md={6} lg={6}>
+                            <Button
+                              variant="primary"
+                              className="w-100"
+                              onClick={() => {
+                                setSelectedPembelianBahanBaku(
+                                  pembelian_bahan_baku
+                                );
+                                setMode("edit");
+                                setFormData({
+                                  id_bahan_baku:
+                                    pembelian_bahan_baku.id_bahan_baku,
+                                  stok: pembelian_bahan_baku.stok,
+                                  harga: pembelian_bahan_baku.harga,
+                                  tanggal_pembelian:
+                                    pembelian_bahan_baku.tanggal_pembelian,
+                                });
+                                setSelectedSatuan(
+                                  pembelian_bahan_baku.bahan_baku.satuan
+                                );
+                                handleShowAddEditModal();
+                              }}
+                            >
+                              <BsPencilSquare className="mb-1" /> Ubah
+                            </Button>
+                          </Col>
+                          <Col xs={12} sm={12} md={6} lg={6}>
+                            <Button
+                              variant="danger"
+                              className="custom-danger-btn w-100"
+                              onClick={() => {
+                                setSelectedPembelianBahanBaku(
+                                  pembelian_bahan_baku
+                                );
+                                setMode("delete");
+                                handleShowDelModal();
+                              }}
+                            >
+                              <BsFillTrash3Fill className="mb-1" /> Hapus
+                            </Button>
+                          </Col>
+                        </Row>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -528,6 +552,7 @@ export default function PembelianBahanBakuPage() {
             handleCloseAddEditModal();
             setTimeout(() => {
               setSelectedPembelianBahanBaku(null);
+              setSelectedSatuan(null);
             }, 125);
           }}
           title={
@@ -558,6 +583,9 @@ export default function PembelianBahanBakuPage() {
               value={formData?.id_bahan_baku}
               onChange={(e) => {
                 inputHelper.handleInputChange(e);
+                setSelectedSatuan(
+                  bahanBakuOptions[e.target.selectedIndex - 1].satuan
+                );
               }}
               disabled={edit.isPending || add.isPending || isLoadingModal}
               required
@@ -582,9 +610,24 @@ export default function PembelianBahanBakuPage() {
               placeholder="Masukkan stok pembelian bahan baku"
               name="stok"
               value={formData?.stok}
-              onChange={inputHelper.handleInputChange}
+              onChange={(e) => {
+                inputHelper.handleInputChange(e);
+              }}
               disabled={edit.isPending || add.isPending || isLoadingModal}
               required
+            />
+          </Form.Group>
+          <Form.Group className="text-start mt-3">
+            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+              Satuan
+            </Form.Label>
+            <Form.Control
+              style={{ border: "1px solid #808080" }}
+              type="text"
+              name="satuan"
+              placeholder="Pilih Bahan Baku terlebih dahulu"
+              value={selectedSatuan}
+              disabled
             />
           </Form.Group>
           <Form.Group className="text-start mt-3">
@@ -610,6 +653,7 @@ export default function PembelianBahanBakuPage() {
               style={{ border: "1px solid #808080" }}
               type="text"
               name="tanggal_pembelian"
+              min={firstDayOfMonth.toLocaleDateString("en-ca")}
               max={new Date().toISOString().split("T")[0]}
               value={formData?.tanggal_pembelian}
               onChange={inputHelper.handleInputChange}
