@@ -104,7 +104,7 @@ export default function PengeluaranLainPage() {
 
   const [formData, setFormData] = useState({
     nama: "",
-    satuan: "",
+    other: "",
     total: "",
     tanggal_pengeluaran: "",
   });
@@ -118,9 +118,9 @@ export default function PengeluaranLainPage() {
       required: true,
       alias: "Total Pengeluaran Lain",
     },
-    satuan: {
-      required: true,
-      alias: "Satuan Pengeluaran Lain",
+    other: {
+      required: formData.nama === "Other" ? true : false,
+      alias: "Nama Pengeluaran Lain",
     },
     tanggal_pengeluaran: {
       required: true,
@@ -139,7 +139,7 @@ export default function PengeluaranLainPage() {
       setSelectedPengeluaran(null);
       setFormData({
         nama: "",
-        satuan: "",
+        other: "",
         total: "",
         tanggal_pengeluaran: "",
       });
@@ -193,6 +193,11 @@ export default function PengeluaranLainPage() {
     if (isLoading) return;
 
     try {
+      if (formData?.nama === "Other") {
+        formData.nama = formData.other;
+        delete formData.other;
+      }
+
       if (mode === "add") {
         await add.mutateAsync(formData);
         return;
@@ -343,14 +348,11 @@ export default function PengeluaranLainPage() {
             <Table responsive striped>
               <thead>
                 <tr>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "20%" }} className="th-style">
                     Nama
                   </th>
-                  <th style={{ width: "16%" }} className="th-style">
+                  <th style={{ width: "20%" }} className="th-style">
                     Total
-                  </th>
-                  <th style={{ width: "18%" }} className="th-style">
-                    Satuan
                   </th>
                   <th style={{ width: "20%" }} className="th-style">
                     Tanggal Pengeluaran
@@ -365,7 +367,6 @@ export default function PengeluaranLainPage() {
                   <tr key={index}>
                     <td>{pengeluaran.nama}</td>
                     <td>{Formatter.moneyFormatter(pengeluaran.total)}</td>
-                    <td>{pengeluaran.satuan}</td>
                     <td>
                       {Formatter.dateFormatter(pengeluaran.tanggal_pengeluaran)}
                     </td>
@@ -378,13 +379,35 @@ export default function PengeluaranLainPage() {
                             onClick={() => {
                               setSelectedPengeluaran(pengeluaran);
                               setMode("edit");
+
+                              let pengeluaranNama = "";
+
+                              switch (pengeluaran.nama) {
+                                case "Iuran RT":
+                                  pengeluaranNama = "Iuran RT";
+                                  break;
+                                case "Bensin":
+                                  pengeluaranNama = "Bensin";
+                                  break;
+                                case "Listrik":
+                                  pengeluaranNama = "Listrik";
+                                  break;
+                                case "Gas":
+                                  pengeluaranNama = "Gas";
+                                  break;
+                                default:
+                                  pengeluaranNama = "Other";
+                                  break;
+                              }
+
                               setFormData({
-                                nama: pengeluaran.nama,
-                                satuan: pengeluaran.satuan,
+                                nama: pengeluaranNama,
+                                other: pengeluaran.nama,
                                 total: pengeluaran.total,
                                 tanggal_pengeluaran:
                                   pengeluaran.tanggal_pengeluaran,
                               });
+
                               handleShowAddEditModal();
                             }}
                           >
@@ -496,7 +519,7 @@ export default function PengeluaranLainPage() {
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Nama
             </Form.Label>
-            <Form.Control
+            <Form.Select
               style={{ border: "1px solid #808080" }}
               type="text"
               placeholder="Masukkan nama pengeluaran"
@@ -505,8 +528,34 @@ export default function PengeluaranLainPage() {
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
               required
-            />
+            >
+              <option value="" disabled selected hidden>
+                Pilih Nama Pengeluaran
+              </option>
+              <option value="Iuran RT">Iuran RT</option>
+              <option value="Bensin">Bensin</option>
+              <option value="Listrik">Listrik</option>
+              <option value="Gas">Gas</option>
+              <option value="Other">Other</option>
+            </Form.Select>
           </Form.Group>
+          {formData.nama === "Other" && (
+            <Form.Group className="text-start mt-3">
+              <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                Nama Pengeluaran Lain
+              </Form.Label>
+              <Form.Control
+                style={{ border: "1px solid #808080" }}
+                type="text"
+                placeholder="Masukkan nama pengeluaran lain"
+                name="other"
+                value={formData?.other}
+                onChange={inputHelper.handleInputChange}
+                disabled={edit.isPending || add.isPending}
+                required
+              />
+            </Form.Group>
+          )}
           <Form.Group className="text-start mt-3">
             <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
               Total
@@ -517,22 +566,6 @@ export default function PengeluaranLainPage() {
               placeholder="Masukkan stok pengeluaran"
               name="total"
               value={formData?.total}
-              onChange={inputHelper.handleInputChange}
-              disabled={edit.isPending || add.isPending}
-              required
-            />
-          </Form.Group>
-
-          <Form.Group className="text-start my-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Satuan
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              type="text"
-              placeholder="Masukkan satuan pengeluaran"
-              name="satuan"
-              value={formData?.satuan}
               onChange={inputHelper.handleInputChange}
               disabled={edit.isPending || add.isPending}
               required
