@@ -31,6 +31,7 @@ import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import APIBahanBaku from "@/api/APIBahanBaku";
 import Formatter from "@/assets/Formatter";
+import Checker from "@/assets/Checker";
 
 export default function PembelianBahanBakuPage() {
   const [showDelModal, setShowDelModal] = useState(false);
@@ -288,15 +289,6 @@ export default function PembelianBahanBakuPage() {
     1
   );
 
-  const isCurrentMonthYear = (date) => {
-    const currentDate = new Date();
-    const dateConvert = new Date(date);
-    return (
-      dateConvert.getMonth() === currentDate.getMonth() &&
-      dateConvert.getFullYear() === currentDate.getFullYear()
-    );
-  };
-
   return (
     <>
       <OutlerHeader
@@ -436,7 +428,7 @@ export default function PembelianBahanBakuPage() {
                       )}
                     </td>
                     <td>
-                      {isCurrentMonthYear(
+                      {Checker.isCurrentMonthYear(
                         pembelian_bahan_baku.tanggal_pembelian
                       ) && (
                         <Row className="gap-1 gap-lg-0 gap-md-0">
