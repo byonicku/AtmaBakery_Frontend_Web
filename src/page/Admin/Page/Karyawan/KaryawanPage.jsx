@@ -159,7 +159,11 @@ export default function KaryawanPage() {
   // Wajib dipanggil abis mutation / query
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchKaryawan();
+    if (!search) {
+      fetchKaryawan();
+    } else {
+      fetchKaryawanSearch();
+    }
     setTimeout(() => {
       setSelectedKaryawan(null);
       setFormData({
@@ -170,7 +174,7 @@ export default function KaryawanPage() {
         gaji: 0,
         bonus: 0,
       });
-      setSearch(null);
+      if (!search) setSearch(null);
     }, 125);
   };
 

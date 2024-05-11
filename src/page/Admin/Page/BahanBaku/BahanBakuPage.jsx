@@ -143,7 +143,11 @@ export default function BahanBakuPage() {
 
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchBahanBaku();
+    if (!search) {
+      fetchBahanBaku();
+    } else {
+      fetchBahanBakuSearch();
+    }
     setTimeout(() => {
       setSelectedBahanBaku(null);
       setFormData({
@@ -152,7 +156,7 @@ export default function BahanBakuPage() {
         satuan: "",
       });
       setSelectedIdBahanBakuTrash(null);
-      setSearch(null);
+      if (!search) setSearch(null);
     }, 125);
   };
 

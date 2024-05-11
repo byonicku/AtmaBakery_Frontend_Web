@@ -133,7 +133,11 @@ export default function PembelianBahanBakuPage() {
 
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchPembelianBahanBaku();
+    if (!search) {
+      fetchPembelianBahanBaku();
+    } else {
+      fetchPembelianBahanBakuSearch();
+    }
     setTimeout(() => {
       setSelectedPembelianBahanBaku(null);
       setFormData({
@@ -142,7 +146,7 @@ export default function PembelianBahanBakuPage() {
         harga: "",
         tanggal_pembelian: "",
       });
-      setSearch(null);
+      if (!search) setSearch(null);
     }, 125);
   };
 

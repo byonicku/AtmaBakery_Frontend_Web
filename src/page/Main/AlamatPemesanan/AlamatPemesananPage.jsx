@@ -105,7 +105,11 @@ export default function AlamatPemesananPage() {
   // Wajib dipanggil abis mutation / query
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchAlamat();
+    if (!search) {
+      fetchAlamat();
+    } else {
+      fetchAlamatSearch();
+    }
     setTimeout(() => {
       setSelectedAlamat(null);
       setFormData({
@@ -114,7 +118,7 @@ export default function AlamatPemesananPage() {
         lokasi: "",
         keterangan: "",
       });
-      setSearch(null);
+      if (!search) setSearch(null);
     }, 125);
   };
 

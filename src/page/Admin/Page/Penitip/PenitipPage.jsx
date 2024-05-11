@@ -122,14 +122,18 @@ export default function PenitipPage() {
   // Wajib dipanggil abis mutation / query
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchPenitip();
+    if (!search) {
+      fetchPenitip();
+    } else {
+      fetchPenitipSearch();
+    }
     setTimeout(() => {
       setSelectedPenitip(null);
       setFormData({
         nama: "",
         no_telp: "",
       });
-      setSearch(null);
+      if (!search) setSearch(null);
     }, 125);
   };
 

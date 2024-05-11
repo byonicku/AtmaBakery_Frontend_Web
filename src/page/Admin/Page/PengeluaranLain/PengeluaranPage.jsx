@@ -130,7 +130,11 @@ export default function PengeluaranLainPage() {
 
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchPengeluaran();
+    if (!search) {
+      fetchPengeluaran();
+    } else {
+      fetchPengeluaranSearch();
+    }
     setTimeout(() => {
       setSelectedPengeluaran(null);
       setFormData({
@@ -139,7 +143,7 @@ export default function PengeluaranLainPage() {
         total: "",
         tanggal_pengeluaran: "",
       });
-      setSearch(null);
+      if (!search) setSearch(null);
     }, 125);
   };
 

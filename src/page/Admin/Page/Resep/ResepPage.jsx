@@ -174,7 +174,11 @@ export default function ResepPage() {
   // Wajib dipanggil abis mutation / query
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchResep();
+    if (!search) {
+      fetchResep();
+    } else {
+      fetchResepSearch();
+    }
     setSelectedResep(null);
     setSelectedSatuan(null);
     setTimeout(() => {
@@ -186,7 +190,7 @@ export default function ResepPage() {
         kuantitas: "",
         satuan: "",
       });
-      setSearch(null);
+      if (!search) setSearch(null);
     }, 125);
   };
 

@@ -329,7 +329,11 @@ export default function HampersPage() {
   // Wajib dipanggil abis mutation / query
   const handleMutationSuccess = () => {
     setIsLoading(true);
-    fetchHampers();
+    if (!search) {
+      fetchHampers();
+    } else {
+      fetchHampersSearch();
+    }
     setTimeout(() => {
       setSelectedHampers(null);
       setSelectedAllHampers(null);
@@ -337,7 +341,7 @@ export default function HampersPage() {
         nama_hampers: "",
         harga: "",
       });
-      setSearch(null);
+      if (!search) setSearch(null);
       setImage(null);
       setImagePreview(null);
     }, 125);
@@ -345,7 +349,11 @@ export default function HampersPage() {
 
   const handleMutationSuccessProd = () => {
     setIsLoadingModal(true);
-    fetchHampers();
+    if (!search) {
+      fetchHampers();
+    } else {
+      fetchHampersSearch();
+    }
     setTimeout(() => {
       setSelectedProduk(null);
       setSelectedAllHampers(null);
@@ -355,6 +363,7 @@ export default function HampersPage() {
         nama_produk: "",
         ukuran: "",
       });
+      if (!search) setSearch(null);
     }, 125);
   };
 
