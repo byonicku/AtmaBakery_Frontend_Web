@@ -24,8 +24,11 @@ import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 import { useRefresh } from "@/component/RefreshProvider";
 import { FaCamera, FaTrash } from "react-icons/fa";
 import Formatter from "@/assets/Formatter";
+import APIAuth from "@/api/APIAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [eyeToggle, setEyeToggle] = useState(true);
   const [eyeToggle1, setEyeToggle1] = useState(true);
@@ -125,7 +128,7 @@ export default function Profile() {
   const edit = useMutation({
     mutationFn: (data) => APIUser.updateSelfPassword(data),
     onSuccess: async () => {
-      toast.success("Edit Berhasil!");
+      toast.success("Edit Password Berhasil! Silahkan login kembali!");
       handleCloseAddEditModal();
       handleMutationSuccess();
     },
@@ -137,7 +140,7 @@ export default function Profile() {
   const editGambar = useMutation({
     mutationFn: () => APIUser.updateUserSelfGambar(image),
     onSuccess: async () => {
-      toast.success("Edit Berhasil!");
+      toast.success("Edit Gambar Berhasil!");
       handleCloseAddEditModalGambar();
       handleMutationSuccess();
       handleRefresh();
@@ -150,7 +153,7 @@ export default function Profile() {
   const delGambar = useMutation({
     mutationFn: () => APIUser.deleteUserSelfGambar(),
     onSuccess: async () => {
-      toast.success("Hapus Berhasil!");
+      toast.success("Hapus Gambar Berhasil!");
       handleCloseDeleteModal();
       handleMutationSuccess();
       sessionStorage.setItem("foto_profil", null);
@@ -178,6 +181,8 @@ export default function Profile() {
         }
 
         await edit.mutateAsync(data);
+        await APIAuth.logout();
+        navigate("/");
         return;
       }
 
