@@ -185,7 +185,7 @@ export default function PembelianBahanBakuPage() {
   const del = useMutation({
     mutationFn: (id) => APIPembelianBahanBaku.deletePembelianBahanBaku(id),
     onSuccess: async () => {
-      toast.success("Hapus Pembelian Bahan Baku berhasil!");
+      toast.success("Retur Pembelian Bahan Baku berhasil!");
       handleCloseDelModal();
       handleMutationSuccess();
     },
