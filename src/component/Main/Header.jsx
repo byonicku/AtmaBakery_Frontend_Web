@@ -93,6 +93,8 @@ export default function Header() {
 
     setTimeout(updateWhenResize, 100);
 
+    window.addEventListener("resize", updateWhenResize);
+
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", updateWhenResize);
