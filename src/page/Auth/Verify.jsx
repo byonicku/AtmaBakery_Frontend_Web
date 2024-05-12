@@ -79,27 +79,25 @@ export default function Verify() {
                       style={{ width: "45%", height: "45%" }}
                       className="mt-3"
                     />
-                    <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                    <h1 className="header-text">
                       <span style={{ color: "#F48E28" }}>Berhasil</span>
                       <span> Verifikasi Akun</span>
                     </h1>
-                    <div className="py-2" style={{ fontSize: "1.25em" }}>
+                    <div className="py-2 subheader-text">
                       <p className="mb-1">
                         Akun Anda Telah berhasil diverifikasi
                       </p>
                     </div>
 
-                    <div style={{ color: "black" }}>
-                      <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                        <span>Anda sudah dapat mengakses akun Anda!</span>
-                        <span>
-                          {" "}
-                          <Link to="/login" style={{ textDecoration: "none" }}>
-                            Masuk ke Akun
-                          </Link>
-                        </span>
-                      </p>
-                    </div>
+                    <p className="text-under-button">
+                      <span>Anda sudah dapat mengakses akun Anda!</span>
+                      <span>
+                        {" "}
+                        <Link to="/login" style={{ textDecoration: "none" }}>
+                          Masuk ke Akun
+                        </Link>
+                      </span>
+                    </p>
                   </>
                 ) : status == 0 ? (
                   <>
@@ -108,31 +106,26 @@ export default function Verify() {
                       style={{ width: "45%", height: "45%" }}
                       className="mt-3"
                     />
-                    <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                    <h1 className="header-text">
                       <span style={{ color: "#F48E28" }}>Peringatan</span>
                       <span> Akun Telah Terverifikasi</span>
                     </h1>
-                    <div className="py-2" style={{ fontSize: "1.25em" }}>
+                    <div className="py-2 subheader-text">
                       <p className="mb-1">
                         Akun Anda Telah terverifikasi sebelumnya
                       </p>
                     </div>
 
                     <Container className="text-center">
-                      <div style={{ color: "black" }}>
-                        <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                          <span>Anda sudah dapat mengakses akun Anda!</span>
-                          <span>
-                            {" "}
-                            <Link
-                              to="/login"
-                              style={{ textDecoration: "none" }}
-                            >
-                              Masuk ke Akun
-                            </Link>
-                          </span>
-                        </p>
-                      </div>
+                      <p className="text-under-button">
+                        <span>Anda sudah dapat mengakses akun Anda!</span>
+                        <span>
+                          {" "}
+                          <Link to="/login" style={{ textDecoration: "none" }}>
+                            Masuk ke Akun
+                          </Link>
+                        </span>
+                      </p>
                     </Container>
                   </>
                 ) : (
@@ -142,11 +135,11 @@ export default function Verify() {
                       style={{ width: "45%", height: "45%" }}
                       className="mt-3"
                     />
-                    <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                    <h1 className="header-text">
                       <span style={{ color: "#FF5B19" }}>Gagal</span>
                       <span> Verifikasi Akun</span>
                     </h1>
-                    <div className="py-2" style={{ fontSize: "1.25em" }}>
+                    <div className="py-2 subheader-text">
                       <p className="mb-1">Akun Anda Gagal terverifikasi</p>
                       <p className="mt-0 pt-0">
                         Token tidak sah atau kadaluarsa
@@ -154,20 +147,15 @@ export default function Verify() {
                     </div>
 
                     <Container className="text-center">
-                      <div style={{ color: "black" }}>
-                        <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                          <span>Kembali ke halaman login!</span>
-                          <span>
-                            {" "}
-                            <Link
-                              to="/login"
-                              style={{ textDecoration: "none" }}
-                            >
-                              Masuk ke Akun
-                            </Link>
-                          </span>
-                        </p>
-                      </div>
+                      <p className="text-under-button">
+                        <span>Kembali ke halaman login!</span>
+                        <span>
+                          {" "}
+                          <Link to="/login" style={{ textDecoration: "none" }}>
+                            Masuk ke Akun
+                          </Link>
+                        </span>
+                      </p>
                     </Container>
                   </>
                 )}

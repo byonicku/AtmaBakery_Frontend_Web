@@ -14,16 +14,14 @@ export default function Home() {
   return (
     <Container>
       <Row>
-        <Col md={6} className="content-left">
+        <Col md={8} className="content-left">
           <div
             className="ellipse-container button-style"
             onClick={() => window.open("https://www.youtube.com")}
           >
-            <span className="ellipse-text mr-2">Tonton Video</span>
-            <MdOutlinePlayCircleFilled
-              className="btn-circleLanding ml-1"
-              style={{ color: "#F48E28" }}
-            />
+            <span className="ellipse-text">Tonton Video</span>
+
+            <MdOutlinePlayCircleFilled className="btn-circleLanding ms-4" />
           </div>
           <h1 className="main-title mt-5">
             Nikmati <br />
@@ -59,7 +57,7 @@ export default function Home() {
             </Col>
           </Row>
         </Col>
-        <Col md={6} className="content-right">
+        <Col md={4} className="content-right">
           <div className="rectangleLanding"></div>
         </Col>
       </Row>

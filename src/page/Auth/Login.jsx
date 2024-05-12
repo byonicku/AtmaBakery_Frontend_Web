@@ -96,27 +96,20 @@ export default function Login() {
               />
             </Col>
             <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
-              <div style={{ color: "black" }}>
-                <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                  <span>Selamat</span>
-                  <span style={{ color: "#F48E28" }}> Datang</span>
-                  <span> Kembali</span>
-                </h1>
-                <p className="py-2" style={{ fontSize: "1em" }}>
-                  Masuk ke akun untuk melanjutkan
-                </p>
-              </div>
+              <h1 className="header-text">
+                <span>Selamat</span>
+                <span style={{ color: "#F48E28" }}> Datang</span>
+                <span> Kembali</span>
+              </h1>
+              <p className="py-2 subheader-text">
+                Masuk ke akun untuk melanjutkan
+              </p>
 
               <Form onSubmit={inputHelper.handleSubmit}>
                 <Form.Group>
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Email
-                  </Form.Label>
+                  <Form.Label className="form-label-font">Email</Form.Label>
                   <Form.Control
-                    style={{
-                      border: "1px #E5E5E5",
-                      backgroundColor: "#F2F2F2",
-                    }}
+                    className="input-border"
                     type="email"
                     placeholder="Masukkan alamat email"
                     name="email"
@@ -126,16 +119,11 @@ export default function Login() {
                   />
                 </Form.Group>
                 <Form.Group className="mt-4">
-                  <Form.Label style={{ fontWeight: "bold" }}>
-                    Password
-                  </Form.Label>
+                  <Form.Label className="form-label-font">Password</Form.Label>
                   <InputGroup>
                     <Form.Control
+                      className="input-border"
                       type={eyeToggle ? "password" : "text"}
-                      style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
-                      }}
                       placeholder="Masukkan kata sandi"
                       name="password"
                       onChange={inputHelper.handleInputChange}
@@ -143,9 +131,8 @@ export default function Login() {
                       required
                     />
                     <InputGroup.Text
+                      className="input-border"
                       style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
                         userSelect: "none",
                       }}
                       onClick={handleToggle}
@@ -171,17 +158,15 @@ export default function Login() {
                 </Container>
               </Form>
               <Container className="text-center">
-                <div style={{ color: "black" }}>
-                  <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    <span>Belum memiliki akun?</span>
-                    <span>
-                      {" "}
-                      <Link to="/register" style={{ textDecoration: "none" }}>
-                        Daftar Sekarang
-                      </Link>
-                    </span>
-                  </p>
-                </div>
+                <p className="text-under-button">
+                  <span>Belum memiliki akun?</span>
+                  <span>
+                    {" "}
+                    <Link to="/register" style={{ textDecoration: "none" }}>
+                      Daftar Sekarang
+                    </Link>
+                  </span>
+                </p>
               </Container>
             </Col>
           </Row>

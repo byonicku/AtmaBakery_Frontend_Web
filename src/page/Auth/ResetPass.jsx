@@ -78,28 +78,21 @@ export default function ResetPass() {
               />
             </Col>
             <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
-              <div style={{ color: "black" }}>
-                <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                  <span style={{ color: "#F48E28" }}>Lupa</span>
-                  <span> Kata Sandi</span>
-                </h1>
-                <p className="py-2" style={{ fontSize: "1em" }}>
-                  Mohon masukkan alamat email yang terhubung dengan akun Anda.
-                  Kami akan mengirimkan instruksi ubah kata sandi ke email
-                  tersebut.
-                </p>
-              </div>
+              <h1 className="header-text">
+                <span style={{ color: "#F48E28" }}>Lupa</span>
+                <span> Kata Sandi</span>
+              </h1>
+              <p className="py-2 subheader-text">
+                Mohon masukkan alamat email yang terhubung dengan akun Anda.
+                Kami akan mengirimkan instruksi ubah kata sandi ke email
+                tersebut.
+              </p>
 
               <Form onSubmit={inputHelper.handleSubmit}>
                 <Form.Group className="pb-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Email
-                  </Form.Label>
+                  <Form.Label className="form-label-font">Email</Form.Label>
                   <Form.Control
-                    style={{
-                      border: "1px #E5E5E5",
-                      backgroundColor: "#F2F2F2",
-                    }}
+                    className="input-border"
                     type="email"
                     placeholder="Masukkan alamat email"
                     name="email"
@@ -118,17 +111,15 @@ export default function ResetPass() {
                 </Container>
               </Form>
               <Container className="text-center">
-                <div style={{ color: "black" }}>
-                  <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    <span>Batalkan permintaan lupa kata sandi?</span>
-                    <span>
-                      {" "}
-                      <Link to="/login" style={{ textDecoration: "none" }}>
-                        Masuk Sekarang
-                      </Link>
-                    </span>
-                  </p>
-                </div>
+                <p className="text-under-button">
+                  <span>Batalkan permintaan lupa kata sandi?</span>
+                  <span>
+                    {" "}
+                    <Link to="/login" style={{ textDecoration: "none" }}>
+                      Masuk Sekarang
+                    </Link>
+                  </span>
+                </p>
               </Container>
             </Col>
           </Row>

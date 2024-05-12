@@ -119,28 +119,21 @@ export default function Register() {
                 className="p-0 m-0 rounded left-img"
               />
             </Col>
-            <Col className="py-4 px-5" style={{ backgroundColor: "#FFFFFF" }}>
-              <div style={{ color: "black" }}>
-                <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                  <span>Daftarkan</span>
-                  <span style={{ color: "#F48E28" }}> Diri</span>
-                  <span> Anda</span>
-                </h1>
-                <p className="py-2" style={{ fontSize: "1em" }}>
-                  Daftar segera dan nikmati produk serta pelayanan kami
-                </p>
-              </div>
+            <Col className="py-5 px-5" style={{ backgroundColor: "#FFFFFF" }}>
+              <h1 className="header-text">
+                <span>Daftarkan</span>
+                <span style={{ color: "#F48E28" }}> Diri</span>
+                <span> Anda</span>
+              </h1>
+              <p className="py-2 subheader-text">
+                Daftar segera dan nikmati produk serta pelayanan kami
+              </p>
 
               <Form onSubmit={inputHelper.handleSubmit}>
                 <Form.Group>
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    Email
-                  </Form.Label>
+                  <Form.Label className="form-label-font">Email</Form.Label>
                   <Form.Control
-                    style={{
-                      border: "1px #E5E5E5",
-                      backgroundColor: "#F2F2F2",
-                    }}
+                    className="input-border"
                     type="email"
                     placeholder="Masukkan alamat email"
                     name="email"
@@ -150,14 +143,11 @@ export default function Register() {
                   />
                 </Form.Group>
                 <Form.Group className="mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  <Form.Label className="form-label-font">
                     Nama Lengkap
                   </Form.Label>
                   <Form.Control
-                    style={{
-                      border: "1px #E5E5E5",
-                      backgroundColor: "#F2F2F2",
-                    }}
+                    className="input-border"
                     type="text"
                     placeholder="Masukkan nama lengkap"
                     name="nama"
@@ -167,14 +157,11 @@ export default function Register() {
                   />
                 </Form.Group>
                 <Form.Group className="mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  <Form.Label className="form-label-font">
                     Nomor Telepon
                   </Form.Label>
                   <Form.Control
-                    style={{
-                      border: "1px #E5E5E5",
-                      backgroundColor: "#F2F2F2",
-                    }}
+                    className="input-border"
                     type="text"
                     placeholder="Masukkan nomor telepon"
                     name="no_telp"
@@ -184,14 +171,11 @@ export default function Register() {
                   />
                 </Form.Group>
                 <Form.Group className="mt-3">
-                  <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
+                  <Form.Label className="form-label-font">
                     Tanggal Lahir
                   </Form.Label>
                   <Form.Control
-                    style={{
-                      border: "1px #E5E5E5",
-                      backgroundColor: "#F2F2F2",
-                    }}
+                    className="input-border"
                     type="date"
                     max={new Date().toISOString().split("T")[0]}
                     placeholder="Masukkan Tanggal Lahir"
@@ -208,10 +192,7 @@ export default function Register() {
                   <InputGroup>
                     <Form.Control
                       type={eyeToggle1 ? "password" : "text"}
-                      style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
-                      }}
+                      className="input-border"
                       placeholder="Masukkan kata sandi"
                       name="password"
                       onChange={inputHelper.handleInputChange}
@@ -219,9 +200,8 @@ export default function Register() {
                       required
                     />
                     <InputGroup.Text
+                      className="input-border"
                       style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
                         userSelect: "none",
                       }}
                       onClick={() => setEyeToggle1(!eyeToggle1)}
@@ -238,10 +218,7 @@ export default function Register() {
                   <InputGroup>
                     <Form.Control
                       type={eyeToggle2 ? "password" : "text"}
-                      style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
-                      }}
+                      className="input-border"
                       placeholder="Masukkan kembali kata sandi"
                       name="password_confirmation"
                       onChange={inputHelper.handleInputChange}
@@ -249,9 +226,8 @@ export default function Register() {
                       required
                     />
                     <InputGroup.Text
+                      className="input-border"
                       style={{
-                        border: "1px #E5E5E5",
-                        backgroundColor: "#F2F2F2",
                         userSelect: "none",
                       }}
                       onClick={() => setEyeToggle2(!eyeToggle2)}
@@ -271,15 +247,15 @@ export default function Register() {
                           menyetujui{" "}
                         </span>
                         <span>
-                          <a href="#" style={{ textDecoration: "none" }}>
+                          <Link to="." style={{ textDecoration: "none" }}>
                             Persyaratan Layanan
-                          </a>
+                          </Link>
                         </span>
                         <span> dan </span>
                         <span>
-                          <a href="#" style={{ textDecoration: "none" }}>
+                          <Link to="." style={{ textDecoration: "none" }}>
                             Kebijakan Privasi
-                          </a>
+                          </Link>
                         </span>
                       </p>
                     }
@@ -296,17 +272,15 @@ export default function Register() {
                 </Container>
               </Form>
               <Container className="text-center">
-                <div style={{ color: "black" }}>
-                  <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                    <span>Sudah memiliki akun?</span>
-                    <span>
-                      {" "}
-                      <Link to="/login" style={{ textDecoration: "none" }}>
-                        Masuk Sekarang
-                      </Link>
-                    </span>
-                  </p>
-                </div>
+                <p className="text-under-button">
+                  <span>Sudah memiliki akun?</span>
+                  <span>
+                    {" "}
+                    <Link to="/login" style={{ textDecoration: "none" }}>
+                      Masuk Sekarang
+                    </Link>
+                  </span>
+                </p>
               </Container>
             </Col>
           </Row>

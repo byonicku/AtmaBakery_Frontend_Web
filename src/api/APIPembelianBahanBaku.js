@@ -14,20 +14,6 @@ const getAllPembelianBahanBaku = async () => {
   }
 };
 
-const getAllTrashedPembelianBahanBaku = async () => {
-  try {
-    const response = await useAxios.get("/trash/pembelian_bahan_baku", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-      },
-    });
-    return response.data.data;
-  } catch (error) {
-    throw error.response || error;
-  }
-};
-
 const getPembelianBahanBakuByPage = async (page = 0, signal) => {
   try {
     const response = await useAxios.get("/paginate/pembelian_bahan_baku", {
@@ -58,20 +44,6 @@ const searchPembelianBahanBaku = async (search) => {
       }
     );
     return response.data.data;
-  } catch (error) {
-    throw error.response || error;
-  }
-};
-
-const restorePembelianBahanBaku = async (id) => {
-  try {
-    const response = await useAxios.get(`/trash/pembelian_bahan_baku/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-      },
-    });
-    return response.data;
   } catch (error) {
     throw error.response || error;
   }
@@ -125,9 +97,7 @@ const deletePembelianBahanBaku = async (id) => {
 
 const APIPembelianBahanBaku = {
   getAllPembelianBahanBaku,
-  getAllTrashedPembelianBahanBaku,
   getPembelianBahanBakuByPage,
-  restorePembelianBahanBaku,
   searchPembelianBahanBaku,
   createPembelianBahanBaku,
   updatePembelianBahanBaku,

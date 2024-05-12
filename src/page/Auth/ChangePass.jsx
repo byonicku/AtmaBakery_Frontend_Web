@@ -144,31 +144,24 @@ export default function ResetPass() {
                 </div>
               ) : status == 1 ? (
                 <>
-                  <div style={{ color: "black" }}>
-                    <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
-                      <span style={{ color: "#F48E28" }}>Kata Sandi</span>
-                      <span> Baru Anda</span>
-                    </h1>
-                    <p className="py-1" style={{ fontSize: "1em" }}>
-                      Mohon masukkan kata sandi baru Anda dan harap simpan
-                      dengan baik data tersebut. Setelah berhasil masuk ke akun
-                      kembali dengan kata sandi baru!
-                    </p>
-                  </div>
+                  <h1 className="header-text">
+                    <span style={{ color: "#F48E28" }}>Kata Sandi</span>
+                    <span> Baru Anda</span>
+                  </h1>
+                  <p className="py-1 subheader-text">
+                    Mohon masukkan kata sandi baru Anda dan harap simpan dengan
+                    baik data tersebut. Setelah berhasil masuk ke akun kembali
+                    dengan kata sandi baru!
+                  </p>
 
                   <Form onSubmit={inputHelper.handleSubmit}>
                     <Form.Group>
-                      <Form.Label
-                        style={{ fontWeight: "bold", fontSize: "1em" }}
-                      >
+                      <Form.Label className="form-label-font">
                         Kata Sandi Baru
                       </Form.Label>
                       <InputGroup>
                         <Form.Control
-                          style={{
-                            border: "1px #E5E5E5",
-                            backgroundColor: "#F2F2F2",
-                          }}
+                          className="input-border"
                           type={eyeToggle1 ? "password" : "text"}
                           placeholder="Masukkan kata sandi baru"
                           name="password"
@@ -176,9 +169,8 @@ export default function ResetPass() {
                           disabled={result.isPending}
                         />
                         <InputGroup.Text
+                          className="input-border"
                           style={{
-                            border: "1px #E5E5E5",
-                            backgroundColor: "#F2F2F2",
                             userSelect: "none",
                           }}
                           onClick={() => setEyeToggle1(!eyeToggle1)}
@@ -188,17 +180,12 @@ export default function ResetPass() {
                       </InputGroup>
                     </Form.Group>
                     <Form.Group className="mt-4 mb-4">
-                      <Form.Label
-                        style={{ fontWeight: "bold", fontSize: "1em" }}
-                      >
+                      <Form.Label className="form-label-font">
                         Konfirmasi Kata Sandi Baru
                       </Form.Label>
                       <InputGroup>
                         <Form.Control
-                          style={{
-                            border: "1px #E5E5E5",
-                            backgroundColor: "#F2F2F2",
-                          }}
+                          className="input-border"
                           type={eyeToggle2 ? "password" : "text"}
                           placeholder="Masukkan ulang kata sandi baru"
                           name="password_confirmation"
@@ -206,9 +193,8 @@ export default function ResetPass() {
                           disabled={result.isPending}
                         />
                         <InputGroup.Text
+                          className="input-border"
                           style={{
-                            border: "1px #E5E5E5",
-                            backgroundColor: "#F2F2F2",
                             userSelect: "none",
                           }}
                           onClick={() => setEyeToggle2(!eyeToggle2)}
@@ -235,22 +221,20 @@ export default function ResetPass() {
                     style={{ width: "45%", height: "45%" }}
                     className="mt-3"
                   />
-                  <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                  <h1 className="header-text">
                     <span style={{ color: "#F48E28" }}>Berhasil</span>
                     <span> Ubah Kata Sandi</span>
                   </h1>
 
-                  <div style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      <span>Masuk kembali dengan kata sandi terbaru!</span>
-                      <span>
-                        {" "}
-                        <Link to="/login" style={{ textDecoration: "none" }}>
-                          Masuk ke Akun
-                        </Link>
-                      </span>
-                    </p>
-                  </div>
+                  <p className="text-under-button">
+                    <span>Masuk kembali dengan kata sandi terbaru!</span>
+                    <span>
+                      {" "}
+                      <Link to="/login" style={{ textDecoration: "none" }}>
+                        Masuk ke Akun
+                      </Link>
+                    </span>
+                  </p>
                 </div>
               ) : (
                 <div className="text-center" style={{ color: "black" }}>
@@ -259,28 +243,26 @@ export default function ResetPass() {
                     style={{ width: "45%", height: "45%" }}
                     className="mt-3"
                   />
-                  <h1 style={{ fontWeight: "bold", fontSize: "2em" }}>
+                  <h1 className="header-text">
                     <span style={{ color: "#F48E28" }}>Gagal</span>
                     <span> Untuk Verifikasi</span>
                   </h1>
-                  <div className="py-2" style={{ fontSize: "1.25em" }}>
+                  <div className="subheader-text">
                     <p className="mb-1">
                       Tidak dapat melakukan penggantian password
                     </p>
                     <p className="mt-0 pt-0">Token tidak sah atau kadaluarsa</p>
                   </div>
 
-                  <div style={{ color: "black" }}>
-                    <p style={{ fontWeight: "bold", fontSize: "1em" }}>
-                      <span>Masuk kembali ke akun?</span>
-                      <span>
-                        {" "}
-                        <Link to="/login" style={{ textDecoration: "none" }}>
-                          Masuk ke Akun
-                        </Link>
-                      </span>
-                    </p>
-                  </div>
+                  <p className="text-under-button">
+                    <span>Masuk kembali ke akun?</span>
+                    <span>
+                      {" "}
+                      <Link to="/login" style={{ textDecoration: "none" }}>
+                        Masuk ke Akun
+                      </Link>
+                    </span>
+                  </p>
                 </div>
               )}
             </Col>
