@@ -1,21 +1,96 @@
-import { Container, Nav, Navbar } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Container, Image, Nav, Navbar } from "react-bootstrap";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import "./css/Header.css";
+import iconSVG from "@/assets/Icon_Kue.svg";
 import { useMutation } from "@tanstack/react-query";
 import APIAuth from "@/api/APIAuth";
 import { toast } from "sonner";
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const role = sessionStorage.getItem("role");
   const token = sessionStorage.getItem("token");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const indicatorRef = useRef(null);
+  const iconIndicator = useRef(null);
+
+  const handleLinkClick = (index) => {
+    setActiveIndex(index);
+  };
+
+  const navLinks = [
+    { to: "/", text: "Beranda" },
+    { to: "/tentang", text: "Tentang Kami" },
+    { to: "/produk", text: "Produk" },
+    { to: "/pesan", text: "Pesan" },
+    { to: "/kontak", text: "Kontak" },
+    ...(role !== null && role !== "CUST"
+      ? [{ to: "/admin", text: "Dashboard" }]
+      : []),
+    ...(role !== null && role === "CUST"
+      ? [{ to: "/profile", text: "Profile" }]
+      : []),
+  ];
+
+  useLayoutEffect(() => {
+    const currentPath = location.pathname;
+    const links = document.querySelectorAll(".nav-link-custom");
+
+    links.forEach((link) => {
+      link.classList.remove("active");
+      const linkPath = link.getAttribute("href");
+
+      if (currentPath.startsWith(linkPath)) {
+        link.classList.add("active");
+
+        if (indicatorRef.current && iconIndicator.current) {
+          indicatorRef.current.style.left = link.offsetLeft + "px";
+          indicatorRef.current.style.width = link.offsetWidth + "px";
+          indicatorRef.current.style.transform = "translateY(-2.5rem)";
+
+          iconIndicator.current.style.left = link.offsetLeft + "px";
+          iconIndicator.current.style.width = link.offsetWidth + "px";
+          iconIndicator.current.style.transform = "translateY(-5.75rem)";
+          setTimeout(() => {
+            indicatorRef.current.classList.add("active");
+            iconIndicator.current.classList.add("active");
+          }, 200);
+        }
+      }
+    });
+
+    function updateWhenResize() {
+      links.forEach((link) => {
+        if (link.classList.contains("active")) {
+          indicatorRef.current.style.left = link.offsetLeft + "px";
+          indicatorRef.current.style.width = link.offsetWidth + "px";
+          indicatorRef.current.style.transform = "translateY(-2.5rem)";
+
+          iconIndicator.current.style.left = link.offsetLeft + "px";
+          iconIndicator.current.style.width = link.offsetWidth + "px";
+          iconIndicator.current.style.transform = "translateY(-5.75rem)";
+          setTimeout(() => {
+            indicatorRef.current.classList.add("active");
+            iconIndicator.current.classList.add("active");
+          }, 200);
+        }
+      });
+    }
+
+    window.addEventListener("resize", updateWhenResize);
+
+    return () => {
+      window.removeEventListener("resize", updateWhenResize);
+    };
+  }, [location]);
 
   const mutation = useMutation({
     mutationFn: APIAuth.logout,
@@ -47,7 +122,7 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="navbarHome" expand="lg" fixed="top">
+    <Navbar className="navbarHome font-header-main" expand="lg" fixed="top">
       <Container>
         <Navbar.Brand
           style={{ cursor: "pointer" }}
@@ -72,84 +147,49 @@ export default function Header() {
           id="navbarNavDropdown"
           className="justify-content-center"
         >
-          <Nav className="mx-auto">
-            <Nav.Link
-              onClick={() => {
-                navigate("/");
-              }}
-            >
-              Beranda
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => {
-                navigate("/tentang");
-              }}
-            >
-              Tentang Kami
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => {
-                navigate("/produk");
-              }}
-            >
-              Produk
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => {
-                navigate("/pesan");
-              }}
-            >
-              Pesan
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => {
-                navigate("/kontak");
-              }}
-            >
-              Kontak
-            </Nav.Link>
-            {role !== null && role !== "CUST" && (
-              <Nav.Link
-                onClick={() => {
-                  navigate("/admin");
-                }}
-              >
-                Dashboard
-              </Nav.Link>
-            )}
-            {role !== null && role === "CUST" && (
-              <Nav.Link
-                onClick={() => {
-                  navigate("/profile");
-                }}
-              >
-                Profile
-              </Nav.Link>
-            )}
+          <Nav className="mx-auto nav-custom text-center">
+            {navLinks.map((link, index) => (
+              <Nav.Item key={index} className="py-1">
+                <NavLink
+                  to={link.to}
+                  className={`nav-link-custom ${
+                    index === activeIndex ? "active" : ""
+                  }`}
+                  onClick={() => handleLinkClick(index)}
+                >
+                  {link.text}
+                </NavLink>
+              </Nav.Item>
+            ))}
+            <div className="icon-indicator" ref={iconIndicator}>
+              {iconSVG && <Image src={iconSVG} alt="icon" />}
+            </div>
+            <div className="indicator" ref={indicatorRef}></div>
           </Nav>
-          <Nav className="ml-auto">
+          <Nav className="ml-auto text-center">
             {token === null ? (
-              <Nav.Link
-                className="button-style"
-                onClick={() => {
-                  navigate("/login");
-                }}
-              >
-                <FaRegUser style={{ marginRight: "10px", color: "#F48E28" }} />
-                Masuk ke Akun
-              </Nav.Link>
+              <Nav.Item className="py-2">
+                <NavLink className="button-style nav-link-custom" to="/login">
+                  <FaRegUser
+                    style={{ marginRight: "10px", color: "#F48E28" }}
+                  />
+                  Masuk ke Akun
+                </NavLink>
+              </Nav.Item>
             ) : (
-              <Nav.Link
-                className="button-style"
-                onClick={() => {
-                  handleLogout();
-                }}
-              >
-                <IoIosLogOut
-                  style={{ marginRight: "10px", color: "#F48E28" }}
-                />
-                {isLoading ? "Loading..." : "Logout"}
-              </Nav.Link>
+              <Nav.Item className="py-2">
+                <Nav.Link
+                  className="button-style nav-link-custom"
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                >
+                  <IoIosLogOut
+                    style={{ marginRight: "10px", color: "#F48E28" }}
+                  />
+                  {isLoading ? "Loading..." : "Logout"}
+                </Nav.Link>
+              </Nav.Item>
             )}
           </Nav>
         </Navbar.Collapse>

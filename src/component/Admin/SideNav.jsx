@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 import RouteData from "@/assets/AdminConstant";
-import AdminLTELogo from "/dist/img/AdminLTELogo.png";
 
-import "./css/SideNav.css";
+import "./css/AdminComponent.css";
 import { useEffect, useState } from "react";
 import NavItem from "./component/NavItem";
 
 import { useRefresh } from "@/component/RefreshProvider";
+import { useLayoutEffect } from "react";
 
 const role = {
   ADM: "Admin",
@@ -26,7 +26,7 @@ export default function SideNav() {
   const [image, setImage] = useState(getImageSrc());
   const { refresh } = useRefresh();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const currentPath = location.pathname;
     const menuItems = document.querySelectorAll(".nav-link");
 
@@ -56,19 +56,13 @@ export default function SideNav() {
   }, [refresh]);
 
   return (
-    <aside className="main-sidebar sidebar-dark-primary elevation-4">
+    <aside className="main-sidebar sidebar-dark-primary elevation-4 font-sidebar">
       {/* Brand Logo */}
-      <Link to="/" className="brand-link">
-        <Image
-          src={AdminLTELogo}
-          alt="Atma Bakery"
-          className="brand-image img-circle elevation-3"
-          style={{ opacity: ".8" }}
-        />
-        <span className="brand-text font-weight-light">Atma Bakery</span>
+      <Link to="/" className="brand-link text-center">
+        <span className="brand-text">Atma Bakery</span>
       </Link>
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className="sidebar ">
         {/* Sidebar user panel (optional) */}
         <div className="user-panel mt-1 pb-2 mb-3 d-flex">
           <div className="image pt-2">
@@ -83,12 +77,16 @@ export default function SideNav() {
               }}
             />
           </div>
-          <div className="info mt-1">
+          <div className="info profile-sidebar mt-1">
             <Link
               to={roleId === "CUST" ? "/profile" : "./profile"}
               className="d-block"
             >
-              <span className="text-bold">
+              <span
+                style={{
+                  fontWeight: "600",
+                }}
+              >
                 {nama == "null" || nama == null ? "User" : nama}
               </span>
               <p className="p-0 m-0">

@@ -17,6 +17,60 @@
   background-color: #ffffff;
 }
 
+.font-header-main {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: black;
+}
+
+.nav-link-custom {
+  color: black !important;
+  font-weight: 600;
+  display: inline-block; /* or display: block; */
+}
+
+.indicator {
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  height: 2px;
+  background-color: #f48e28;
+  width: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, left 0.3s ease,
+    width 0.3s ease;
+}
+
+.icon-indicator {
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  height: 4px;
+  box-shadow: none;
+  text-shadow: none;
+  width: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, left 0.3s ease,
+    width 0.3s ease;
+}
+
+.indicator.active {
+  opacity: 1;
+}
+
+.icon-indicator.active {
+  opacity: 1;
+}
+
+.nav-link-custom.active {
+  color: #0070f3;
+}
+
+.nav-custom {
+  gap: 1.25rem;
+}
+
 @media screen and (max-width: 912px) {
   .button-style {
     padding: 0.625rem 1.25rem;
@@ -29,5 +83,13 @@
   a.button-style.nav-link {
     padding: 0.625rem 1.25rem;
     margin: auto;
+  }
+
+  .indicator {
+    display: none;
+  }
+
+  .icon-indicator {
+    display: none;
   }
 }

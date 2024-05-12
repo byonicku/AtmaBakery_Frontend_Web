@@ -40,6 +40,13 @@
   background-color: #f5ddc4;
 }
 
+.font-footer-main {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: black;
+}
+
 @media screen and (max-width: 912px) {
   .button-style {
     padding: 0.625rem 1.25rem;

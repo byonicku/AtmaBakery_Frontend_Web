@@ -8,7 +8,7 @@ export default function Wrapper() {
   return (
     <>
       <Header />
-      <div className="content-main">
+      <div className="content-main front-end-font-non-admin">
         <Outlet />
       </div>
       <Footer />

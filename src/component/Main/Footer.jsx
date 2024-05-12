@@ -11,7 +11,7 @@ import "./css/Footer.css";
 
 export default function Footer() {
   return (
-    <footer className="footer-main">
+    <footer className="footer-main font-footer-main">
       <Container>
         <Row>
           <Col lg={3} md={6} sm={6} className="mb-4 mt-4">

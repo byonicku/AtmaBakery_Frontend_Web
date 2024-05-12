@@ -28,3 +28,14 @@
 .main-sidebar {
   position: fixed !important;
 }
+
+.profile-sidebar {
+  font-size: 0.88rem;
+}
+
+.font-sidebar {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: black;
+}
