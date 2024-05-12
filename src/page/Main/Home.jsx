@@ -1,11 +1,12 @@
-import { Row, Col, Button, Container } from "react-bootstrap";
+import { Row, Col, Button, Container, Image } from "react-bootstrap";
 import { MdOutlinePlayCircleFilled } from "react-icons/md";
+import Abstrak from "@/assets/Abstrak.svg";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Home() {
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
 
   const handleClickCoding2 = () => {
     toast.error("Fitur Belum Tersedia!");
@@ -13,8 +14,8 @@ export default function Home() {
 
   return (
     <Container>
-      <Row>
-        <Col md={8} className="content-left">
+      <Row className="mb-5">
+        <Col xl={6} lg={6} md={12} sm={12}>
           <div
             className="ellipse-container button-style"
             onClick={() => window.open("https://www.youtube.com")}
@@ -28,14 +29,15 @@ export default function Home() {
             <span style={{ color: "#F48E28" }}>Kelezatan</span> Yang <br />
             Tak <span style={{ color: "#F48E28" }}>Terlupakan</span>
           </h1>
-          <div className="ftext-desc mt-5">
+          <Image src={Abstrak} className="abstrak" />
+          <div className="text-desc mt-5">
             Kue-kue ini dibuat dengan teliti menggunakan bahan-bahan berkualitas
             pilihan. Proses pembuatannya menggabungkan keahlian tangan dan
             perhatian mendetail untuk menciptakan produk akhir yang istimewa
           </div>
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
+          {/* {errorMessage && <div className="error-message">{errorMessage}</div>} */}
           <Row className="mt-5">
-            <Col md={6} className="mb-3 mb-md-0">
+            <Col xl={6} lg={12} md={12} sm={12} className="mb-3 mb-md-3">
               <Button
                 className="button-landing button-style"
                 variant="danger"
@@ -45,7 +47,7 @@ export default function Home() {
                 Baca Selanjutnya
               </Button>
             </Col>
-            <Col md={6} className="mb-3 mb-md-0">
+            <Col xl={6} lg={12} md={12} sm={12} className="mb-3 mb-md-3">
               <Button
                 className="button-landing-border button-style"
                 variant="outline-light"
@@ -57,7 +59,7 @@ export default function Home() {
             </Col>
           </Row>
         </Col>
-        <Col md={4} className="content-right">
+        <Col xl={6} lg={6} md={12} sm={12}>
           <div className="rectangleLanding"></div>
         </Col>
       </Row>

@@ -6,7 +6,6 @@ import {
   FaShoppingCart,
   FaFileInvoice,
   FaUsers,
-  FaWallet,
   FaHome,
   FaBell,
 } from "react-icons/fa";
@@ -38,10 +37,9 @@ const OwnerRoute = [
 ];
 
 const CustomerRoute = [
-  { to: "./dompet", icon: FaWallet, label: "Dompet Saya" },
-  { to: "./alamat", icon: FaHome, label: "Alamat Pengiriman Saya" },
-  { to: "./notifikasi", icon: FaBell, label: "Notifikasi Saya" },
-  { to: "./pemesanan", icon: FaShoppingBasket, label: "Pemesanan Saya" },
+  { to: "./notifikasi", icon: FaBell, label: "Notifikasi" },
+  { to: "./alamat", icon: FaHome, label: "Alamat Pengiriman" },
+  { to: "./pemesanan", icon: FaShoppingBasket, label: "Pemesanan" },
 ];
 
 const EmptyRoute = [{ to: "/admin", icon: BsGrid, label: "Beranda" }];

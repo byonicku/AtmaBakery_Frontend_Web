@@ -12,6 +12,8 @@
   align-items: center;
   justify-content: center;
   vertical-align: middle;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.95rem;
 }
 
 .button-custom {

@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import "./css/Header.css";
 import iconSVG from "@/assets/Icon_Kue.svg";
@@ -40,7 +40,7 @@ export default function Header() {
       : []),
   ];
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const currentPath = location.pathname;
     const links = document.querySelectorAll(".nav-link-custom");
 
@@ -85,9 +85,16 @@ export default function Header() {
       });
     }
 
-    window.addEventListener("resize", updateWhenResize);
+    const observer = new MutationObserver(updateWhenResize);
+    observer.observe(document.querySelector(".nav-custom"), {
+      childList: true,
+      subtree: true,
+    });
+
+    setTimeout(updateWhenResize, 100);
 
     return () => {
+      observer.disconnect();
       window.removeEventListener("resize", updateWhenResize);
     };
   }, [location]);
