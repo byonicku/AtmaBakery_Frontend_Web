@@ -346,6 +346,10 @@ export default function PengeluaranLainPage() {
           </div>
         ) : pengeluaran?.length > 0 ? (
           <>
+            <p className="text-muted">
+              *Hanya dapat mengubah data pada bulan ini, pastikan data yang anda
+              masukan sudah benar!
+            </p>
             <Table responsive striped>
               <thead>
                 <tr>

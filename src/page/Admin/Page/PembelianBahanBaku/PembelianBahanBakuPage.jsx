@@ -390,6 +390,10 @@ export default function PembelianBahanBakuPage() {
           </div>
         ) : pembelian_bahan_baku?.length > 0 ? (
           <>
+            <p className="text-muted">
+              *Hanya dapat mengubah data pada hari ini, pastikan data yang anda
+              masukan sudah benar!
+            </p>
             <Table responsive striped>
               <thead>
                 <tr>
@@ -428,7 +432,7 @@ export default function PembelianBahanBakuPage() {
                       )}
                     </td>
                     <td>
-                      {Checker.isCurrentMonthYear(
+                      {Checker.isToday(
                         pembelian_bahan_baku.tanggal_pembelian
                       ) && (
                         <Row className="gap-1 gap-lg-0 gap-md-0">
