@@ -19,6 +19,7 @@ import laptop from "@/assets/laptop.svg";
 import paket from "@/assets/paket.svg";
 import roti from "@/assets/roti.svg";
 import gambar_kue from "@/assets/gambar_kue.svg";
+import produk_awal from "@/assets/produk_awal.svg";
 
 import CardProduk from "@/component/Main/CardProduk";
 
@@ -125,7 +126,8 @@ export default function Home() {
           </Row>
         </Col>
         <Col xl={6} lg={6} md={12} sm={12}>
-          <div className="rectangleLanding"></div>
+          <Image src={produk_awal} className="produk-awal" />
+          <div className="rectangleLanding" />
         </Col>
       </Row>
       <Row className="mx-1 py-5">
@@ -191,7 +193,7 @@ export default function Home() {
         <h1 style={{ fontWeight: 600, fontSize: "1.85rem" }} className="pt-0">
           Favorit Sepanjang Masa
         </h1>
-        <Row className="py-3 mx-auto">
+        <Row className="pt-5 mx-auto">
           {produk.map((item, index) => (
             <Col key={index} xl={4} lg={4} md={6} sm={12} className="mb-3">
               <CardProduk
@@ -227,7 +229,7 @@ export default function Home() {
         <h1 style={{ fontWeight: 600, fontSize: "1.85rem" }} className="pt-0">
           Kenapa Harus Memilih Produk Kami?
         </h1>
-        <Row className="py-3 mx-auto">
+        <Row className="pt-5 mx-auto">
           <Col xl={4} lg={4} md={6} sm={12} className="mb-3">
             <Card className="card-layanan rounded-5">
               <Card.Body>
@@ -310,7 +312,7 @@ export default function Home() {
         <h1 style={{ fontWeight: 600, fontSize: "1.85rem" }} className="pt-0">
           Pesanan Ditangani dengan Profesional
         </h1>
-        <Row className="pt-3">
+        <Row className="pt-5">
           <Col xl={4} lg={4} md={6} sm={12} className="mb-3">
             <Row>
               <Col xl={12}>
