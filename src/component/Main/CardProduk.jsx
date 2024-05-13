@@ -3,7 +3,7 @@ import { Card, Row, Col, Button, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 export default function CardProduk({
-  image = "https://via.placeholder.com/150",
+  image = "https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/dyc1n9feqhbetyfxe5o5",
   nama = "...",
   ukuran = "...",
   harga = "...",
@@ -18,54 +18,57 @@ export default function CardProduk({
         className="img-product rounded-top-5"
         style={{
           aspectRatio: "4/3",
+          objectFit: "cover",
         }}
       />
-      <Card.Body>
-        <Row>
-          <Col>
-            <Card.Text className="text-left card-judul">{nama}</Card.Text>
-          </Col>
-          <Col>
-            <Card.Text className="text-right card-font-ukuran mb-2">
-              {ukuran}
-            </Card.Text>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card.Text className="text-right card-font-uang mb-1">
-              <span style={{ color: "#BE1008" }}>Rp </span>
-              {harga}
-            </Card.Text>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Card.Text className="text-left ">
-              <Button
-                className="card-pesan-btn rounded-5"
-                variant="danger"
-                onClick={() => navigate("/pesan")}
-              >
-                Pesan
-              </Button>
-            </Card.Text>
-          </Col>
-          <Col>
-            <Card.Text className="text-right m-0">
-              <Badge className="card-badge rounded-5">{kategori}</Badge>
-            </Card.Text>
-          </Col>
-        </Row>
-      </Card.Body>
+      <div className="card-inside">
+        <Card.Body>
+          <Row>
+            <Col md={8}>
+              <Card.Text className="text-left card-judul">{nama}</Card.Text>
+            </Col>
+            <Col md={4}>
+              <Card.Text className="text-right card-font-ukuran">
+                {ukuran}
+              </Card.Text>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <Card.Text className="text-right card-font-uang mb-1">
+                <span style={{ color: "#BE1008" }}>Rp </span>
+                {harga}
+              </Card.Text>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Card.Text className="text-left ">
+                <Button
+                  className="card-pesan-btn rounded-5"
+                  variant="danger"
+                  onClick={() => navigate("/pesan")}
+                >
+                  Pesan
+                </Button>
+              </Card.Text>
+            </Col>
+            <Col md={6}>
+              <Card.Text className="text-right m-0">
+                <Badge className="card-badge rounded-5">{kategori}</Badge>
+              </Card.Text>
+            </Col>
+          </Row>
+        </Card.Body>
+      </div>
     </Card>
   );
 }
 
 CardProduk.propTypes = {
-  image: PropTypes.string.isRequired,
+  image: PropTypes.string,
   nama: PropTypes.string.isRequired,
   ukuran: PropTypes.string.isRequired,
-  harga: PropTypes.number.isRequired,
+  harga: PropTypes.string.isRequired,
   kategori: PropTypes.string.isRequired,
 };

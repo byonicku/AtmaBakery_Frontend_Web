@@ -1,12 +1,13 @@
 import useAxios from "./APIConstant";
 
-const getAllProduk = async () => {
+const getAllProduk = async (signal) => {
   try {
     const response = await useAxios.get("/produk", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
+      signal: signal,
     });
     return response.data.data;
   } catch (error) {

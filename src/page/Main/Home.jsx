@@ -25,59 +25,64 @@ import CardProduk from "@/component/Main/CardProduk";
 
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Suspense, useCallback, useEffect, useState } from "react";
+
+import APIProduk from "@/api/APIProduk";
+import Formatter from "@/assets/Formatter";
+import CardProdukSkeleton from "@/component/Main/CardProdukSkeleton";
 
 export default function Home() {
   // const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [produk, setProduk] = useState([]);
+
+  const fetchProduk = useCallback(async (signal) => {
+    setIsLoading(true);
+    try {
+      const response = await APIProduk.getAllProduk(signal);
+      const remove = response.filter((item) => item.ukuran !== "1/2");
+      const reverse = remove.reverse();
+      const slice = reverse.slice(0, 6);
+      setProduk(slice);
+    } catch (error) {
+      setProduk([]);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Pas masuk load produk
+  useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    fetchProduk(signal);
+
+    return () => {
+      abortController.abort();
+    };
+  }, [fetchProduk]);
+
   const handleClickCoding2 = () => {
     toast.error("Fitur Belum Tersedia!");
   };
 
-  const produk = [
-    {
-      image: "https://via.placeholder.com/150",
-      nama: "Kue Kering",
-      ukuran: "1/2 Kg",
-      harga: "50.000",
-      kategori: "Kue Kering",
-    },
-    {
-      image: "https://via.placeholder.com/150",
-      nama: "Kue Basah",
-      ukuran: "1/2 Kg",
-      harga: "50.000",
-      kategori: "Kue Basah",
-    },
-    {
-      image: "https://via.placeholder.com/150",
-      nama: "Kue Tart",
-      ukuran: "1/2 Kg",
-      harga: "50.000",
-      kategori: "Kue Tart",
-    },
-    {
-      image: "https://via.placeholder.com/150",
-      nama: "Kue Bolu",
-      ukuran: "1/2 Kg",
-      harga: "50.000",
-      kategori: "Kue Bolu",
-    },
-    {
-      image: "https://via.placeholder.com/150",
-      nama: "Kue Brownies",
-      ukuran: "1/2 Kg",
-      harga: "50.000",
-      kategori: "Kue Brownies",
-    },
-    {
-      image: "https://via.placeholder.com/150",
-      nama: "Kue Lainnya",
-      ukuran: "1/2 Kg",
-      harga: "50.000",
-      kategori: "Kue Lainnya",
-    },
-  ];
+  const kategoriConverter = (id_kategori) => {
+    switch (id_kategori) {
+      case "CK":
+        return "Cake";
+      case "RT":
+        return "Roti";
+      case "MNM":
+        return "Minuman";
+      case "TP":
+        return "Titipan";
+    }
+  };
 
   return (
     <Container>
@@ -195,17 +200,25 @@ export default function Home() {
           Favorit Sepanjang Masa
         </h1>
         <Row className="pt-5 mx-auto">
-          {produk.map((item, index) => (
-            <Col key={index} xl={4} lg={4} md={6} sm={12} className="mb-3">
-              <CardProduk
-                image={item.image}
-                nama={item.nama}
-                ukuran={item.ukuran}
-                harga={item.harga}
-                kategori={item.kategori}
-              />
-            </Col>
-          ))}
+          {isLoading ? (
+            <Suspense fallback={<CardProdukSkeleton amount={6} />}>
+              <CardProdukSkeleton amount={6} />
+            </Suspense>
+          ) : (
+            produk.map((item, index) => (
+              <Col key={index} xl={4} lg={4} md={6} sm={12} className="mb-3">
+                <CardProduk
+                  image={item?.gambar[0]?.url}
+                  nama={item.nama_produk}
+                  ukuran={
+                    item?.id_kategori === "CK" ? item?.ukuran + " Loyang" : ""
+                  }
+                  harga={Formatter.moneyFormatter(item.harga).substring(3)}
+                  kategori={kategoriConverter(item.id_kategori)}
+                />
+              </Col>
+            ))
+          )}
         </Row>
       </Row>
 
