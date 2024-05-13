@@ -279,7 +279,7 @@ export default function Home() {
               </Card.Body>
             </Card>
           </Col>
-          <Col xl={4} lg={4} md={6} sm={12} className="mb-3">
+          <Col xl={4} lg={4} md={12} sm={12} className="mb-3">
             <Card className="card-layanan rounded-5">
               <Card.Body>
                 <Row className="d-flex justify-content-center">
@@ -363,7 +363,7 @@ export default function Home() {
               </Col>
             </Row>
           </Col>
-          <Col xl={4} lg={4} md={6} sm={12} className="mb-3">
+          <Col xl={4} lg={4} md={12} sm={12} className="mb-3">
             <Row>
               <Col xl={12}>
                 <Image
@@ -402,7 +402,7 @@ export default function Home() {
               <Col
                 xl={6}
                 lg={6}
-                md={6}
+                md={12}
                 sm={12}
                 className="gambar-mobile-container"
               >
@@ -413,11 +413,11 @@ export default function Home() {
                     objectFit: "cover",
                     height: "100%",
                     aspectRatio: "4/3",
-                    marginTop: "-3rem",
+                    marginTop: "-3.5rem",
                   }}
                 />
               </Col>
-              <Col xl={6} lg={6} md={6} sm={12}>
+              <Col xl={6} lg={6} md={12} sm={12}>
                 <Container className="container-layanan">
                   <p
                     className="mb-1 text-lg-left text-center"

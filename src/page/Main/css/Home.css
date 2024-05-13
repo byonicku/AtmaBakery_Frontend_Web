@@ -126,8 +126,8 @@
 .abstrak {
   position: absolute;
   background-position: center;
-  top: 7rem;
-  left: 22rem;
+  top: 9rem;
+  left: 18rem;
   z-index: -1;
 }
 
@@ -221,7 +221,7 @@
   position: absolute;
   top: 0;
   left: 3rem;
-  width: 100%;
+  width: 33rem;
   height: 100%;
 }
 
@@ -259,7 +259,13 @@
 
 @media screen and (max-width: 1024px) {
   .abstrak {
-    top: 8rem;
-    left: 16rem;
+    top: 18rem;
+    left: 10rem;
+  }
+
+  .produk-awal {
+    position: absolute;
+    left: 3rem;
+    width: 27rem;
   }
 }

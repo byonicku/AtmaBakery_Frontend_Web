@@ -14,7 +14,7 @@ export default function Footer() {
     <footer className="footer-main font-footer-main">
       <Container>
         <Row>
-          <Col lg={3} md={6} sm={6} className="mb-4 mt-4">
+          <Col lg={3} md={12} sm={12} className="mb-4 mt-4">
             <img
               src="https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/kgpbuy3s9vgdkdaheeo0"
               alt="Logo"
@@ -69,7 +69,7 @@ export default function Footer() {
               </li>
             </ul>
           </Col>
-          <Col lg={3} md={6} sm={6} className="mb-4 mt-4">
+          <Col lg={3} md={12} sm={12} className="mb-4 mt-4">
             <h4 className="footer-title">Waktu Operasional</h4>
             <ul className="list-unstyled footer-contact mb-0">
               <li>
@@ -84,7 +84,7 @@ export default function Footer() {
               </li>
             </ul>
           </Col>
-          <Col lg={3} md={6} sm={6} className="mb-4 mt-4">
+          <Col lg={3} md={12} sm={12} className="mb-4 mt-4">
             <h3 className="footer-title">Kunjungi</h3>
             <ul className="list-unstyled footer-contact mb-0">
               <li>
@@ -114,7 +114,7 @@ export default function Footer() {
               </li>
             </ul>
           </Col>
-          <Col lg={3} md={6} sm={6} className="mb-4 mt-4">
+          <Col lg={3} md={12} sm={12} className="mb-4 mt-4">
             <h4 className="footer-title">Hubungi Kami</h4>
             <ul className="list-unstyled footer-contact mb-0">
               <li>
