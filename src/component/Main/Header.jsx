@@ -46,60 +46,72 @@ export default function Header() {
     const currentPath = location.pathname;
     const links = document.querySelectorAll(".nav-link-custom");
 
+    function updateIndicator(link) {
+      if (indicatorRef.current && iconIndicator.current) {
+        // Ensure elements are fully rendered before measuring
+        requestAnimationFrame(() => {
+          indicatorRef.current.style.left = link.offsetLeft + "px";
+          indicatorRef.current.style.width = link.offsetWidth + "px";
+          indicatorRef.current.style.transform = "translateY(-2.5rem)";
+
+          iconIndicator.current.style.left = link.offsetLeft + "px";
+          iconIndicator.current.style.width = link.offsetWidth + "px";
+          iconIndicator.current.style.transform = "translateY(-5.75rem)";
+
+          setTimeout(() => {
+            indicatorRef.current.classList.add("active");
+            iconIndicator.current.classList.add("active");
+          }, 300);
+        });
+      }
+    }
+
     links.forEach((link) => {
       link.classList.remove("active");
       const linkPath = link.getAttribute("href");
 
       if (currentPath.startsWith(linkPath)) {
         link.classList.add("active");
-
-        if (indicatorRef.current && iconIndicator.current) {
-          indicatorRef.current.style.left = link.offsetLeft + "px";
-          indicatorRef.current.style.width = link.offsetWidth + "px";
-          indicatorRef.current.style.transform = "translateY(-2.5rem)";
-
-          iconIndicator.current.style.left = link.offsetLeft + "px";
-          iconIndicator.current.style.width = link.offsetWidth + "px";
-          iconIndicator.current.style.transform = "translateY(-5.75rem)";
-          setTimeout(() => {
-            indicatorRef.current.classList.add("active");
-            iconIndicator.current.classList.add("active");
-          }, 200);
-        }
+        updateIndicator(link);
       }
     });
 
-    function updateWhenResize() {
+    function updateWhenResizeOrMutation() {
       links.forEach((link) => {
         if (link.classList.contains("active")) {
-          indicatorRef.current.style.left = link.offsetLeft + "px";
-          indicatorRef.current.style.width = link.offsetWidth + "px";
-          indicatorRef.current.style.transform = "translateY(-2.5rem)";
-
-          iconIndicator.current.style.left = link.offsetLeft + "px";
-          iconIndicator.current.style.width = link.offsetWidth + "px";
-          iconIndicator.current.style.transform = "translateY(-5.75rem)";
-          setTimeout(() => {
-            indicatorRef.current.classList.add("active");
-            iconIndicator.current.classList.add("active");
-          }, 200);
+          updateIndicator(link);
         }
       });
     }
 
-    const observer = new MutationObserver(updateWhenResize);
-    observer.observe(document.querySelector(".nav-custom"), {
-      childList: true,
-      subtree: true,
-    });
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
 
-    setTimeout(updateWhenResize, 100);
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          updateWhenResizeOrMutation();
+          navObserver.disconnect();
+        }
+      });
+    }, observerOptions);
 
-    window.addEventListener("resize", updateWhenResize);
+    navObserver.observe(document.querySelector(".nav-custom"));
+
+    setTimeout(updateWhenResizeOrMutation, 300);
+
+    const resizeObserver = new ResizeObserver(updateWhenResizeOrMutation);
+    resizeObserver.observe(document.querySelector(".nav-custom"));
+
+    window.addEventListener("resize", updateWhenResizeOrMutation);
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateWhenResize);
+      navObserver.disconnect();
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateWhenResizeOrMutation);
     };
   }, [location]);
 

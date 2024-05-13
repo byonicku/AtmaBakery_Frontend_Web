@@ -239,6 +239,13 @@
   height: 100%;
 }
 
+@media screen and (max-width: 768px) {
+  .border-desktop {
+    border-right: none;
+    border-bottom: 0.0625rem solid #b6b6b6;
+  }
+}
+
 @media screen and (max-width: 912px) {
   .abstrak {
     display: none;
@@ -251,11 +258,6 @@
   .content-main {
     padding-left: 5px;
     padding-right: 5px;
-  }
-
-  .border-desktop {
-    border-right: none;
-    border-bottom: 0.0625rem solid #b6b6b6;
   }
 
   .container-layanan {
