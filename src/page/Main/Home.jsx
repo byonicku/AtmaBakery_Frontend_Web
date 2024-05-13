@@ -1,4 +1,12 @@
-import { Row, Col, Button, Container, Image, Card } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Button,
+  Container,
+  Image,
+  Card,
+  Form,
+} from "react-bootstrap";
 import { MdArrowRight, MdOutlinePlayCircleFilled } from "react-icons/md";
 import Abstrak from "@/assets/Abstrak.svg";
 import jam from "@/assets/jam.svg";
@@ -10,6 +18,7 @@ import mobil from "@/assets/mobil.svg";
 import laptop from "@/assets/laptop.svg";
 import paket from "@/assets/paket.svg";
 import roti from "@/assets/roti.svg";
+import gambar_kue from "@/assets/gambar_kue.svg";
 
 import CardProduk from "@/component/Main/CardProduk";
 
@@ -92,7 +101,7 @@ export default function Home() {
             perhatian mendetail untuk menciptakan produk akhir yang istimewa
           </div>
           {/* {errorMessage && <div className="error-message">{errorMessage}</div>} */}
-          <Row className="mt-5">
+          <Row className="mt-5 text-center text-lg-left">
             <Col xl={6} lg={12} md={12} sm={12} className="mb-3 mb-md-3">
               <Button
                 className="button-landing button-style"
@@ -307,7 +316,12 @@ export default function Home() {
               <Col xl={12}>
                 <Image
                   src={laptop}
-                  className="ps-sm-0 my-sm-1 my-3 ps-5 ps-lg-3"
+                  className="ps-sm-0 my-sm-1 my-3 ps-5 ps-lg-3 p-0"
+                  style={{
+                    height: "12rem",
+                    aspectRatio: "4/3",
+                    objectFit: "cover",
+                  }}
                 />
               </Col>
               <Col xl={12}>
@@ -325,7 +339,7 @@ export default function Home() {
             </Row>
           </Col>
           <Col xl={4} lg={4} md={6} sm={12} className="mb-3">
-            <Row className="flex-lg-column flex-sm-column-reverse">
+            <Row className="flex-lg-column flex-column-reverse">
               <Col xl={12}>
                 <p className="text-center card-judul-layanan mb-2">
                   PEMROSESAN
@@ -339,7 +353,10 @@ export default function Home() {
               <Col xl={12}>
                 <Image
                   src={roti}
-                  className="ps-sm-0 my-sm-1 my-3 ps-5 ps-lg-3"
+                  className="ps-sm-0 my-sm-1 my-3 ps-5 ps-lg-3 p-0"
+                  style={{
+                    height: "14rem",
+                  }}
                 />
               </Col>
             </Row>
@@ -349,7 +366,7 @@ export default function Home() {
               <Col xl={12}>
                 <Image
                   src={paket}
-                  className="ps-sm-0 my-sm-1 my-3 ps-5 ps-lg-3"
+                  className="ps-sm-0 my-sm-1 my-3 ps-5 ps-lg-3 p-2 ms-1"
                   style={{
                     height: "15rem",
                   }}
@@ -369,6 +386,86 @@ export default function Home() {
             </Row>
           </Col>
         </Row>
+      </Row>
+
+      <Row className="mb-5 mx-2">
+        <Card
+          className="card-info-font rounded-5"
+          style={{
+            backgroundColor: "#818181",
+          }}
+        >
+          <Card.Body className="p-0">
+            <Row>
+              <Col
+                xl={6}
+                lg={6}
+                md={6}
+                sm={12}
+                className="gambar-mobile-container"
+              >
+                <Image
+                  src={gambar_kue}
+                  style={{
+                    width: "100%",
+                    objectFit: "cover",
+                    height: "100%",
+                    aspectRatio: "4/3",
+                    marginTop: "-3rem",
+                  }}
+                />
+              </Col>
+              <Col xl={6} lg={6} md={6} sm={12}>
+                <Container className="container-layanan">
+                  <p
+                    className="mb-1 text-lg-left text-center"
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: "1.5rem",
+                      color: "white",
+                    }}
+                  >
+                    Berikan Kata Akan Produk Kami
+                  </p>
+                  <p
+                    className="text-lg-left text-center"
+                    style={{
+                      fontWeight: 500,
+                      color: "white",
+                    }}
+                  >
+                    Kirimkan testimonimu akan produk-produk kami. Mengenai citra
+                    rasa, pelayanan, dan sebagainya. Kami senang menerima
+                    masukkan Anda!
+                  </p>
+
+                  <Form.Control
+                    as="textarea"
+                    id="komentar"
+                    placeholder="Komentar Anda"
+                    style={{
+                      height: "5rem",
+                      resize: "none",
+                    }}
+                  />
+                  <div className="text-center text-lg-left">
+                    <Button
+                      className="button-landing button-style mt-3"
+                      variant="danger"
+                      block
+                      onClick={() => {
+                        toast.success("Komentar Terkirim!");
+                        document.getElementById("komentar").value = "";
+                      }}
+                    >
+                      Kirim
+                    </Button>
+                  </div>
+                </Container>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
       </Row>
     </Container>
   );

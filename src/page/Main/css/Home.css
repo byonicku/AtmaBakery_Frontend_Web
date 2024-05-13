@@ -55,7 +55,7 @@
 .main-title {
   font-size: 4rem;
   text-align: left;
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   font-weight: bold;
 }
 
@@ -211,6 +211,12 @@
   height: 7rem;
 }
 
+.container-layanan {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  padding-right: 2rem;
+}
+
 @media screen and (max-width: 912px) {
   .abstrak {
     display: none;
@@ -228,6 +234,18 @@
   .border-desktop {
     border-right: none;
     border-bottom: 0.0625rem solid #b6b6b6;
+  }
+
+  .container-layanan {
+    padding-top: 0;
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 2rem;
+  }
+
+  .gambar-mobile-container {
+    padding: 0;
+    height: 30%;
   }
 }
 
