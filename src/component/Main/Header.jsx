@@ -19,11 +19,13 @@ export default function Header() {
   const role = sessionStorage.getItem("role");
   const token = sessionStorage.getItem("token");
   const [activeIndex, setActiveIndex] = useState(0);
+
   const indicatorRef = useRef(null);
   const iconIndicator = useRef(null);
 
   const handleLinkClick = (index) => {
     setActiveIndex(index);
+    setExpanded(false);
   };
 
   const navLinks = [
@@ -131,7 +133,12 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="navbarHome font-header-main" expand="lg" fixed="top">
+    <Navbar
+      className="navbarHome font-header-main"
+      expand="lg"
+      fixed="top"
+      expanded={expanded}
+    >
       <Container>
         <Navbar.Brand
           style={{ cursor: "pointer" }}
