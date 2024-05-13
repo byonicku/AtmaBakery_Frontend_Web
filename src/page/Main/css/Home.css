@@ -178,11 +178,6 @@
   background-color: rgb(209, 121, 34) !important;
 }
 
-.card-inside {
-  display: flex;
-  flex: 1 1 auto;
-}
-
 .card .card-font-ukuran {
   font-size: 1rem;
   font-weight: 600;

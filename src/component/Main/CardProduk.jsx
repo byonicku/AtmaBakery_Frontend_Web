@@ -21,46 +21,50 @@ export default function CardProduk({
           objectFit: "cover",
         }}
       />
-      <div className="card-inside">
-        <Card.Body>
-          <Row>
-            <Col md={8}>
-              <Card.Text className="text-left card-judul">{nama}</Card.Text>
-            </Col>
-            <Col md={4}>
-              <Card.Text className="text-right card-font-ukuran">
-                {ukuran}
-              </Card.Text>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <Card.Text className="text-right card-font-uang mb-1">
-                <span style={{ color: "#BE1008" }}>Rp </span>
-                {harga}
-              </Card.Text>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Card.Text className="text-left ">
-                <Button
-                  className="card-pesan-btn rounded-5"
-                  variant="danger"
-                  onClick={() => navigate("/pesan")}
-                >
-                  Pesan
-                </Button>
-              </Card.Text>
-            </Col>
-            <Col md={6}>
-              <Card.Text className="text-right m-0">
-                <Badge className="card-badge rounded-5">{kategori}</Badge>
-              </Card.Text>
-            </Col>
-          </Row>
-        </Card.Body>
-      </div>
+      <Card.Body>
+        <Row>
+          <Col md={8} lg={8} xl={8} sm={8} xs={8}>
+            <Card.Text className="text-left card-judul">{nama}</Card.Text>
+          </Col>
+          <Col md={4} lg={4} xl={4} sm={4} xs={4}>
+            <Card.Text className="text-right card-font-ukuran">
+              {ukuran}
+            </Card.Text>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12}>
+            <Card.Text className="text-right card-font-uang mb-0">
+              <span style={{ color: "#BE1008" }}>Rp </span>
+              {harga}
+            </Card.Text>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Card.Text className="text-left">
+              <Button
+                className="card-pesan-btn rounded-5"
+                variant="danger"
+                onClick={() => navigate("/pesan")}
+              >
+                Pesan
+              </Button>
+            </Card.Text>
+          </Col>
+          <Col
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+            }}
+          >
+            <Card.Text className="text-right m-0">
+              <Badge className="card-badge rounded-5">{kategori}</Badge>
+            </Card.Text>
+          </Col>
+        </Row>
+      </Card.Body>
     </Card>
   );
 }
