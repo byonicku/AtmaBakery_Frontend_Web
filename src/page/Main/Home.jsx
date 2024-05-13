@@ -25,7 +25,7 @@ import CardProduk from "@/component/Main/CardProduk";
 
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import APIProduk from "@/api/APIProduk";
 import Formatter from "@/assets/Formatter";
@@ -201,9 +201,7 @@ export default function Home() {
         </h1>
         <Row className="pt-5 mx-auto">
           {isLoading ? (
-            <Suspense fallback={<CardProdukSkeleton amount={6} />}>
-              <CardProdukSkeleton amount={6} />
-            </Suspense>
+            <CardProdukSkeleton amount={6} />
           ) : (
             produk.map((item, index) => (
               <Col key={index} xl={4} lg={4} md={6} sm={12} className="mb-3">

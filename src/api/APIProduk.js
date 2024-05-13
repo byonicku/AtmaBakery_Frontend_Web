@@ -61,6 +61,23 @@ const getProdukByPage = async (page = 0, signal) => {
   }
 };
 
+const getProdukByPagePublic = async (page = 0) => {
+  try {
+    const response = await useAxios.get("/public/paginate/produk", {
+      params: {
+        page: page,
+      },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const searchProduk = async (search) => {
   const data = {
     data: search,
@@ -149,6 +166,7 @@ const APIProduk = {
   getAllProdukTrashed,
   restoreProduk,
   getProdukByPage,
+  getProdukByPagePublic,
   showProduk,
   searchProduk,
   createProduk,

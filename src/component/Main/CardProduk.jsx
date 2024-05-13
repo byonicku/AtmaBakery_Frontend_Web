@@ -23,10 +23,10 @@ export default function CardProduk({
       />
       <Card.Body>
         <Row>
-          <Col md={8} lg={8} xl={8} sm={8} xs={8}>
+          <Col md={8} lg={8} xl={8} sm={8} xs={7}>
             <Card.Text className="text-left card-judul">{nama}</Card.Text>
           </Col>
-          <Col md={4} lg={4} xl={4} sm={4} xs={4}>
+          <Col md={4} lg={4} xl={4} sm={4} xs={5}>
             <Card.Text className="text-right card-font-ukuran">
               {ukuran}
             </Card.Text>
