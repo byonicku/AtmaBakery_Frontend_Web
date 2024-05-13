@@ -23,11 +23,12 @@ import produk_awal from "@/assets/produk_awal.svg";
 
 import CardProduk from "@/component/Main/CardProduk";
 
-// import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Home() {
   // const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleClickCoding2 = () => {
     toast.error("Fitur Belum Tersedia!");
@@ -209,7 +210,13 @@ export default function Home() {
       </Row>
 
       <Row className="d-flex justify-content-center pb-3">
-        <div className="ellipse-container-lihat-selanjutnya">
+        <div
+          className="ellipse-container-lihat-selanjutnya"
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/produk")}
+        >
           <span className="ellipse-text-lihat-selanjutnya">
             Lihat Selengkapnya
           </span>
