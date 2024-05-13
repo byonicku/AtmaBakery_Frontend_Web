@@ -17,8 +17,24 @@
   border-radius: 1.5rem;
 }
 
+.ellipse-container-lihat-selanjutnya {
+  width: 16rem;
+  height: 4rem;
+  background-color: #f48e28;
+  display: flex;
+  align-items: center;
+  border-radius: 2rem;
+}
+
 .ellipse-text {
   color: #f48e28;
+  font-size: 1rem;
+  font-weight: 600;
+  padding-left: 0.625rem;
+}
+
+.ellipse-text-lihat-selanjutnya {
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
   padding-left: 0.625rem;
@@ -120,6 +136,81 @@
   font-family: "Montserrat", sans-serif;
 }
 
+.card-info-font {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.border-desktop {
+  border-right: 0.0625rem solid #b6b6b6;
+}
+
+.card-judul {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.card-pesan-btn {
+  background-color: #f48e28 !important;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border: none;
+}
+
+.card-pesan-btn:hover {
+  background-color: rgb(209, 121, 34) !important;
+}
+
+.card-pesan-btn:active {
+  background-color: rgb(209, 121, 34) !important;
+}
+
+.card-pesan-btn:focus {
+  background-color: rgb(209, 121, 34) !important;
+}
+
+.card-font-ukuran {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.card-font-uang {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card-badge {
+  color: #f48e28 !important;
+  background-color: #ffe8d2 !important;
+  padding: 10px 22px;
+}
+
+.card-layanan {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-layanan:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+.card-judul-layanan {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card-font-layanan {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.card-layanan-icon {
+  aspect-ratio: 1/1;
+  width: 7rem;
+  height: 7rem;
+}
+
 @media screen and (max-width: 912px) {
   .abstrak {
     display: none;
@@ -132,6 +223,11 @@
   .content-main {
     padding-left: 5px;
     padding-right: 5px;
+  }
+
+  .border-desktop {
+    border-right: none;
+    border-bottom: 0.0625rem solid #b6b6b6;
   }
 }
 
