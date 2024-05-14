@@ -221,6 +221,7 @@ export default function Home() {
             produk.map((item, index) => (
               <Col key={index} xl={4} lg={4} md={6} sm={12} className="mb-3">
                 <CardProduk
+                  id={item.id_produk}
                   image={item?.gambar[0]?.url}
                   nama={item.nama_produk}
                   ukuran={ukuranConverter(item.ukuran, item.id_kategori)}
