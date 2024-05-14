@@ -60,6 +60,20 @@ const searchHampers = async (search) => {
   }
 };
 
+const showHampers = async (id, signal) => {
+  try {
+    const response = await useAxios.get(`/hampers/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal: signal,
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const restoreHampers = async (id) => {
   try {
     const response = await useAxios.get(`/hampers/restore/${id}`, {
@@ -135,6 +149,7 @@ const APIHampers = {
   restoreHampers,
   getHampersByPage,
   searchHampers,
+  showHampers,
   createHampers,
   updateHampers,
   deleteHampers,

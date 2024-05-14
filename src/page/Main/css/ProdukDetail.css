@@ -1,0 +1,182 @@
+.produk-slug {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.produk-slug a {
+  text-decoration: none;
+  color: black;
+}
+
+.produk-slug a.nama-produk {
+  color: #f48e28;
+}
+
+.input-border-produk-jumlah {
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 1.2rem 1rem;
+  width: auto;
+  max-width: 50px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.input-border-produk-jumlah.form-control {
+  background-color: transparent !important;
+}
+
+.input-border-produk-plusminus {
+  background-color: white !important;
+  color: #f48e28 !important;
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.button-belilangsung {
+  width: 15rem !important;
+  height: 3.75rem !important;
+  background: linear-gradient(180deg, #efab68, #f48e28);
+  font-size: 1.125rem;
+  text-align: center;
+  vertical-align: middle;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.button-belilangsung:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  border: 0.125rem solid #f48e28 !important;
+}
+
+.button-belilangsung-border {
+  width: 15rem;
+  height: 3.75rem;
+  background-color: #ffffff;
+  border: 0.125rem solid #f48e28;
+  font-size: 1.125rem;
+  font-weight: bold;
+}
+
+.button-belilangsung-border.button-style:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  border: 0.125rem solid #f48e28 !important;
+}
+
+.input-border-produk-plusminus:hover,
+.input-border-produk-plusminus:focus {
+  background-color: #f48e28 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
+.input-border-produk-jumlah:focus {
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
+.input-border-produk-readypo {
+  background-color: white !important;
+  color: black !important;
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.button-bayar {
+  background-color: #f48e28 !important;
+  color: white !important;
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.button-bayar:hover,
+.button-bayar:focus {
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
+.button-tambahkeranjang {
+  background-color: white !important;
+  color: black !important;
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.button-tambahkeranjang:hover,
+.button-tambahkeranjang:focus {
+  background-color: #f48e28 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
+.input-border-produk-readypo.active {
+  background-color: #f48e28 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
+.input-border-produk-readypo:hover,
+.input-border-produk-readypo:focus {
+  background-color: #f48e28 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
+.produk-judul {
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.image-gallery-image {
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 0.3125rem;
+}
+
+.image-gallery-slide .image-gallery-image {
+  object-fit: cover !important;
+}
+
+.image-gallery-thumbnail-inner {
+  aspect-ratio: 1/1;
+  object-fit: cover !important;
+}
+
+.image-gallery-thumbnail-image {
+  aspect-ratio: 1/1;
+  object-fit: cover !important;
+  border-radius: 0.15rem;
+}
+
+.image-gallery-thumbnail.active,
+.image-gallery-thumbnail:focus,
+.image-gallery-thumbnail:hover {
+  border-radius: 0.3125rem;
+  border: 0.2rem solid #f48e28 !important;
+}

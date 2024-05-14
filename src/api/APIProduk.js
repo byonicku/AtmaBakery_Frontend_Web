@@ -100,7 +100,6 @@ const showProduk = async (id, signal) => {
     const response = await useAxios.get(`/produk/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
       signal: signal,
     });

@@ -15,6 +15,7 @@ import {
 import { BsSearch } from "react-icons/bs";
 import "./css/ProdukView.css";
 import APIHampers from "@/api/APIHampers";
+import NotFound from "@/component/Admin/NotFound";
 
 export default function ProdukView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -283,7 +284,7 @@ export default function ProdukView() {
           <Row className="pt-2 pt-sm-2 pt-lg-4 pt-mt-4 mx-auto">
             {isLoading ? (
               <CardProdukSkeleton amount={6} />
-            ) : (
+            ) : produk.length !== 0 ? (
               produk.map((item, index) => (
                 <Col key={index} xl={4} lg={4} md={6} sm={12} className="mb-3">
                   <CardProduk
@@ -298,6 +299,14 @@ export default function ProdukView() {
                   />
                 </Col>
               ))
+            ) : (
+              <NotFound
+                text={
+                  search
+                    ? "Produk Tidak Ditemukan"
+                    : "Tidak Ada Produk Tersedia"
+                }
+              />
             )}
           </Row>
         </Row>
