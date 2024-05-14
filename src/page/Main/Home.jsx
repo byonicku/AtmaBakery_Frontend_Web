@@ -129,7 +129,7 @@ export default function Home() {
                 className="button-landing button-style"
                 variant="danger"
                 block
-                onClick={handleClickCoding2}
+                onClick={() => navigate("/tentang")}
               >
                 Baca Selanjutnya
               </Button>
@@ -139,7 +139,7 @@ export default function Home() {
                 className="button-landing-border button-style"
                 variant="outline-light"
                 block
-                onClick={handleClickCoding2}
+                onClick={() => navigate("/produk")}
               >
                 Pesan Sekarang
               </Button>
@@ -202,7 +202,8 @@ export default function Home() {
           </Row>
         </Card>
       </Row>
-      <Row className="text-center pt-3 pb-0">
+
+      <Row className="text-center pt-3 pb-0" id="produk">
         <h5
           style={{
             color: "#F48E28",

@@ -19,7 +19,9 @@ export default function HampersDetail() {
   const { id } = useParams();
 
   const [tanggal, setTanggal] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0]
   );
   const [pilihan, setPilihan] = useState("READY");
   const [jumlah, setJumlah] = useState(1);
@@ -82,6 +84,7 @@ export default function HampersDetail() {
         <div className="text-center">
           <Spinner
             as="span"
+            className="spinner-custom"
             animation="border"
             variant="primary"
             size="lg"

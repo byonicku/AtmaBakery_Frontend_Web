@@ -82,7 +82,7 @@
   width: 15rem;
   height: 3.75rem;
   background-color: #ffffff;
-  border: 0.125rem solid #f48e28;
+  border: 0.125rem solid #f48e28 !important;
   font-size: 1.125rem;
   color: #000000;
   font-weight: bold;
@@ -250,6 +250,10 @@
   left: 3rem;
   width: 33rem;
   height: 100%;
+}
+
+.spinner-custom {
+  color: #f48e28 !important;
 }
 
 @media screen and (max-width: 768px) {

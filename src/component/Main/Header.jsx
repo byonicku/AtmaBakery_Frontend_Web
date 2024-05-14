@@ -1,7 +1,7 @@
 import { Container, Image, Nav, Navbar } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa6";
-import { IoIosLogOut } from "react-icons/io";
+import { IoIosCart, IoIosLogOut } from "react-icons/io";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -32,7 +32,6 @@ export default function Header() {
     { to: "/", text: "Beranda" },
     { to: "/tentang", text: "Tentang Kami" },
     { to: "/produk", text: "Produk" },
-    { to: "/pesan", text: "Pesan" },
     { to: "/kontak", text: "Kontak" },
     ...(role !== null && role !== "CUST"
       ? [{ to: "/admin", text: "Dashboard" }]
@@ -69,6 +68,11 @@ export default function Header() {
     links.forEach((link) => {
       link.classList.remove("active");
       const linkPath = link.getAttribute("href");
+
+      if (currentPath === "/keranjang") {
+        setActiveIndex(2);
+        return;
+      }
 
       if (currentPath.startsWith(linkPath)) {
         link.classList.add("active");
@@ -205,19 +209,36 @@ export default function Header() {
                 </NavLink>
               </Nav.Item>
             ) : (
-              <Nav.Item className="py-2">
-                <Nav.Link
-                  className="button-style nav-link-custom"
-                  onClick={() => {
-                    handleLogout();
-                  }}
-                >
-                  <IoIosLogOut
-                    style={{ marginRight: "10px", color: "#F48E28" }}
-                  />
-                  {isLoading ? "Loading..." : "Logout"}
-                </Nav.Link>
-              </Nav.Item>
+              <>
+                {role === "CUST" && (
+                  <Nav.Item className="py-2 pe-0 pe-sm-0 pe-md-0 pe-lg-3">
+                    <Nav.Link
+                      className="button-style nav-link-custom rounded-5"
+                      onClick={() => {
+                        navigate("/keranjang");
+                        setExpanded(false);
+                      }}
+                    >
+                      <IoIosCart style={{ color: "#F48E28" }} />
+                    </Nav.Link>
+                  </Nav.Item>
+                )}
+
+                <Nav.Item className="py-2">
+                  <Nav.Link
+                    className="button-style nav-link-custom"
+                    onClick={() => {
+                      handleLogout();
+                      setExpanded(false);
+                    }}
+                  >
+                    <IoIosLogOut
+                      style={{ marginRight: "10px", color: "#F48E28" }}
+                    />
+                    {isLoading ? "Loading..." : "Logout"}
+                  </Nav.Link>
+                </Nav.Item>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
