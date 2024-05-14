@@ -57,12 +57,26 @@
 }
 
 .input-search-btn {
-  background-color: #f48e28;
+  background-color: #f48e28 !important;
   color: #ffffff;
   border: none;
   border-radius: 0.3125rem;
   font-size: 0.875rem;
   font-weight: 600;
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.input-search-btn:hover {
+  background-color: #db8025;
+}
+
+.input-search-btn:active {
+  background-color: #bd732a;
+}
+
+.input-search-btn:focus {
+  background-color: #f48e28;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
 }
 
 .input-search:focus {
