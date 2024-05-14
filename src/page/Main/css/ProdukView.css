@@ -74,6 +74,11 @@
   background-color: #bd732a;
 }
 
+.input-search-btn:disabled {
+  color: #ffffff;
+  background-color: #f48e28;
+}
+
 .input-search-btn:focus {
   background-color: #f48e28;
   box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
