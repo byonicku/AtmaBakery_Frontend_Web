@@ -5,7 +5,6 @@ const getAllProduk = async (signal) => {
     const response = await useAxios.get("/produk", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
       signal: signal,
     });

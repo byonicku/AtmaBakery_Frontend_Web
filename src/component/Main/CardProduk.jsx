@@ -3,6 +3,7 @@ import { Card, Row, Col, Button, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 export default function CardProduk({
+  id,
   image = "https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/dyc1n9feqhbetyfxe5o5",
   nama = "...",
   ukuran = "...",
@@ -10,6 +11,16 @@ export default function CardProduk({
   kategori = "...",
 }) {
   const navigate = useNavigate();
+
+  const navigatorMaker = () => {
+    switch (kategori) {
+      case "Hampers":
+        return "/produk/hampers/";
+      default:
+        return "/produk/";
+    }
+  };
+
   return (
     <Card className="card-fav rounded-5 shadow">
       <Card.Img
@@ -46,7 +57,7 @@ export default function CardProduk({
               <Button
                 className="card-pesan-btn rounded-5"
                 variant="danger"
-                onClick={() => navigate("/pesan")}
+                onClick={() => navigate(navigatorMaker() + id)}
               >
                 Pesan
               </Button>
@@ -70,6 +81,7 @@ export default function CardProduk({
 }
 
 CardProduk.propTypes = {
+  id: PropTypes.string.isRequired,
   image: PropTypes.string,
   nama: PropTypes.string.isRequired,
   ukuran: PropTypes.string.isRequired,

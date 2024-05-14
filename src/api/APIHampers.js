@@ -1,13 +1,14 @@
 import useAxios from "./APIConstant.js";
 
-const getAllHampers = async () => {
+const getAllHampers = async (signal) => {
   try {
     const response = await useAxios.get("/hampers", {
       headers: {
         "Content-Type": "application/json",
       },
+      signal: signal,
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw error.response || error;
   }
