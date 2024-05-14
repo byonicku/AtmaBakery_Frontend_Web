@@ -71,6 +71,21 @@ export default function Home() {
     toast.error("Fitur Belum Tersedia!");
   };
 
+  const ukuranConverter = (ukuran, id_kategori) => {
+    switch (id_kategori) {
+      case "CK":
+        return ukuran + " Loyang";
+      case "RT":
+        return "Isi 10/Box";
+      case "MNM":
+        return "Per Liter";
+      case "TP":
+        return "Per Bungkus";
+      default:
+        return "Per Box";
+    }
+  };
+
   const kategoriConverter = (id_kategori) => {
     switch (id_kategori) {
       case "CK":
@@ -208,9 +223,7 @@ export default function Home() {
                 <CardProduk
                   image={item?.gambar[0]?.url}
                   nama={item.nama_produk}
-                  ukuran={
-                    item?.id_kategori === "CK" ? item?.ukuran + " Loyang" : ""
-                  }
+                  ukuran={ukuranConverter(item.ukuran, item.id_kategori)}
                   harga={Formatter.moneyFormatter(item.harga).substring(3)}
                   kategori={kategoriConverter(item.id_kategori)}
                 />

@@ -237,6 +237,7 @@ export default function ProdukView() {
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Cake");
                       filterProduk("CK");
                     }}
                   >
