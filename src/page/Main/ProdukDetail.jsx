@@ -156,9 +156,13 @@ export default function ProdukDetail() {
                   Pesan Untuk Tanggal
                 </Form.Label>
                 <Form.Control
-                  className="input-border"
+                  className="input-border-produk-tanggal"
                   type="date"
-                  max={new Date().toISOString().split("T")[0]}
+                  min={
+                    new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
+                      .toISOString()
+                      .split("T")[0]
+                  }
                   placeholder="Masukkan Tanggal Lahir"
                   name="tanggal"
                   onChange={(e) => setTanggal(e.target.value)}

@@ -93,6 +93,24 @@
   border: 0.125rem solid #f48e28;
 }
 
+.input-border-produk-tanggal {
+  background-color: white;
+  color: black;
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.input-border-produk-tanggal:hover,
+.input-border-produk-tanggal:focus {
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
 .rectangleLanding {
   margin-left: 40%;
   left: 0;
