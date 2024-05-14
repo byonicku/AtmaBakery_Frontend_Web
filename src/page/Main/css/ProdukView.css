@@ -3,7 +3,8 @@
   color: #f48e28 !important;
   border: 0.125rem solid #f48e28 !important;
   box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
-  transition: box-shadow 0.15s ease-in-out;
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
 }
 
 .dropdown-menu-custom:hover {
@@ -63,7 +64,7 @@
   border-radius: 0.3125rem;
   font-size: 0.875rem;
   font-weight: 600;
-  transition: box-shadow 0.15s ease-in-out;
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out;
 }
 
 .input-search-btn:hover {
