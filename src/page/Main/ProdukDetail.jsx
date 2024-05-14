@@ -253,7 +253,7 @@ export default function ProdukDetail() {
               <Row className="mt-4">
                 <Col>
                   <Button variant="outline-secondary button-bayar w-100">
-                    Bayar
+                    Beli Sekarang
                   </Button>
                 </Col>
                 <Col>
