@@ -20,6 +20,7 @@ export default function ProdukView() {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Semua");
+  const [filterText, setFilterText] = useState("Semua");
 
   const [produk, setProduk] = useState([]);
   const [backupProduk, setBackupProduk] = useState([]);
@@ -41,64 +42,67 @@ export default function ProdukView() {
     }
   }, []);
 
+  const applyFilter = (produkList, kategori) => {
+    switch (kategori) {
+      case "PO":
+        return produkList.filter((item) => item.stok === 0);
+      case "READY":
+        return produkList.filter((item) => item.stok > 0);
+      case "Hampers":
+        return produkList.filter((item) => item.id_hampers !== undefined);
+      case "CK":
+      case "RT":
+      case "MNM":
+      case "TP":
+        return produkList.filter((item) => item.id_kategori === kategori);
+      case "Semua":
+      default:
+        return produkList;
+    }
+  };
+
   const searchProduk = async (e) => {
     e.preventDefault();
 
-    if (search === "") {
-      setProduk(backupProduk);
-      return;
+    let filteredProduk = backupProduk;
+
+    if (search) {
+      const searchRegex = new RegExp(`\\b${search}`, "i");
+      filteredProduk = filteredProduk.filter(
+        (item) =>
+          searchRegex.test(item.nama_produk) ||
+          searchRegex.test(item.nama_hampers)
+      );
     }
 
-    const filteredProduk = backupProduk.filter(
-      (item) =>
-        item.nama_produk?.toLowerCase().includes(search.toLowerCase()) ||
-        item.nama_hampers?.toLowerCase().includes(search.toLowerCase())
-    );
-
-    setProduk(filteredProduk);
+    setProduk(applyFilter(filteredProduk, filter));
   };
 
-  const filterProduk = async (kategori) => {
-    if (kategori === "Semua") {
-      setProduk(backupProduk);
-      return;
-    }
+  const filterProduk = (kategori) => {
+    setFilter(kategori);
 
-    if (kategori === "PO") {
-      const filteredProduk = backupProduk.filter((item) => item.stok === 0);
-      setProduk(filteredProduk);
-      return;
-    }
+    const filteredProduk = applyFilter(backupProduk, kategori);
 
-    if (kategori === "READY") {
-      const filteredProduk = backupProduk.filter((item) => item.stok > 0);
-      setProduk(filteredProduk);
-      return;
-    }
-
-    if (kategori === "Hampers") {
-      const filteredProduk = backupProduk.filter(
-        (item) => item.id_hampers !== undefined
+    if (search) {
+      const searchRegex = new RegExp(`\\b${search}`, "i");
+      const searchedProduk = filteredProduk.filter(
+        (item) =>
+          searchRegex.test(item.nama_produk) ||
+          searchRegex.test(item.nama_hampers)
       );
+      setProduk(searchedProduk);
+    } else {
       setProduk(filteredProduk);
-      return;
     }
-
-    const filteredProduk = backupProduk.filter(
-      (item) => item.id_kategori === kategori
-    );
-
-    setProduk(filteredProduk);
   };
 
   useEffect(() => {
     if (search === "") {
-      setProduk(backupProduk);
+      setProduk(applyFilter(backupProduk, filter));
     }
     // eslint-disable-next-line
-  }, [search]);
+  }, [search, filter]);
 
-  // Pas masuk load produk
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
@@ -177,7 +181,7 @@ export default function ProdukView() {
                     setSearch(e.target.value);
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && search) {
+                    if (e.key === "Enter") {
                       searchProduk(e);
                     }
                   }}
@@ -203,30 +207,30 @@ export default function ProdukView() {
                   variant="danger"
                   className="dropdown-menu-custom w-100"
                 >
-                  {filter}
+                  {filterText}
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Semua");
                       filterProduk("Semua");
-                      setFilter("Semua");
                     }}
                   >
                     Semua
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Pre Order");
                       filterProduk("PO");
-                      setFilter("Pre Order");
                     }}
                   >
                     Pre Order
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Ready");
                       filterProduk("READY");
-                      setFilter("Ready");
                     }}
                   >
                     Ready
@@ -234,39 +238,38 @@ export default function ProdukView() {
                   <Dropdown.Item
                     onClick={() => {
                       filterProduk("CK");
-                      setFilter("Cake");
                     }}
                   >
                     Cake
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Roti");
                       filterProduk("RT");
-                      setFilter("Roti");
                     }}
                   >
                     Roti
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Minuman");
                       filterProduk("MNM");
-                      setFilter("Minuman");
                     }}
                   >
                     Minuman
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Titipan");
                       filterProduk("TP");
-                      setFilter("Titipan");
                     }}
                   >
                     Titipan
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
+                      setFilterText("Hampers");
                       filterProduk("Hampers");
-                      setFilter("Hampers");
                     }}
                   >
                     Hampers
