@@ -71,7 +71,7 @@ export default function Keranjang() {
             }}
           >
             *Produk yang anda masukan ke keranjang akan dihapus apabila tidak
-            melanjutkan checkout H-2 tanggal pengambilan
+            melanjutkan checkout H-1 tanggal pengambilan
           </div>
           <Row className="pb-5">
             <Col></Col>

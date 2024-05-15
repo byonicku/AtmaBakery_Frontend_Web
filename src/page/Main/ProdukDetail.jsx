@@ -313,10 +313,11 @@ export default function ProdukDetail() {
                   <Button
                     variant="outline-secondary input-border-produk-plusminus"
                     onClick={() => {
-                      if (jumlah > 1) {
+                      if (jumlah > 1 || !isLogin) {
                         setJumlah(jumlah - 1);
                       }
                     }}
+                    disabled={!isLogin}
                   >
                     -
                   </Button>
@@ -338,11 +339,16 @@ export default function ProdukDetail() {
                   <Button
                     variant="outline-secondary input-border-produk-plusminus"
                     onClick={() => {
-                      if (jumlah === 10) {
+                      if (
+                        jumlah === produk.stok ||
+                        jumlah === produk.limit ||
+                        !isLogin
+                      ) {
                         return;
                       }
                       setJumlah(jumlah + 1);
                     }}
+                    disabled={!isLogin}
                   >
                     +
                   </Button>

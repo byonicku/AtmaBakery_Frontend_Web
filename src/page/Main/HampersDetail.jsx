@@ -266,6 +266,7 @@ export default function HampersDetail() {
                         setJumlah(jumlah - 1);
                       }
                     }}
+                    disabled={!isLogin}
                   >
                     -
                   </Button>
@@ -292,6 +293,7 @@ export default function HampersDetail() {
                       }
                       setJumlah(jumlah + 1);
                     }}
+                    disabled={!isLogin}
                   >
                     +
                   </Button>
