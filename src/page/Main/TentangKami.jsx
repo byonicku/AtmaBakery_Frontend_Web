@@ -210,10 +210,7 @@ export default function TentangKami() {
         </Col>
         <Col xl={7} lg={12} md={12} sm={12} xs={12} className="text-sm-center">
           <Image src={moment_2} className="foto-momen-2" />
-          <div
-            className="text-desc-own my-2"
-            style={{ textAlign: "left", marginBottom: "0" }}
-          >
+          <div className="text-desc-own my-2" style={{ textAlign: "left" }}>
             Dari sentuhan tradisional hingga inovasi modern, toko kue kami
             adalah perjalanan rasa yang melintasi masa, menghadirkan cita rasa
             yang timeless dalam setiap gigitannya.
