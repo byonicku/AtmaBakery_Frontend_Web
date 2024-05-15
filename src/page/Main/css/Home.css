@@ -268,7 +268,7 @@
 
 .text-desc-own {
   font-size: 1.2rem;
-  text-align: left;
+  text-align: justify;
 }
 
 .rectangleLanding-2 {
@@ -346,15 +346,43 @@
 .foto-momen-2 {
   max-width: fit-content;
   width: 120%;
-  height: 65%;
+  height: 68.5%;
   padding: 0;
   margin: 0;
   left: 0;
 }
 
+.bg-beda {
+  background-color: #ffeddb;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 45rem;
+  color: #ffeddb;
+  z-index: -1;
+}
+
+.bg-beda-bawah {
+  background-color: #ffeddb;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 31rem;
+  color: #ffeddb;
+  z-index: -1;
+}
+
 /* cuma ini doang nanti ku pindah */
 
 @media screen and (max-width: 768px) {
+  .bg-beda {
+    display: none;
+  }
+
+  .bg-beda-bawah {
+    display: none;
+  }
+
   .border-desktop {
     border-right: none;
     border-bottom: 0.0625rem solid #b6b6b6;
@@ -362,8 +390,21 @@
 }
 
 @media screen and (max-width: 912px) {
+  .bg-beda {
+    height: 30rem !important;
+  }
+
+  .bg-beda-bawah {
+    height: 39rem !important;
+  }
+
   .abstrak {
     display: none;
+  }
+
+  .foto-momen-2 {
+    width: 100%;
+    margin-left: 0.5rem !important;
   }
 
   .main-title {
@@ -389,6 +430,18 @@
 }
 
 @media screen and (max-width: 1024px) {
+  .bg-beda {
+    height: 31rem;
+  }
+
+  .bg-beda-bawah {
+    height: 44rem;
+  }
+
+  .foto-momen-2 {
+    margin-left: 1.2rem;
+  }
+
   .abstrak {
     top: 18rem;
     left: 10rem;

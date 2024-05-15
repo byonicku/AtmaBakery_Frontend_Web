@@ -128,7 +128,6 @@ export default function Home() {
               <Button
                 className="button-landing button-style"
                 variant="danger"
-                block
                 onClick={() => navigate("/tentang")}
               >
                 Baca Selanjutnya
@@ -138,7 +137,6 @@ export default function Home() {
               <Button
                 className="button-landing-border button-style"
                 variant="outline-light"
-                block
                 onClick={() => navigate("/produk")}
               >
                 Pesan Sekarang
@@ -487,7 +485,6 @@ export default function Home() {
                     <Button
                       className="button-landing button-style mt-3"
                       variant="danger"
-                      block
                       onClick={() => {
                         toast.success("Komentar Terkirim!");
                         document.getElementById("komentar").value = "";

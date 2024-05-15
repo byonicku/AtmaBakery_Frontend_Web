@@ -81,7 +81,7 @@ export default function CardProduk({
 }
 
 CardProduk.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
   image: PropTypes.string,
   nama: PropTypes.string.isRequired,
   ukuran: PropTypes.string.isRequired,
