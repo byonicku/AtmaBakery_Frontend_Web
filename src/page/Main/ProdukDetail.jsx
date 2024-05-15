@@ -45,7 +45,8 @@ export default function ProdukDetail() {
         const response = await APIProduk.showProduk(id, signal);
 
         setProduk(response);
-        if (response.gambar.length > 0) {
+
+        if (response?.gambar?.length > 0) {
           setGambar(
             response.gambar.map((item) => ({
               original: item.url,
@@ -74,6 +75,30 @@ export default function ProdukDetail() {
       abortController.abort();
     };
   }, [fetchProduk]);
+
+  useEffect(() => {
+    if (produk) {
+      if (produk.status === "READY") {
+        refPO.current?.classList.remove("active");
+        refReady.current?.classList.add("active");
+      } else {
+        refReady.current?.classList.remove("active");
+        refPO.current?.classList.add("active");
+      }
+
+      if (produk.stok > 0) {
+        refPO.current.disabled = true;
+      } else {
+        refPO.current.disabled = false;
+      }
+
+      if (produk.limit > 0) {
+        refReady.current.disabled = true;
+      } else {
+        refReady.current.disabled = false;
+      }
+    }
+  }, [produk]);
 
   const namaProdukConverter = (kategori, ukuran, nama) => {
     if (kategori === "CK") {
@@ -185,6 +210,9 @@ export default function ProdukDetail() {
                       "outline-danger input-border-produk-readypo active me-2"
                     }
                     onClick={() => {
+                      if (produk.limit > 0) {
+                        return;
+                      }
                       refPO.current.classList.remove("active");
                       refReady.current.classList.add("active");
                       setPilihan("READY");
@@ -196,6 +224,9 @@ export default function ProdukDetail() {
                   <Button
                     variant="outline-danger input-border-produk-readypo"
                     onClick={() => {
+                      if (produk.stok > 0) {
+                        return;
+                      }
                       refReady.current.classList.remove("active");
                       refPO.current.classList.add("active");
                       setPilihan("PO");
