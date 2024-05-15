@@ -12,17 +12,17 @@ import {
 import { Link, useParams } from "react-router-dom";
 import ReactImageGallery from "react-image-gallery";
 import Formatter from "@/assets/Formatter";
+import APITransaksi from "@/api/APITransaksi";
 
 export default function ProdukDetail() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDate, setIsLoadingDate] = useState(false);
   const [produk, setProduk] = useState(null);
+  const isLogin = sessionStorage.getItem("role") === "CUST" ? true : false;
   const { id } = useParams();
 
-  const [tanggal, setTanggal] = useState(
-    new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0]
-  );
+  const [limit, setLimit] = useState(10);
+  const [tanggal, setTanggal] = useState(null);
   const [pilihan, setPilihan] = useState("READY");
   const [jumlah, setJumlah] = useState(1);
 
@@ -37,6 +37,7 @@ export default function ProdukDetail() {
 
   const refReady = useRef(null);
   const refPO = useRef(null);
+  const refDate = useRef(null);
 
   const fetchProduk = useCallback(
     async (signal) => {
@@ -55,11 +56,33 @@ export default function ProdukDetail() {
           );
         }
       } catch (error) {
-        setProduk([]);
+        setProduk(null);
 
         console.error(error);
       } finally {
         setIsLoading(false);
+      }
+    },
+    [id]
+  );
+
+  const getCountTransaksi = useCallback(
+    async (tanggal) => {
+      setIsLoadingDate(true);
+      try {
+        const data = {
+          id_produk: id,
+          po_date: tanggal,
+        };
+
+        const response = await APITransaksi.countTransaksi(data);
+
+        setLimit(response.data);
+      } catch (error) {
+        setLimit(0);
+        console.error(error);
+      } finally {
+        setIsLoadingDate(false);
       }
     },
     [id]
@@ -88,6 +111,7 @@ export default function ProdukDetail() {
 
       if (produk.stok > 0) {
         refPO.current.disabled = true;
+        refDate.current.disabled = true;
       } else {
         refPO.current.disabled = false;
       }
@@ -122,6 +146,18 @@ export default function ProdukDetail() {
             aria-hidden="true"
           />
           <h6 className="mt-2 mb-0">Loading...</h6>
+        </div>
+      ) : produk === null ? (
+        <div className="text-center">
+          <h2 className="mt-2 mb-0">Produk Tidak Ditemukan</h2>
+          <Link to="/produk" className="error-button">
+            <Button
+              className="button-landing button-style mt-5"
+              variant="danger"
+            >
+              Kembali ke Produk
+            </Button>
+          </Link>
         </div>
       ) : (
         <>
@@ -193,7 +229,12 @@ export default function ProdukDetail() {
                   }
                   placeholder="Masukkan Tanggal Lahir"
                   name="tanggal"
-                  onChange={(e) => setTanggal(e.target.value)}
+                  onChange={(e) => {
+                    setTanggal(e.target.value);
+                    getCountTransaksi(e.target.value);
+                  }}
+                  disabled={isLoadingDate}
+                  ref={refDate}
                   required
                 />
               </Form.Group>
@@ -215,6 +256,8 @@ export default function ProdukDetail() {
                       }
                       refPO.current.classList.remove("active");
                       refReady.current.classList.add("active");
+                      refDate.current.disabled = true;
+                      refDate.current.value = "";
                       setPilihan("READY");
                     }}
                     ref={refReady}
@@ -229,6 +272,8 @@ export default function ProdukDetail() {
                       }
                       refReady.current.classList.remove("active");
                       refPO.current.classList.add("active");
+                      refDate.current.disabled = false;
+                      refDate.current.value = "";
                       setPilihan("PO");
                     }}
                     ref={refPO}
@@ -238,7 +283,29 @@ export default function ProdukDetail() {
                 </Col>
               </Row>
 
-              <Form.Group className="mt-3">
+              <Row className="mt-3">
+                <Col md={12}>
+                  <Form.Label
+                    className="form-label-font"
+                    style={{
+                      color: "#BE1008",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {produk?.limit > 0
+                      ? tanggal === "" ||
+                        tanggal === null ||
+                        tanggal === undefined
+                        ? "Silahkan Pilih Tanggal Terlebih Dahulu"
+                        : isLoadingDate
+                        ? "Loading..."
+                        : "Limit Produk Sisa " + limit
+                      : "Stok Produk Sisa " + produk?.stok}
+                  </Form.Label>
+                </Col>
+              </Row>
+
+              <Form.Group className="mt-2">
                 <Form.Label className="form-label-font">
                   Masukkan Jumlah
                 </Form.Label>
@@ -283,16 +350,38 @@ export default function ProdukDetail() {
               </Form.Group>
               <Row className="mt-4">
                 <Col>
-                  <Button variant="outline-secondary button-bayar w-100">
+                  <Button
+                    variant="outline-secondary button-bayar w-100"
+                    disabled={!isLogin}
+                  >
                     Beli Sekarang
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="outline-secondary button-tambahkeranjang w-100">
+                  <Button
+                    variant="outline-secondary button-tambahkeranjang w-100"
+                    disabled={!isLogin}
+                  >
                     + Keranjang
                   </Button>
                 </Col>
               </Row>
+              {!isLogin && (
+                <Row
+                  className="mt-1 text-center"
+                  style={{
+                    fontSize: "1.2rem",
+                    color: "#BE1008",
+                  }}
+                >
+                  <Col>
+                    <p>
+                      Silahkan Login sebagai Customer terlebih dahulu untuk
+                      melakukan pembelian
+                    </p>
+                  </Col>
+                </Row>
+              )}
             </Col>
           </Row>
         </>

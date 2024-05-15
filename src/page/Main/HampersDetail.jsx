@@ -17,6 +17,7 @@ export default function HampersDetail() {
   const [isLoading, setIsLoading] = useState(false);
   const [hampers, setHampers] = useState(null);
   const { id } = useParams();
+  const isLogin = sessionStorage.getItem("role") === "CUST" ? true : false;
 
   const [tanggal, setTanggal] = useState(
     new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
@@ -57,8 +58,8 @@ export default function HampersDetail() {
           );
         }
       } catch (error) {
-        setHampers([]);
-        setDetailHampers([]);
+        setHampers(null);
+        setDetailHampers(null);
         console.error(error);
       } finally {
         setIsLoading(false);
@@ -78,6 +79,20 @@ export default function HampersDetail() {
     };
   }, [fetchHampers]);
 
+  useEffect(() => {
+    if (hampers) {
+      if (hampers.status === "READY") {
+        refPO.current?.classList.remove("active");
+        refPO.current.disabled = true;
+        refReady.current?.classList.add("active");
+      } else {
+        refReady.current?.classList.remove("active");
+        refReady.current.disabled = true;
+        refPO.current?.classList.add("active");
+      }
+    }
+  }, [hampers]);
+
   return (
     <Container>
       {isLoading ? (
@@ -92,6 +107,18 @@ export default function HampersDetail() {
             aria-hidden="true"
           />
           <h6 className="mt-2 mb-0">Loading...</h6>
+        </div>
+      ) : hampers === null ? (
+        <div className="text-center">
+          <h2 className="mt-2 mb-0">Produk Tidak Ditemukan</h2>
+          <Link to="/produk" className="error-button">
+            <Button
+              className="button-landing button-style mt-5"
+              variant="danger"
+            >
+              Kembali ke Produk
+            </Button>
+          </Link>
         </div>
       ) : (
         <>
@@ -272,16 +299,38 @@ export default function HampersDetail() {
               </Form.Group>
               <Row className="mt-4">
                 <Col>
-                  <Button variant="outline-secondary button-bayar w-100">
+                  <Button
+                    variant="outline-secondary button-bayar w-100"
+                    disabled={!isLogin}
+                  >
                     Beli Sekarang
                   </Button>
                 </Col>
                 <Col>
-                  <Button variant="outline-secondary button-tambahkeranjang w-100">
+                  <Button
+                    variant="outline-secondary button-tambahkeranjang w-100"
+                    disabled={!isLogin}
+                  >
                     + Keranjang
                   </Button>
                 </Col>
               </Row>
+              {!isLogin && (
+                <Row
+                  className="mt-1 text-center"
+                  style={{
+                    fontSize: "1.2rem",
+                    color: "#BE1008",
+                  }}
+                >
+                  <Col>
+                    <p>
+                      Silahkan Login sebagai Customer terlebih dahulu untuk
+                      melakukan pembelian
+                    </p>
+                  </Col>
+                </Row>
+              )}
             </Col>
           </Row>
         </>

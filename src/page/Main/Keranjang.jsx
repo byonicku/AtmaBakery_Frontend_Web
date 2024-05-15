@@ -60,10 +60,18 @@ export default function Keranjang() {
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
-              marginBottom: "1rem",
             }}
           >
             Ringkasan Pesanan
+          </div>
+          <div
+            className="text-muted"
+            style={{
+              fontSize: "1rem",
+            }}
+          >
+            *Produk yang anda masukan ke keranjang akan dihapus apabila tidak
+            melanjutkan checkout H-2 tanggal pengambilan
           </div>
           <Row className="pb-5">
             <Col></Col>
