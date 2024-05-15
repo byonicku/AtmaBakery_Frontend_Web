@@ -148,7 +148,7 @@ export default function ProdukView() {
   return (
     <>
       <Container>
-        <Row className="text-center pt-3 pb-5">
+        <Row className="text-center pb-5">
           <h5
             style={{
               color: "#F48E28",
