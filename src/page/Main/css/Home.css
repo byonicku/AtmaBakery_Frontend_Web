@@ -256,6 +256,104 @@
   color: #f48e28 !important;
 }
 
+/* tambahan jospun */
+.foto-owner {
+  position: absolute;
+  top: 5.4rem;
+  bottom: 0;
+  left: 2rem;
+  width: 37.5rem;
+  height: 130%;
+}
+
+.text-desc-own {
+  font-size: 1.2rem;
+  text-align: left;
+}
+
+.rectangleLanding-2 {
+  left: 0;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(180deg, #efab68 0%, #f4f2f2 100%);
+  border-radius: 1.25rem 0rem 0rem 0rem;
+}
+
+.rectangleLanding-3 {
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(180deg, #d9d9d9 0%, #f4f2f2 100%);
+  border-radius: 0rem 1.25rem 0rem 0rem;
+}
+
+.rectangle-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.produk-admin {
+  position: absolute;
+  right: 0;
+  left: 4rem;
+  top: 1rem;
+  bottom: 0;
+  width: 40rem;
+  height: 110%;
+}
+
+.card-histori {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-histori:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.card-judul-histori {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #f48e28;
+}
+
+.card-font-histori {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #f48e28;
+}
+
+.card-histori-icon {
+  aspect-ratio: 1/1;
+  width: 6rem;
+  height: 6rem;
+}
+
+.foto-momen-1 {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  left: 0;
+  right: 0;
+  top: 5rem;
+  bottom: 0;
+  width: 100%;
+  height: 70%;
+}
+
+.foto-momen-2 {
+  max-width: fit-content;
+  width: 120%;
+  height: 65%;
+  padding: 0;
+  margin: 0;
+  left: 0;
+}
+
+/* cuma ini doang nanti ku pindah */
+
 @media screen and (max-width: 768px) {
   .border-desktop {
     border-right: none;
