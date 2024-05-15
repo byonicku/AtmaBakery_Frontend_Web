@@ -1,16 +1,5 @@
-import {
-  Row,
-  Col,
-  Button,
-  Container,
-  Image,
-  Card,
-  Form,
-} from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { useCallback, useEffect, useState } from "react";
-import { MdArrowRight, MdOutlinePlayCircleFilled } from "react-icons/md";
+import { Row, Col, Container, Image, Card } from "react-bootstrap";
+import { MdOutlinePlayCircleFilled } from "react-icons/md";
 
 import owner from "@/assets/OwnerPoto.svg";
 import produk from "@/assets/list_produk.svg";
@@ -23,9 +12,6 @@ import moment_1 from "@/assets/moment-1.svg";
 import moment_2 from "@/assets/moment-2.svg";
 
 export default function TentangKami() {
-  const navigate = useNavigate();
-
-  const [isLoading, setIsLoading] = useState(true);
   return (
     <Container>
       <Row className="mt-0 mt-md-3 mt-lg-0 mb-1 mb-lg-3 mb-md-3">
@@ -180,7 +166,7 @@ export default function TentangKami() {
           lg={6}
           md={12}
           sm={12}
-          className="ps-0 ps-lg-4 ps-md-4 pt-0 pt-lg-4 pt-md-5"
+          className="ps-lg-4 ps-md-4 pt-0 pt-lg-4 pt-md-5"
         >
           <h1
             style={{
@@ -208,8 +194,8 @@ export default function TentangKami() {
         </Col>
       </Row>
       <div className="bg-beda-bawah" />
-      <Row>
-        <Col xl={5} lg={12} md={12} sm={12}>
+      <Row className="mb-sm-5 mt-sm-3 mb-5 pb-5 pb-lg-0">
+        <Col xl={5} lg={12} md={12} sm={12} xs={12}>
           <h1
             style={{
               fontSize: "1.7rem",
@@ -222,7 +208,7 @@ export default function TentangKami() {
           </h1>
           <Image src={moment_1} className="foto-momen-1" />
         </Col>
-        <Col xl={7} lg={12} md={12} sm={12}>
+        <Col xl={7} lg={12} md={12} sm={12} xs={12} className="text-sm-center">
           <Image src={moment_2} className="foto-momen-2" />
           <div
             className="text-desc-own my-2"

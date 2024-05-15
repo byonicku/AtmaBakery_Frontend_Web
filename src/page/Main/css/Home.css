@@ -404,7 +404,7 @@
 
   .foto-momen-2 {
     width: 100%;
-    margin-left: 0.5rem !important;
+    margin-left: 0;
   }
 
   .main-title {
@@ -435,11 +435,7 @@
   }
 
   .bg-beda-bawah {
-    height: 44rem;
-  }
-
-  .foto-momen-2 {
-    margin-left: 1.2rem;
+    height: 43rem;
   }
 
   .abstrak {
