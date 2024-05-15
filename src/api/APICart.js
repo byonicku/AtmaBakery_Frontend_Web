@@ -8,7 +8,7 @@ const getAllCart = async () => {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw error.response || error;
   }

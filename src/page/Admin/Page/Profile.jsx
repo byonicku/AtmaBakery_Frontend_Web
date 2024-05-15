@@ -67,6 +67,8 @@ export default function Profile() {
       sessionStorage.setItem("no_telp", data.no_telp);
       sessionStorage.setItem("jenis_kelamin", data.jenis_kelamin);
       sessionStorage.setItem("foto_profil", data.foto_profil);
+      sessionStorage.setItem("saldo", data.saldo);
+      sessionStorage.setItem("poin", data.poin);
       setUser(data);
     } catch (error) {
       console.error(error);
@@ -86,6 +88,8 @@ export default function Profile() {
         sessionStorage.getItem("foto_profil") === "null"
           ? null
           : sessionStorage.getItem("foto_profil"),
+      saldo: sessionStorage.getItem("saldo"),
+      poin: sessionStorage.getItem("poin"),
     });
     setImage(null);
   }, []);
@@ -454,6 +458,42 @@ export default function Profile() {
                     disabled
                   />
                 </div>
+                {sessionStorage.getItem("role") === "CUST" && (
+                  <>
+                    <div className="text-start mt-3">
+                      <label
+                        htmlFor="nama"
+                        style={{ fontWeight: "bold", fontSize: "1em" }}
+                      >
+                        Saldo
+                      </label>
+                      <input
+                        style={{ border: "1px solid #808080" }}
+                        id="saldo"
+                        type="text"
+                        className="form-control"
+                        value={Formatter.moneyFormatter(user?.saldo) || ""}
+                        disabled
+                      />
+                    </div>
+                    <div className="text-start mt-3">
+                      <label
+                        htmlFor="nama"
+                        style={{ fontWeight: "bold", fontSize: "1em" }}
+                      >
+                        Poin
+                      </label>
+                      <input
+                        style={{ border: "1px solid #808080" }}
+                        id="poin"
+                        type="text"
+                        className="form-control"
+                        value={user?.poin || ""}
+                        disabled
+                      />
+                    </div>
+                  </>
+                )}
                 <div className="text-start mt-3 d-flex mb-3">
                   <Button
                     variant="success"

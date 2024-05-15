@@ -203,7 +203,7 @@ export default function HampersDetail() {
 
               <Form.Group className="mt-1">
                 <Form.Label className="form-label-font">
-                  Pesan Untuk Tanggal
+                  Pesan Untuk Tanggal (Khusus PO)
                 </Form.Label>
                 <Form.Control
                   className="input-border"

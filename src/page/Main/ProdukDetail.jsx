@@ -35,9 +35,13 @@ export default function ProdukDetail() {
     },
   ]);
 
+  const activeButtonPOBeliSekarang = useRef(null);
+  const activeButtonPOKeranjang = useRef(null);
   const refReady = useRef(null);
   const refPO = useRef(null);
   const refDate = useRef(null);
+  const btnPlus = useRef(null);
+  const btnMinus = useRef(null);
 
   const fetchProduk = useCallback(
     async (signal) => {
@@ -99,6 +103,15 @@ export default function ProdukDetail() {
     };
   }, [fetchProduk]);
 
+  const resetField = () => {
+    activeButtonPOBeliSekarang.current.disabled = true;
+    activeButtonPOKeranjang.current.disabled = true;
+    btnMinus.current.disabled = true;
+    btnPlus.current.disabled = true;
+    setTanggal(null);
+    setJumlah(1);
+  };
+
   useEffect(() => {
     if (produk) {
       if (produk.status === "READY") {
@@ -118,6 +131,10 @@ export default function ProdukDetail() {
 
       if (produk.limit > 0) {
         refReady.current.disabled = true;
+        activeButtonPOBeliSekarang.current.disabled = true;
+        activeButtonPOKeranjang.current.disabled = true;
+        btnMinus.current.disabled = true;
+        btnPlus.current.disabled = true;
       } else {
         refReady.current.disabled = false;
       }
@@ -217,7 +234,7 @@ export default function ProdukDetail() {
 
               <Form.Group className="mt-3">
                 <Form.Label className="form-label-font">
-                  Pesan Untuk Tanggal
+                  Pesan Untuk Tanggal (Khusus PO)
                 </Form.Label>
                 <Form.Control
                   className="input-border-produk-tanggal"
@@ -230,6 +247,15 @@ export default function ProdukDetail() {
                   placeholder="Masukkan Tanggal Lahir"
                   name="tanggal"
                   onChange={(e) => {
+                    if (e.target.value === "") {
+                      resetField();
+                      return;
+                    }
+
+                    activeButtonPOBeliSekarang.current.disabled = false;
+                    activeButtonPOKeranjang.current.disabled = false;
+                    btnMinus.current.disabled = false;
+                    btnPlus.current.disabled = false;
                     setTanggal(e.target.value);
                     getCountTransaksi(e.target.value);
                   }}
@@ -252,12 +278,14 @@ export default function ProdukDetail() {
                     }
                     onClick={() => {
                       if (produk.limit > 0) {
+                        resetField();
                         return;
                       }
                       refPO.current.classList.remove("active");
                       refReady.current.classList.add("active");
                       refDate.current.disabled = true;
                       refDate.current.value = "";
+                      resetField();
                       setPilihan("READY");
                     }}
                     ref={refReady}
@@ -268,12 +296,14 @@ export default function ProdukDetail() {
                     variant="outline-danger input-border-produk-readypo"
                     onClick={() => {
                       if (produk.stok > 0) {
+                        resetField();
                         return;
                       }
                       refReady.current.classList.remove("active");
                       refPO.current.classList.add("active");
                       refDate.current.disabled = false;
                       refDate.current.value = "";
+                      resetField();
                       setPilihan("PO");
                     }}
                     ref={refPO}
@@ -317,7 +347,8 @@ export default function ProdukDetail() {
                         setJumlah(jumlah - 1);
                       }
                     }}
-                    disabled={!isLogin}
+                    ref={btnMinus}
+                    disabled={!isLogin || isLoadingDate}
                   >
                     -
                   </Button>
@@ -348,7 +379,8 @@ export default function ProdukDetail() {
                       }
                       setJumlah(jumlah + 1);
                     }}
-                    disabled={!isLogin}
+                    ref={btnPlus}
+                    disabled={!isLogin || isLoadingDate}
                   >
                     +
                   </Button>
@@ -358,7 +390,8 @@ export default function ProdukDetail() {
                 <Col>
                   <Button
                     variant="outline-secondary button-bayar w-100"
-                    disabled={!isLogin}
+                    disabled={!isLogin || isLoadingDate}
+                    ref={activeButtonPOBeliSekarang}
                   >
                     Beli Sekarang
                   </Button>
@@ -366,7 +399,8 @@ export default function ProdukDetail() {
                 <Col>
                   <Button
                     variant="outline-secondary button-tambahkeranjang w-100"
-                    disabled={!isLogin}
+                    disabled={!isLogin || isLoadingDate}
+                    ref={activeButtonPOKeranjang}
                   >
                     + Keranjang
                   </Button>

@@ -16,6 +16,8 @@ const login = async (data) => {
     sessionStorage.setItem("no_telp", response.data.data.no_telp);
     sessionStorage.setItem("email", response.data.data.email);
     sessionStorage.setItem("jenis_kelamin", response.data.data.jenis_kelamin);
+    sessionStorage.setItem("poin", response.data.data.poin);
+    sessionStorage.setItem("saldo", response.data.data.saldo);
 
     return response.data;
   } catch (error) {

@@ -1,0 +1,62 @@
+.table-keranjang thead tr {
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.table-keranjang thead tr th {
+  border: 0;
+}
+
+.table-keranjang tbody td {
+  font-size: 1rem;
+  font-weight: 600;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.table-keranjang tbody td img {
+  width: 125px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.border-keranjang {
+  border-right: 0.05rem solid #afafaf;
+}
+
+.left-detail {
+  text-align: left;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.right-detail {
+  text-align: right;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.button-checkout {
+  background-color: #f48e28 !important;
+  color: white !important;
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.button-checkout:hover {
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
+@media screen and (max-width: 768px) {
+  .border-keranjang {
+    border-right: 0;
+  }
+}
