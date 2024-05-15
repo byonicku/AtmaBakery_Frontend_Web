@@ -303,6 +303,12 @@
   height: 110%;
 }
 
+.bakery-poto {
+  width: 26.5rem;
+  height: 83%;
+  border-radius: 2rem;
+}
+
 .card-histori {
   background-color: #ffffff;
   border-radius: 1rem;
