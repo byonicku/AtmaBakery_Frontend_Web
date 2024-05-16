@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Col,
   Container,
@@ -6,7 +6,6 @@ import {
   Spinner,
   Form,
   Button,
-  InputGroup,
   Table,
   Image,
   Card,
@@ -14,17 +13,20 @@ import {
 import { Link } from "react-router-dom";
 import Formatter from "@/assets/Formatter";
 import APICart from "@/api/APICart";
-
-import "./css/Keranjang.css";
 import APIAlamat from "@/api/APIAlamat";
 import { FaTrash } from "react-icons/fa";
 
+import "./css/Keranjang.css";
+
 export default function Keranjang() {
   const [isLoading, setIsLoading] = useState(false);
-  const [produk, setProduk] = useState(null);
+  const [produk, setProduk] = useState([]);
   const [alamat, setAlamat] = useState([]);
-  const [selectedAlamat, setSelectedAlamat] = useState(null);
-  const [selectedPengiriman, setSelectedPengiriman] = useState(null);
+  const [selectedAlamat, setSelectedAlamat] = useState("");
+  const [subtotal, setSubtotal] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [poin, setPoin] = useState(0);
+  const [selectedPengiriman, setSelectedPengiriman] = useState("");
   const [gunakanPoin, setGunakanPoin] = useState(false);
   const [userPoin, setUserPoin] = useState(0);
 
@@ -57,37 +59,52 @@ export default function Keranjang() {
     fetchAlamat();
   }, [fetchKeranjang, fetchAlamat]);
 
+  useEffect(() => {
+    setSubtotal(
+      produk?.reduce(
+        (total, item) => total + item?.produk?.harga * item?.jumlah,
+        0
+      )
+    );
+    setTotal(
+      produk?.reduce(
+        (total, item) => total + item?.produk?.harga * item?.jumlah,
+        0
+      ) - (gunakanPoin ? userPoin * 100 : 0)
+    );
+
+    setPoin(
+      hitungPoint(
+        produk?.reduce(
+          (total, item) => total + item?.produk?.harga * item?.jumlah,
+          0
+        ),
+        0
+      )
+    );
+  }, [gunakanPoin, produk, userPoin]);
+
   const ukuranConverter = (ukuran, id_kategori) => {
-    switch (id_kategori) {
-      case "CK":
-        return ukuran + " Loyang";
-      case "RT":
-        return "Isi 10/Box";
-      case "MNM":
-        return "Per Liter";
-      case "TP":
-        return "Per Bungkus";
-      default:
-        return "Per Box";
-    }
+    const converters = {
+      CK: `${ukuran} Loyang`,
+      RT: "Isi 10/Box",
+      MNM: "Per Liter",
+      TP: "Per Bungkus",
+    };
+    return converters[id_kategori] || "Per Box";
   };
 
   const kategoriConverter = (id_kategori) => {
-    switch (id_kategori) {
-      case "CK":
-        return "Cake";
-      case "RT":
-        return "Roti";
-      case "MNM":
-        return "Minuman";
-      case "TP":
-        return "Titipan";
-      default:
-        return "Hampers";
-    }
+    const converters = {
+      CK: "Cake",
+      RT: "Roti",
+      MNM: "Minuman",
+      TP: "Titipan",
+    };
+    return converters[id_kategori] || "Hampers";
   };
 
-  function hitungPoint(totalAmount, points) {
+  const hitungPoint = (totalAmount, points) => {
     while (totalAmount >= 10000) {
       if (totalAmount >= 1000000) {
         points += 200;
@@ -104,7 +121,12 @@ export default function Keranjang() {
       }
     }
     return points;
-  }
+  };
+
+  const handleDeleteItem = (item) => {
+    const updatedProduk = produk.filter((produkItem) => produkItem !== item);
+    setProduk(updatedProduk);
+  };
 
   return (
     <Container>
@@ -163,7 +185,7 @@ export default function Keranjang() {
                         <Row>
                           <Col lg={4} md={12} sm={12} className="text-left">
                             <Image
-                              src={item?.produk?.gambar[0].url}
+                              src={item?.produk?.gambar[0]?.url}
                               className="rounded-3"
                             />
                           </Col>
@@ -194,7 +216,7 @@ export default function Keranjang() {
                             {item?.po_date && (
                               <p
                                 style={{
-                                  fontSize: "0.85rem",
+                                  fontSize: "0.8rem",
                                   fontWeight: "500",
                                 }}
                                 className="text-left"
@@ -224,55 +246,18 @@ export default function Keranjang() {
                           </Col>
                         </Row>
                       </td>
-                      <td>
-                        <InputGroup className="m-0 p-0">
-                          <Button
-                            variant="outline-secondary input-border-produk-plusminus"
-                            onClick={() => {
-                              if (item?.jumlah > 1) {
-                                item.jumlah -= 1;
-                              }
-                            }}
-                          >
-                            -
-                          </Button>
-                          <Form.Control
-                            type="number"
-                            className="input-border-produk-jumlah"
-                            placeholder="Masukkan Jumlah"
-                            name="jumlah"
-                            value={item?.jumlah}
-                            // onChange={(e) => {
-                            //   if (e.target.value < 1) {
-                            //     setJumlah(1);
-                            //   }
-                            //   setJumlah(parseInt(e.target.value));
-                            // }}
-                            required
-                            readOnly
-                          />
-                          <Button
-                            variant="outline-secondary input-border-produk-plusminus"
-                            onClick={() => {
-                              if (item?.jumlah > 1) {
-                                return;
-                              }
-                              item.jumlah += 1;
-                            }}
-                            // ref={btnPlus}
-                            // disabled={!isLogin || isLoadingDate}
-                          >
-                            +
-                          </Button>
-                        </InputGroup>
-                      </td>
+                      <td>{item?.jumlah}</td>
                       <td>
                         {Formatter.moneyFormatter(
                           item?.produk?.harga * item?.jumlah
                         )}
                       </td>
                       <td>
-                        <Button variant="danger">
+                        <Button
+                          variant="danger"
+                          className="ml-3 mr-3"
+                          onClick={() => handleDeleteItem(item)}
+                        >
                           <FaTrash />
                         </Button>
                       </td>
@@ -280,8 +265,10 @@ export default function Keranjang() {
                   ))}
                 </tbody>
               </Table>
-
-              <Button variant="danger custom-danger-btn w-100 my-3">
+              <Button
+                variant="danger custom-danger-btn w-100 my-3"
+                onClick={() => setProduk([])}
+              >
                 Kosongkan Keranjang
               </Button>
             </Col>
@@ -303,13 +290,12 @@ export default function Keranjang() {
                       >
                         Alamat
                       </Form.Label>
-
                       <Form.Select
                         name="alamat"
                         onChange={(e) => setSelectedAlamat(e.target.value)}
                         required
                       >
-                        <option value="" disabled selected hidden>
+                        <option value="" disabled hidden selected>
                           {alamat?.length === 0
                             ? "Tambah Alamat Baru di Profil Anda"
                             : "Pilih Alamat"}
@@ -325,13 +311,12 @@ export default function Keranjang() {
                       >
                         Pilih Pengiriman
                       </Form.Label>
-
                       <Form.Select
                         name="pengiriman"
                         onChange={(e) => setSelectedPengiriman(e.target.value)}
                         required
                       >
-                        <option value="" disabled selected hidden>
+                        <option value="" disabled hidden selected>
                           Pilih Pengiriman
                         </option>
                         <option value="Kurir">Kurir</option>
@@ -377,12 +362,7 @@ export default function Keranjang() {
                         Subtotal
                       </Col>
                       <Col md={6} className="right-detail">
-                        {Formatter.moneyFormatter(
-                          produk?.reduce(
-                            (total, item) => total + item?.produk?.harga,
-                            0
-                          )
-                        )}
+                        {Formatter.moneyFormatter(subtotal)}
                       </Col>
                     </Row>
                     {selectedPengiriman === "Kurir" && (
@@ -421,10 +401,7 @@ export default function Keranjang() {
                       </Col>
                       <Col md={6} className="right-detail">
                         {Formatter.moneyFormatter(
-                          produk?.reduce(
-                            (total, item) => total + item?.produk?.harga,
-                            0
-                          ) - (gunakanPoin ? userPoin * 100 : 0)
+                          total - (gunakanPoin ? userPoin * 100 : 0)
                         )}
                       </Col>
                     </Row>
@@ -433,13 +410,7 @@ export default function Keranjang() {
                         Poin dari Pesanan Ini
                       </Col>
                       <Col md={6} className="right-detail text-muted">
-                        {hitungPoint(
-                          produk?.reduce(
-                            (total, item) => total + item?.produk?.harga,
-                            0
-                          ),
-                          0
-                        )}
+                        {poin}
                       </Col>
                     </Row>
                     <Row className="pt-4">

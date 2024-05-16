@@ -18,6 +18,7 @@ const login = async (data) => {
     sessionStorage.setItem("jenis_kelamin", response.data.data.jenis_kelamin);
     sessionStorage.setItem("poin", response.data.data.poin);
     sessionStorage.setItem("saldo", response.data.data.saldo);
+    sessionStorage.setItem("po_date", response.data.po_date);
 
     return response.data;
   } catch (error) {

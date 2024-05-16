@@ -55,8 +55,54 @@
   box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
 }
 
+.input-border-produk-jumlah-keranjang {
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  padding: 1.2rem 1rem;
+  width: auto;
+  max-width: 50px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.input-border-produk-jumlah-keranjang.form-control {
+  background-color: transparent !important;
+}
+
+.input-border-produk-plusminus-keranjang {
+  background-color: white !important;
+  color: #f48e28 !important;
+  border: 0.05rem solid #f48e28 !important;
+  border-radius: 0.3125rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
+  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.input-border-produk-plusminus-keranjang:hover,
+.input-border-produk-plusminus-keranjang :focus {
+  background-color: #f48e28 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
+}
+
 @media screen and (max-width: 768px) {
   .border-keranjang {
     border-right: 0;
+    padding: 10px;
+  }
+
+  .left-detail,
+  .right-detail {
+    font-size: 0.9rem;
+  }
+
+  .button-checkout {
+    font-size: 0.9rem;
   }
 }

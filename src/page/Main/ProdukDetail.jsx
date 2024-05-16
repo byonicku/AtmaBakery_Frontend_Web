@@ -19,6 +19,8 @@ export default function ProdukDetail() {
   const [isLoadingDate, setIsLoadingDate] = useState(false);
   const [produk, setProduk] = useState(null);
   const isLogin = sessionStorage.getItem("role") === "CUST" ? true : false;
+  const isAlreadyPO =
+    sessionStorage.getItem("po_date") !== "null" ? true : false;
   const { id } = useParams();
 
   const [limit, setLimit] = useState(10);
@@ -81,6 +83,7 @@ export default function ProdukDetail() {
 
         const response = await APITransaksi.countTransaksi(data);
 
+        setTanggal(tanggal);
         setLimit(response.data);
       } catch (error) {
         setLimit(0);
@@ -138,8 +141,15 @@ export default function ProdukDetail() {
       } else {
         refReady.current.disabled = false;
       }
+
+      const date = sessionStorage.getItem("po_date");
+      if (date !== null || date !== undefined || date !== "null") {
+        refDate.current.value = date;
+        getCountTransaksi(date);
+        refDate.current.disabled = true;
+      }
     }
-  }, [produk]);
+  }, [produk, getCountTransaksi]);
 
   const namaProdukConverter = (kategori, ukuran, nama) => {
     if (kategori === "CK") {
@@ -244,6 +254,7 @@ export default function ProdukDetail() {
                       .toISOString()
                       .split("T")[0]
                   }
+                  value={tanggal}
                   placeholder="Masukkan Tanggal Lahir"
                   name="tanggal"
                   onChange={(e) => {
@@ -259,7 +270,7 @@ export default function ProdukDetail() {
                     setTanggal(e.target.value);
                     getCountTransaksi(e.target.value);
                   }}
-                  disabled={isLoadingDate}
+                  disabled={isLoadingDate || isAlreadyPO}
                   ref={refDate}
                   required
                 />
