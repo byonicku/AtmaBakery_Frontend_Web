@@ -1,4 +1,6 @@
 function dateFormatter(value) {
+  if (!value) return "";
+
   const date = new Date(value);
 
   const day = String(date.getDate()).padStart(2, "0");
@@ -9,6 +11,8 @@ function dateFormatter(value) {
 }
 
 function dateTimeFormatter(value) {
+  if (!value) return "";
+
   const date = new Date(value);
 
   const day = String(date.getDate()).padStart(2, "0");
@@ -22,6 +26,8 @@ function dateTimeFormatter(value) {
 }
 
 function moneyFormatter(value) {
+  if (value === null || value === undefined) return "";
+
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",

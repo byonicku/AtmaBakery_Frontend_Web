@@ -205,9 +205,7 @@ export default function HistoryCustomerPage() {
                     <td>
                       {Formatter.dateTimeFormatter(history.tanggal_pesan)}
                     </td>
-                    <td>
-                      {Formatter.dateTimeFormatter(history.tanggal_ambil)}
-                    </td>
+                    <td>{Formatter.dateFormatter(history.tanggal_ambil)}</td>
                     <td>
                       {history.status == "Terkirim" ? (
                         <Badge bg="success">{history.status}</Badge>
@@ -327,7 +325,7 @@ export default function HistoryCustomerPage() {
                       style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
                     >
                       Tanggal Ambil :{" "}
-                      {Formatter.dateTimeFormatter(selectedNota?.tanggal_ambil)}
+                      {Formatter.dateFormatter(selectedNota?.tanggal_ambil)}
                     </h5>
                   </Col>
                 </Row>
@@ -489,13 +487,9 @@ export default function HistoryCustomerPage() {
           </Modal.Body>
           {isLoadingModal ? null : (
             <Modal.Footer>
-              {selectedNota?.status == "Menunggu Pembayaran" ?
-                <Button variant="primary">
-                  Bayar
-                </Button>
-              :
-                null  
-              }
+              {selectedNota?.status == "Menunggu Pembayaran" ? (
+                <Button variant="primary">Bayar</Button>
+              ) : null}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
               </Button>

@@ -10,7 +10,7 @@ import {
   Image,
   Card,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Formatter from "@/assets/Formatter";
 import APICart from "@/api/APICart";
 import APIAlamat from "@/api/APIAlamat";
@@ -23,6 +23,13 @@ import { toast } from "sonner";
 import APITransaksi from "@/api/APITransaksi";
 
 export default function Keranjang() {
+  const navigate = useNavigate();
+
+  const nama = sessionStorage.getItem("nama");
+  const no_hp = sessionStorage.getItem("no_telp");
+  const tanggal_ambil = sessionStorage.getItem("po_date");
+  const tanggal_lahir = sessionStorage.getItem("tanggal_lahir");
+
   const [isLoading, setIsLoading] = useState(false);
   const [produk, setProduk] = useState([]);
   const [alamat, setAlamat] = useState([]);
@@ -67,6 +74,69 @@ export default function Keranjang() {
     fetchAlamat();
   }, [fetchKeranjang, fetchAlamat]);
 
+  const hitungPoint = useCallback(
+    (totalAmount, points) => {
+      while (totalAmount >= 10000) {
+        if (totalAmount >= 1000000) {
+          points += 200;
+          totalAmount -= 1000000;
+        } else if (totalAmount >= 500000) {
+          points += 75;
+          totalAmount -= 500000;
+        } else if (totalAmount >= 100000) {
+          points += 15;
+          totalAmount -= 100000;
+        } else if (totalAmount >= 10000) {
+          points += 1;
+          totalAmount -= 10000;
+        }
+      }
+
+      if (
+        new Date(tanggal_lahir).getMonth() === new Date().getMonth() &&
+        new Date(tanggal_lahir).getDate() === new Date().getDate()
+      ) {
+        points *= 2;
+      }
+
+      function calculatePoints(user_birthday, points) {
+        function formatDate(date) {
+          const d = new Date(date);
+          const month = ("0" + (d.getMonth() + 1)).slice(-2);
+          const day = ("0" + d.getDate()).slice(-2);
+          return month + "-" + day;
+        }
+
+        function addDays(date, days) {
+          const result = new Date(date);
+          result.setDate(result.getDate() + days);
+          return result;
+        }
+
+        const now_date = new Date();
+
+        const userBirthdayMinus3Days = addDays(user_birthday, -3);
+        const userBirthdayPlus3Days = addDays(user_birthday, 3);
+
+        const userBirthdayStartMD = formatDate(userBirthdayMinus3Days);
+        const userBirthdayEndMD = formatDate(userBirthdayPlus3Days);
+        const nowDateMD = formatDate(now_date);
+
+        if (
+          nowDateMD >= userBirthdayStartMD &&
+          nowDateMD <= userBirthdayEndMD
+        ) {
+          points = points * 2;
+        }
+
+        return points;
+      }
+
+      return calculatePoints(new Date(tanggal_lahir), points);
+    },
+    [tanggal_lahir]
+  );
+
   useEffect(() => {
     setSubtotal(
       produk?.reduce(
@@ -82,7 +152,7 @@ export default function Keranjang() {
           total +
           parseInt(item?.produk?.harga ?? item?.hampers?.harga) * item?.jumlah,
         0
-      ) - (gunakanPoin ? userPoin * 100 : 0)
+      )
     );
 
     setPoin(
@@ -97,7 +167,7 @@ export default function Keranjang() {
         0
       )
     );
-  }, [gunakanPoin, produk, userPoin]);
+  }, [gunakanPoin, produk, userPoin, hitungPoint]);
 
   const ukuranConverter = (ukuran, id_kategori) => {
     const converters = {
@@ -119,31 +189,16 @@ export default function Keranjang() {
     return converters[id_kategori] || "Hampers";
   };
 
-  const hitungPoint = (totalAmount, points) => {
-    while (totalAmount >= 10000) {
-      if (totalAmount >= 1000000) {
-        points += 200;
-        totalAmount -= 1000000;
-      } else if (totalAmount >= 500000) {
-        points += 75;
-        totalAmount -= 500000;
-      } else if (totalAmount >= 100000) {
-        points += 15;
-        totalAmount -= 100000;
-      } else if (totalAmount >= 10000) {
-        points += 1;
-        totalAmount -= 10000;
-      }
-    }
-    return points;
-  };
-
   const checkout = useMutation({
     mutationFn: (data) => APITransaksi.checkoutTransaksi(data),
     onSuccess: async () => {
       toast.success("Checkout berhasil!");
       fetchKeranjang();
       sessionStorage.setItem("po_date", null);
+      if (gunakanPoin) {
+        sessionStorage.setItem("poin", 0);
+      }
+      navigate("/profile/pemesanan");
     },
     onError: (error) => {
       console.error(error);
@@ -250,29 +305,33 @@ export default function Keranjang() {
       return;
     }
 
-    const nama = sessionStorage.getItem("nama");
-    const no_hp = sessionStorage.getItem("no_hp");
+    const alamatFix = alamat[selectedAlamat];
 
     const data = {
       nama_penerima: nama,
       no_telp_penerima: no_hp,
-      lokasi: selectedAlamat.lokasi,
+      lokasi: alamatFix?.lokasi,
       tipe_delivery: selectedPengiriman,
-      keterangan: selectedAlamat.keterangan,
+      keterangan: alamatFix?.keterangan,
       pengiriman: selectedPengiriman,
-      gunakan_poin: gunakanPoin,
       total: subtotal,
-      is_using_poin: gunakanPoin,
       status: "Menunggu Pembayaran",
+      is_using_poin: gunakanPoin,
+      tanggal_ambil: tanggal_ambil,
     };
 
-    if (
-      sessionStorage.getItem("po_date") !== null ||
-      sessionStorage.getItem("po_date") !== "null"
-    ) {
+    if (selectedPengiriman === "Kurir" && alamatFix) {
       data.po_date = sessionStorage.getItem("po_date");
-      data.nama_penerima = selectedAlamat.nama_lengkap;
-      data.no_telp_penerima = selectedAlamat.no_hp;
+      data.nama_penerima = alamatFix?.nama_lengkap;
+      data.no_telp_penerima = alamatFix?.no_telp;
+      data.status = "Menunggu Perhitungan Ongkir";
+    } else {
+      delete data.lokasi;
+      delete data.keterangan;
+    }
+
+    if (produk.every((item) => item?.status === "READY")) {
+      delete data.tanggal_ambil;
     }
 
     try {
@@ -476,10 +535,11 @@ export default function Keranjang() {
                       </Form.Label>
                       <Form.Select
                         name="pengiriman"
+                        defaultValue=""
                         onChange={(e) => setSelectedPengiriman(e.target.value)}
                         required
                       >
-                        <option value="" disabled hidden selected>
+                        <option value="" disabled hidden>
                           Pilih Pengiriman
                         </option>
                         <option value="Kurir">Kurir</option>
@@ -497,16 +557,22 @@ export default function Keranjang() {
                         <Form.Select
                           name="alamat"
                           disabled={alamat?.length === 0}
-                          onChange={(e) => setSelectedAlamat(e.target.value)}
+                          defaultValue=""
+                          onChange={(e) => {
+                            setSelectedAlamat(e.target.value);
+                            console.log(e.target.value);
+                          }}
                           required
                         >
-                          <option value="" disabled hidden selected>
+                          <option value="" disabled hidden>
                             {alamat?.length === 0
                               ? "Tambah Alamat di Profile Anda"
                               : "Pilih Alamat"}
                           </option>
                           {alamat?.map((item, index) => (
-                            <option key={index}>{item?.lokasi}</option>
+                            <option key={index} value={index}>
+                              {item?.lokasi}
+                            </option>
                           ))}
                         </Form.Select>
                       </Form.Group>
@@ -523,17 +589,17 @@ export default function Keranjang() {
                   Detail Belanja
                 </h3>
                 <Card className="shadow">
-                  <Card.Body className="m-2">
+                  <Card.Body className="m-0 m-sm-0 m-md-0 m-lg-0 m-xl-2">
                     <Row
                       style={{
                         borderBottom: "2px dotted #E0E0E0",
                       }}
                       className="pb-2"
                     >
-                      <Col md={6} className="left-detail">
+                      <Col lg={6} md={6} sm={6} xs={6} className="left-detail">
                         Gunakan Poin?
                       </Col>
-                      <Col md={6} className="right-detail">
+                      <Col lg={6} md={6} sm={6} xs={6} className="right-detail">
                         <Form.Check
                           type="checkbox"
                           onChange={() => setGunakanPoin(!gunakanPoin)}
@@ -545,34 +611,58 @@ export default function Keranjang() {
                         selectedPengiriman === "Kurir" ? "pt-2" : "py-2"
                       }
                     >
-                      <Col md={6} className="left-detail">
+                      <Col lg={6} md={6} sm={6} xs={6} className="left-detail">
                         Subtotal
                       </Col>
-                      <Col md={6} className="right-detail">
+                      <Col lg={6} md={6} sm={6} xs={6} className="right-detail">
                         {Formatter.moneyFormatter(subtotal)}
                       </Col>
                     </Row>
                     {selectedPengiriman === "Kurir" && (
                       <Row className="py-2">
-                        <Col md={6} className="left-detail">
+                        <Col
+                          lg={6}
+                          md={6}
+                          sm={6}
+                          xs={6}
+                          className="left-detail"
+                        >
                           Ongkos Kirim
                         </Col>
-                        <Col md={6} className="right-detail">
+                        <Col
+                          lg={6}
+                          md={6}
+                          sm={6}
+                          xs={6}
+                          className="right-detail"
+                        >
                           Akan di informasikan
                         </Col>
                       </Row>
                     )}
                     {gunakanPoin && (
                       <Row
-                        className="py-2"
+                        className={selectedAlamat ? "pb-2" : "py-2"}
                         style={{
                           borderBottom: "2px dotted #E0E0E0",
                         }}
                       >
-                        <Col md={6} className="left-detail">
+                        <Col
+                          lg={6}
+                          md={6}
+                          sm={6}
+                          xs={6}
+                          className="left-detail"
+                        >
                           Potongan {userPoin} Poin
                         </Col>
-                        <Col md={6} className="right-detail">
+                        <Col
+                          lg={6}
+                          md={6}
+                          sm={6}
+                          xs={6}
+                          className="right-detail"
+                        >
                           - {Formatter.moneyFormatter(userPoin * 100)}
                         </Col>
                       </Row>
@@ -583,20 +673,32 @@ export default function Keranjang() {
                         borderTop: !gunakanPoin ? "2px dotted #E0E0E0" : "none",
                       }}
                     >
-                      <Col md={6} className="left-detail">
+                      <Col lg={6} md={6} sm={6} xs={6} className="left-detail">
                         Total
                       </Col>
-                      <Col md={6} className="right-detail">
+                      <Col lg={6} md={6} sm={6} xs={6} className="right-detail">
                         {Formatter.moneyFormatter(
-                          total - (gunakanPoin ? userPoin * 100 : 0)
+                          Math.max(total - userPoin * 100, 0)
                         )}
                       </Col>
                     </Row>
                     <Row className="pt-2">
-                      <Col md={6} className="left-detail text-muted">
+                      <Col
+                        lg={6}
+                        md={6}
+                        sm={6}
+                        xs={6}
+                        className="left-detail text-muted"
+                      >
                         Poin dari Pesanan Ini
                       </Col>
-                      <Col md={6} className="right-detail text-muted">
+                      <Col
+                        lg={6}
+                        md={6}
+                        sm={6}
+                        xs={6}
+                        className="right-detail text-muted"
+                      >
                         {poin}
                       </Col>
                     </Row>

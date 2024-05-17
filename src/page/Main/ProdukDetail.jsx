@@ -94,6 +94,7 @@ export default function ProdukDetail() {
 
         setTanggal(tanggal);
         setLimit(response.data.remaining);
+        setJumlah(1);
       } catch (error) {
         setLimit(0);
         console.error(error);
@@ -145,6 +146,11 @@ export default function ProdukDetail() {
       return;
     }
 
+    if (limit === 0 && pilihan === "PO") {
+      toast.error("Limit produk sudah habis pada hari tersebut!");
+      return;
+    }
+
     const data = {
       id_produk: id,
       jumlah: jumlah,
@@ -187,7 +193,7 @@ export default function ProdukDetail() {
         refPO.current?.classList.add("active");
       }
 
-      if (produk.stok > 0) {
+      if (produk?.status === "READY") {
         refPO.current.disabled = true;
         refDate.current.disabled = true;
         setPilihan("READY");
@@ -195,7 +201,7 @@ export default function ProdukDetail() {
         refPO.current.disabled = false;
       }
 
-      if (produk.limit > 0) {
+      if (produk?.status === "PO") {
         refReady.current.disabled = true;
         activeButtonPOKeranjang.current.disabled = true;
         btnMinus.current.disabled = true;
@@ -338,7 +344,12 @@ export default function ProdukDetail() {
                     setTanggal(e.target.value);
                     getCountTransaksi(e.target.value);
                   }}
-                  disabled={isLoadingDate || isAlreadyPO || add.isPending}
+                  disabled={
+                    isLoadingDate ||
+                    isAlreadyPO ||
+                    add.isPending ||
+                    checkMinimium()
+                  }
                   ref={refDate}
                   required
                 />
@@ -435,7 +446,12 @@ export default function ProdukDetail() {
                       }
                     }}
                     ref={btnMinus}
-                    disabled={!isLogin || isLoadingDate || add.isPending}
+                    disabled={
+                      !isLogin ||
+                      isLoadingDate ||
+                      add.isPending ||
+                      checkMinimium()
+                    }
                   >
                     -
                   </Button>
@@ -458,8 +474,8 @@ export default function ProdukDetail() {
                     variant="outline-secondary input-border-produk-plusminus"
                     onClick={() => {
                       if (
-                        jumlah === produk.stok ||
-                        jumlah === produk.limit ||
+                        jumlah === produk?.stok ||
+                        jumlah === limit ||
                         !isLogin
                       ) {
                         return;
@@ -467,7 +483,12 @@ export default function ProdukDetail() {
                       setJumlah(jumlah + 1);
                     }}
                     ref={btnPlus}
-                    disabled={!isLogin || isLoadingDate || add.isPending}
+                    disabled={
+                      !isLogin ||
+                      isLoadingDate ||
+                      add.isPending ||
+                      checkMinimium()
+                    }
                   >
                     +
                   </Button>
@@ -477,7 +498,12 @@ export default function ProdukDetail() {
                 <Col>
                   <Button
                     variant="outline-secondary button-tambahkeranjang w-100"
-                    disabled={!isLogin || isLoadingDate || add.isPending}
+                    disabled={
+                      !isLogin ||
+                      isLoadingDate ||
+                      add.isPending ||
+                      checkMinimium()
+                    }
                     ref={activeButtonPOKeranjang}
                     onClick={handleAddKerajang}
                   >
@@ -502,7 +528,7 @@ export default function ProdukDetail() {
                 </Row>
               )}
 
-              {checkMinimium() && tanggal && (
+              {checkMinimium() && (
                 <Row
                   className="mt-1 text-center"
                   style={{
@@ -511,7 +537,10 @@ export default function ProdukDetail() {
                   }}
                 >
                   <Col>
-                    <p>Produk ini tidak tersedia, silahkan pilih produk lain</p>
+                    <p>
+                      Produk ini tidak tersedia, silahkan pilih produk lain atau
+                      tanggal lain
+                    </p>
                   </Col>
                 </Row>
               )}

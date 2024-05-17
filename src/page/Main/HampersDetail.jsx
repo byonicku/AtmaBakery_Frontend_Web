@@ -30,6 +30,7 @@ export default function HampersDetail() {
       ? true
       : false;
 
+  const [minLimitOrStok, setMinLimitOrStok] = useState(null);
   const [limit, setLimit] = useState([]);
   const [tanggal, setTanggal] = useState("");
   const [pilihan, setPilihan] = useState("READY");
@@ -106,11 +107,8 @@ export default function HampersDetail() {
 
         setTanggal(tanggal);
         setLimit(response.data);
-        if (getMinimumLimitAndStok(response.data) === 0) {
-          activeButtonPOKeranjang.current.disabled = true;
-          btnMinus.current.disabled = true;
-          btnPlus.current.disabled = true;
-        }
+        setJumlah(1);
+        setMinLimitOrStok(response.min);
       } catch (error) {
         setLimit([]);
         console.error(error);
@@ -231,34 +229,10 @@ export default function HampersDetail() {
             data?.nama_produk
           ) +
             " dengan limit " +
-            data?.limit
+            data?.remaining
         );
     });
     return array;
-  };
-
-  const getMinimumLimitAndStok = (limit) => {
-    let min = 0;
-    limit.map((data) => {
-      if (data?.stok > 0) {
-        if (min === 0) {
-          min = data?.stok;
-        } else {
-          if (min > data?.stok) {
-            min = data?.stok;
-          }
-        }
-      } else {
-        if (min === 0) {
-          min = data?.limit;
-        } else {
-          if (min > data?.limit) {
-            min = data?.limit;
-          }
-        }
-      }
-    });
-    return min;
   };
 
   const namaProdukConverter = (kategori, ukuran, nama) => {
@@ -469,7 +443,12 @@ export default function HampersDetail() {
                       }
                     }}
                     ref={btnMinus}
-                    disabled={!isLogin || isLoadingDate || add.isPending}
+                    disabled={
+                      !isLogin ||
+                      isLoadingDate ||
+                      add.isPending ||
+                      minLimitOrStok === 0
+                    }
                   >
                     -
                   </Button>
@@ -491,13 +470,18 @@ export default function HampersDetail() {
                   <Button
                     variant="outline-secondary input-border-produk-plusminus"
                     onClick={() => {
-                      if (jumlah === getMinimumLimitAndStok(limit)) {
+                      if (jumlah === minLimitOrStok) {
                         return;
                       }
                       setJumlah(jumlah + 1);
                     }}
                     ref={btnPlus}
-                    disabled={!isLogin || isLoadingDate || add.isPending}
+                    disabled={
+                      !isLogin ||
+                      isLoadingDate ||
+                      add.isPending ||
+                      minLimitOrStok === 0
+                    }
                   >
                     +
                   </Button>
@@ -505,6 +489,18 @@ export default function HampersDetail() {
               </Form.Group>
               <Row className="mt-3">
                 <Col md={12}>
+                  {!tanggal && pilihan === "PO" && (
+                    <p
+                      className="m-0"
+                      style={{
+                        fontSize: "0.9rem",
+                        fontWeight: "600",
+                        color: "#BE1008",
+                      }}
+                    >
+                      Silahkan Pilih Tanggal Terlebih Dahulu
+                    </p>
+                  )}
                   {limit.length > 0 && (
                     <p
                       className="m-0"
@@ -553,7 +549,12 @@ export default function HampersDetail() {
                 <Col>
                   <Button
                     variant="outline-secondary button-tambahkeranjang w-100"
-                    disabled={!isLogin || isLoadingDate || add.isPending}
+                    disabled={
+                      !isLogin ||
+                      isLoadingDate ||
+                      add.isPending ||
+                      minLimitOrStok === 0
+                    }
                     onClick={handleAddKerajang}
                     ref={activeButtonPOKeranjang}
                   >
@@ -578,23 +579,22 @@ export default function HampersDetail() {
                 </Row>
               )}
 
-              {getMinimumLimitAndStok(limit) === 0 &&
-                !isLoadingDate &&
-                tanggal && (
-                  <Row
-                    className="mt-1 text-center"
-                    style={{
-                      fontSize: "0.9rem",
-                      color: "#BE1008",
-                    }}
-                  >
-                    <Col>
-                      <p>
-                        Produk ini tidak tersedia, silahkan pilih produk lain
-                      </p>
-                    </Col>
-                  </Row>
-                )}
+              {minLimitOrStok === 0 && !isLoadingDate && tanggal && (
+                <Row
+                  className="mt-1 text-center"
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "#BE1008",
+                  }}
+                >
+                  <Col>
+                    <p>
+                      Produk ini tidak tersedia, silahkan pilih produk lain atau
+                      tanggal lain
+                    </p>
+                  </Col>
+                </Row>
+              )}
             </Col>
           </Row>
         </>
