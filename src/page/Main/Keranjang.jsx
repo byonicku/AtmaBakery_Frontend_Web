@@ -17,6 +17,9 @@ import APIAlamat from "@/api/APIAlamat";
 import { FaTrash } from "react-icons/fa";
 
 import "./css/Keranjang.css";
+import { useConfirm } from "@/hooks/useConfirm";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export default function Keranjang() {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +32,10 @@ export default function Keranjang() {
   const [selectedPengiriman, setSelectedPengiriman] = useState("");
   const [gunakanPoin, setGunakanPoin] = useState(false);
   const [userPoin, setUserPoin] = useState(0);
+  const { confirm, modalElement } = useConfirm();
+
+  const defaultGambar =
+    "https://res.cloudinary.com/daorbrq8v/image/upload/f_auto,q_auto/v1/atma-bakery/dyc1n9feqhbetyfxe5o5";
 
   const fetchKeranjang = useCallback(async () => {
     setIsLoading(true);
@@ -62,13 +69,17 @@ export default function Keranjang() {
   useEffect(() => {
     setSubtotal(
       produk?.reduce(
-        (total, item) => total + item?.produk?.harga * item?.jumlah,
+        (total, item) =>
+          total +
+          parseInt(item?.produk?.harga ?? item?.hampers?.harga) * item?.jumlah,
         0
       )
     );
     setTotal(
       produk?.reduce(
-        (total, item) => total + item?.produk?.harga * item?.jumlah,
+        (total, item) =>
+          total +
+          parseInt(item?.produk?.harga ?? item?.hampers?.harga) * item?.jumlah,
         0
       ) - (gunakanPoin ? userPoin * 100 : 0)
     );
@@ -76,7 +87,10 @@ export default function Keranjang() {
     setPoin(
       hitungPoint(
         produk?.reduce(
-          (total, item) => total + item?.produk?.harga * item?.jumlah,
+          (total, item) =>
+            total +
+            parseInt(item?.produk?.harga ?? item?.hampers?.harga) *
+              item?.jumlah,
           0
         ),
         0
@@ -123,9 +137,81 @@ export default function Keranjang() {
     return points;
   };
 
-  const handleDeleteItem = (item) => {
-    const updatedProduk = produk.filter((produkItem) => produkItem !== item);
-    setProduk(updatedProduk);
+  const del = useMutation({
+    mutationFn: (id) => APICart.deleteCart(id),
+    onSuccess: async () => {
+      toast.success("Hapus Produk dari Keranjang berhasil!");
+      fetchKeranjang();
+
+      if (!(produk.length > 1)) {
+        sessionStorage.setItem("po_date", null);
+      }
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const handleDeleteItem = async (item) => {
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin menghapus produk ini dari keranjang?",
+      "",
+      "Hapus",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await del.mutateAsync(item.id_cart);
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const delAll = useMutation({
+    mutationFn: () => APICart.deleteCartAll(),
+    onSuccess: async () => {
+      toast.success("Kosongkan Keranjang berhasil!");
+      fetchKeranjang();
+      sessionStorage.setItem("po_date", null);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const handleDeleteAllItem = async () => {
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin menghapus semua produk ini dari keranjang?",
+      "",
+      "Hapus",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await delAll.mutateAsync();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
   };
 
   return (
@@ -142,6 +228,18 @@ export default function Keranjang() {
             aria-hidden="true"
           />
           <h6 className="mt-2 mb-0">Loading...</h6>
+        </div>
+      ) : produk?.length === 0 ? (
+        <div className="text-center">
+          <h2 className="mt-2 mb-0">Keranjang Kosong</h2>
+          <Link to="/produk" className="error-button">
+            <Button
+              className="button-landing button-style mt-5"
+              variant="danger"
+            >
+              Kembali ke Produk
+            </Button>
+          </Link>
         </div>
       ) : (
         <>
@@ -185,7 +283,11 @@ export default function Keranjang() {
                         <Row>
                           <Col lg={4} md={12} sm={12} className="text-left">
                             <Image
-                              src={item?.produk?.gambar[0]?.url}
+                              src={
+                                item?.produk?.gambar[0]?.url ??
+                                item?.hampers?.gambar[0]?.url ??
+                                defaultGambar
+                              }
                               className="rounded-3"
                             />
                           </Col>
@@ -206,12 +308,13 @@ export default function Keranjang() {
                                 textOverflow: "ellipsis",
                               }}
                             >
-                              {item?.produk?.nama_produk +
-                                " " +
-                                ukuranConverter(
-                                  item?.produk?.ukuran,
-                                  item?.produk?.id_kategori
-                                )}
+                              {item?.produk?.nama_produk ??
+                                item?.hampers?.nama_hampers +
+                                  " " +
+                                  ukuranConverter(
+                                    item?.produk?.ukuran,
+                                    item?.produk?.id_kategori
+                                  )}
                             </p>
                             {item?.po_date && (
                               <p
@@ -239,7 +342,8 @@ export default function Keranjang() {
                                 color: "#0BA42D",
                               }}
                             >
-                              {item?.produk?.status === "PO"
+                              {item?.produk?.status === "PO" ||
+                              item?.status === "PO"
                                 ? "Pre Order"
                                 : "Ready Stok"}
                             </p>
@@ -249,13 +353,15 @@ export default function Keranjang() {
                       <td>{item?.jumlah}</td>
                       <td>
                         {Formatter.moneyFormatter(
-                          item?.produk?.harga * item?.jumlah
+                          parseInt(
+                            item?.produk?.harga ?? item?.hampers?.harga
+                          ) * item?.jumlah
                         )}
                       </td>
                       <td>
                         <Button
                           variant="danger"
-                          className="ml-3 mr-3"
+                          className="ml-3 mr-3 custom-danger-btn"
                           onClick={() => handleDeleteItem(item)}
                         >
                           <FaTrash />
@@ -267,7 +373,7 @@ export default function Keranjang() {
               </Table>
               <Button
                 variant="danger custom-danger-btn w-100 my-3"
-                onClick={() => setProduk([])}
+                onClick={handleDeleteAllItem}
               >
                 Kosongkan Keranjang
               </Button>
@@ -292,12 +398,13 @@ export default function Keranjang() {
                       </Form.Label>
                       <Form.Select
                         name="alamat"
+                        disabled={alamat?.length === 0}
                         onChange={(e) => setSelectedAlamat(e.target.value)}
                         required
                       >
                         <option value="" disabled hidden selected>
                           {alamat?.length === 0
-                            ? "Tambah Alamat Baru di Profil Anda"
+                            ? "Tambah Alamat di Profile Anda"
                             : "Pilih Alamat"}
                         </option>
                         {alamat?.map((item, index) => (
@@ -429,6 +536,7 @@ export default function Keranjang() {
           </Row>
         </>
       )}
+      {modalElement}
     </Container>
   );
 }

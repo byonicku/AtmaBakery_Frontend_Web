@@ -11,12 +11,18 @@ export function useConfirm() {
 
   const resolveRef = useRef(null);
 
-  function showModal(header, secondP, submitBtnText, validate = false) {
+  function showModal(
+    header,
+    secondP,
+    submitBtnText,
+    isDelete,
+    validate = false
+  ) {
     if (validate && validate() === 0) return Promise.resolve(false);
 
     return new Promise((resolve) => {
       resolveRef.current = resolve;
-      setModalContent({ header, secondP, submitBtnText });
+      setModalContent({ header, secondP, submitBtnText, isDelete });
       setModalVisible(true);
     });
   }
@@ -37,6 +43,7 @@ export function useConfirm() {
         onCancel={() => handleChoice(false)}
         onSubmit={() => handleChoice(true)}
         del={{ isPending: false }}
+        isDelete={modalContent.isDelete}
         submitBtnText={modalContent.submitBtnText}
       />
     ),

@@ -11,6 +11,7 @@ const ConfirmationModal = ({
   onSubmit,
   size,
   del,
+  isDelete = true,
   submitBtnText = "Hapus",
   cancelBtnText = "Batal",
 }) => {
@@ -29,7 +30,9 @@ const ConfirmationModal = ({
           style={{ color: "rgb(18,19,20,70%)", fontSize: "1.15em" }}
           className="mt-3"
         >
-          <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
+          {isDelete && (
+            <p className="m-0 p-0">Tindakan ini tidak bisa dibatalkan.</p>
+          )}
           <p className="m-0 p-0">{secondP}</p>
         </p>
         <Row className="pt-3 gap-2 gap-lg-0 gap-md-0 flex-row-reverse">
@@ -71,6 +74,7 @@ ConfirmationModal.propTypes = {
   onSubmit: propTypes.func,
   selectedPenitip: propTypes.object,
   del: propTypes.object,
+  isDelete: propTypes.bool,
   confirm: propTypes.bool,
   submitBtnText: propTypes.string,
   cancelBtnText: propTypes.string,

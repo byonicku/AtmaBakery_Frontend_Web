@@ -12,8 +12,23 @@ const countTransaksi = async (data) => {
     throw error.response || error;
   }
 };
+
+const countTransaksiWithHampers = async (data) => {
+  try {
+    const response = await useAxios.post("/transaksi/hampers/count", data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
+  countTransaksiWithHampers,
 };
 
 export default APITransaksi;

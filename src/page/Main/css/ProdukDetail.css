@@ -97,27 +97,9 @@
     color 0.15s ease-in-out;
 }
 
-.button-bayar {
+.button-tambahkeranjang {
   background-color: #f48e28 !important;
   color: white !important;
-  border: 0.05rem solid #f48e28 !important;
-  border-radius: 0.3125rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0);
-  transition: box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    color 0.15s ease-in-out;
-}
-
-.button-bayar:hover,
-.button-bayar:focus {
-  box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
-}
-
-.button-tambahkeranjang {
-  background-color: white !important;
-  color: black !important;
   border: 0.05rem solid #f48e28 !important;
   border-radius: 0.3125rem;
   padding: 0.5rem 1rem;
@@ -130,8 +112,6 @@
 
 .button-tambahkeranjang:hover,
 .button-tambahkeranjang:focus {
-  background-color: #f48e28 !important;
-  color: white !important;
   box-shadow: 0 0 0 0.2rem rgba(244, 142, 40, 0.25);
 }
 

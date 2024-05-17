@@ -67,10 +67,6 @@ export default function Home() {
     };
   }, [fetchProduk]);
 
-  const handleClickCoding2 = () => {
-    toast.error("Fitur Belum Tersedia!");
-  };
-
   const ukuranConverter = (ukuran, id_kategori) => {
     switch (id_kategori) {
       case "CK":

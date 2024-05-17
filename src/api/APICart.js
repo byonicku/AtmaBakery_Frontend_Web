@@ -72,7 +72,7 @@ const deleteCart = async (id) => {
 
 const deleteCartAll = async () => {
   try {
-    const response = await useAxios.delete(`/cart/all`, {
+    const response = await useAxios.delete(`/all/cart`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,

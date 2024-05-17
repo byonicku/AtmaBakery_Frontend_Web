@@ -9,10 +9,13 @@ import {
   Button,
   InputGroup,
 } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactImageGallery from "react-image-gallery";
 import Formatter from "@/assets/Formatter";
 import APITransaksi from "@/api/APITransaksi";
+import { useMutation } from "@tanstack/react-query";
+import APICart from "@/api/APICart";
+import { toast } from "sonner";
 
 export default function ProdukDetail() {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,11 +23,16 @@ export default function ProdukDetail() {
   const [produk, setProduk] = useState(null);
   const isLogin = sessionStorage.getItem("role") === "CUST" ? true : false;
   const isAlreadyPO =
-    sessionStorage.getItem("po_date") !== "null" ? true : false;
+    sessionStorage.getItem("po_date") !== "null" &&
+    sessionStorage.getItem("po_date") !== null &&
+    sessionStorage.getItem("po_date") !== ""
+      ? true
+      : false;
+
   const { id } = useParams();
 
   const [limit, setLimit] = useState(10);
-  const [tanggal, setTanggal] = useState(null);
+  const [tanggal, setTanggal] = useState("");
   const [pilihan, setPilihan] = useState("READY");
   const [jumlah, setJumlah] = useState(1);
 
@@ -37,13 +45,14 @@ export default function ProdukDetail() {
     },
   ]);
 
-  const activeButtonPOBeliSekarang = useRef(null);
   const activeButtonPOKeranjang = useRef(null);
   const refReady = useRef(null);
   const refPO = useRef(null);
   const refDate = useRef(null);
   const btnPlus = useRef(null);
   const btnMinus = useRef(null);
+
+  const navigate = useNavigate();
 
   const fetchProduk = useCallback(
     async (signal) => {
@@ -84,7 +93,7 @@ export default function ProdukDetail() {
         const response = await APITransaksi.countTransaksi(data);
 
         setTanggal(tanggal);
-        setLimit(response.data);
+        setLimit(response.data.remaining);
       } catch (error) {
         setLimit(0);
         console.error(error);
@@ -94,6 +103,60 @@ export default function ProdukDetail() {
     },
     [id]
   );
+
+  // Add Data
+  const add = useMutation({
+    mutationFn: (data) => APICart.createCart(data),
+    onSuccess: async () => {
+      toast.success("Tambah Produk ke keranjang berhasil!");
+      if (!isAlreadyPO) {
+        sessionStorage.setItem("po_date", tanggal);
+      }
+
+      resetField();
+      navigate("/keranjang");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const handleAddKerajang = async () => {
+    if (
+      (tanggal === "" || tanggal === null || tanggal === undefined) &&
+      pilihan === "PO"
+    ) {
+      toast.error("Tanggal tidak boleh kosong!");
+      return;
+    }
+
+    if (jumlah === 0) {
+      toast.error("Jumlah tidak boleh 0!");
+      return;
+    }
+
+    if (jumlah > produk.stok && pilihan === "READY") {
+      toast.error("Jumlah melebihi stok produk!");
+      return;
+    }
+
+    if (jumlah > produk.limit && pilihan === "PO") {
+      toast.error("Jumlah melebihi limit produk!");
+      return;
+    }
+
+    const data = {
+      id_produk: id,
+      jumlah: jumlah,
+      status: pilihan,
+    };
+
+    if (pilihan === "PO" || isAlreadyPO) {
+      data.po_date = tanggal;
+    }
+
+    await add.mutateAsync(data);
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -107,7 +170,6 @@ export default function ProdukDetail() {
   }, [fetchProduk]);
 
   const resetField = () => {
-    activeButtonPOBeliSekarang.current.disabled = true;
     activeButtonPOKeranjang.current.disabled = true;
     btnMinus.current.disabled = true;
     btnPlus.current.disabled = true;
@@ -128,28 +190,29 @@ export default function ProdukDetail() {
       if (produk.stok > 0) {
         refPO.current.disabled = true;
         refDate.current.disabled = true;
+        setPilihan("READY");
       } else {
         refPO.current.disabled = false;
       }
 
       if (produk.limit > 0) {
         refReady.current.disabled = true;
-        activeButtonPOBeliSekarang.current.disabled = true;
         activeButtonPOKeranjang.current.disabled = true;
         btnMinus.current.disabled = true;
         btnPlus.current.disabled = true;
+        setPilihan("PO");
       } else {
         refReady.current.disabled = false;
       }
 
-      const date = sessionStorage.getItem("po_date");
-      if (date !== null || date !== undefined || date !== "null") {
+      if (isAlreadyPO) {
+        const date = sessionStorage.getItem("po_date");
         refDate.current.value = date;
         getCountTransaksi(date);
         refDate.current.disabled = true;
       }
     }
-  }, [produk, getCountTransaksi]);
+  }, [produk, getCountTransaksi, isAlreadyPO]);
 
   const namaProdukConverter = (kategori, ukuran, nama) => {
     if (kategori === "CK") {
@@ -157,6 +220,13 @@ export default function ProdukDetail() {
     }
 
     return nama;
+  };
+
+  const checkMinimium = () => {
+    return (
+      (produk?.stok === 0 && produk?.status === "READY") ||
+      (limit === 0 && produk?.status === "PO")
+    );
   };
 
   return (
@@ -255,22 +325,20 @@ export default function ProdukDetail() {
                       .split("T")[0]
                   }
                   value={tanggal}
-                  placeholder="Masukkan Tanggal Lahir"
+                  placeholder="Masukkan Tanggal Pesan"
                   name="tanggal"
                   onChange={(e) => {
                     if (e.target.value === "") {
                       resetField();
                       return;
                     }
-
-                    activeButtonPOBeliSekarang.current.disabled = false;
                     activeButtonPOKeranjang.current.disabled = false;
                     btnMinus.current.disabled = false;
                     btnPlus.current.disabled = false;
                     setTanggal(e.target.value);
                     getCountTransaksi(e.target.value);
                   }}
-                  disabled={isLoadingDate || isAlreadyPO}
+                  disabled={isLoadingDate || isAlreadyPO || add.isPending}
                   ref={refDate}
                   required
                 />
@@ -288,6 +356,10 @@ export default function ProdukDetail() {
                       "outline-danger input-border-produk-readypo active me-2"
                     }
                     onClick={() => {
+                      if (add.isPending) {
+                        return;
+                      }
+
                       if (produk.limit > 0) {
                         resetField();
                         return;
@@ -306,6 +378,10 @@ export default function ProdukDetail() {
                   <Button
                     variant="outline-danger input-border-produk-readypo"
                     onClick={() => {
+                      if (add.isPending) {
+                        return;
+                      }
+
                       if (produk.stok > 0) {
                         resetField();
                         return;
@@ -359,7 +435,7 @@ export default function ProdukDetail() {
                       }
                     }}
                     ref={btnMinus}
-                    disabled={!isLogin || isLoadingDate}
+                    disabled={!isLogin || isLoadingDate || add.isPending}
                   >
                     -
                   </Button>
@@ -391,7 +467,7 @@ export default function ProdukDetail() {
                       setJumlah(jumlah + 1);
                     }}
                     ref={btnPlus}
-                    disabled={!isLogin || isLoadingDate}
+                    disabled={!isLogin || isLoadingDate || add.isPending}
                   >
                     +
                   </Button>
@@ -400,18 +476,10 @@ export default function ProdukDetail() {
               <Row className="mt-4">
                 <Col>
                   <Button
-                    variant="outline-secondary button-bayar w-100"
-                    disabled={!isLogin || isLoadingDate}
-                    ref={activeButtonPOBeliSekarang}
-                  >
-                    Beli Sekarang
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
                     variant="outline-secondary button-tambahkeranjang w-100"
-                    disabled={!isLogin || isLoadingDate}
+                    disabled={!isLogin || isLoadingDate || add.isPending}
                     ref={activeButtonPOKeranjang}
+                    onClick={handleAddKerajang}
                   >
                     + Keranjang
                   </Button>
@@ -421,7 +489,7 @@ export default function ProdukDetail() {
                 <Row
                   className="mt-1 text-center"
                   style={{
-                    fontSize: "1.2rem",
+                    fontSize: "0.9rem",
                     color: "#BE1008",
                   }}
                 >
@@ -430,6 +498,20 @@ export default function ProdukDetail() {
                       Silahkan Login sebagai Customer terlebih dahulu untuk
                       melakukan pembelian
                     </p>
+                  </Col>
+                </Row>
+              )}
+
+              {checkMinimium() && tanggal && (
+                <Row
+                  className="mt-1 text-center"
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "#BE1008",
+                  }}
+                >
+                  <Col>
+                    <p>Produk ini tidak tersedia, silahkan pilih produk lain</p>
                   </Col>
                 </Row>
               )}

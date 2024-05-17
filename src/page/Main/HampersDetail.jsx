@@ -8,22 +8,30 @@ import {
   Button,
   InputGroup,
 } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactImageGallery from "react-image-gallery";
 import Formatter from "@/assets/Formatter";
 import APIHampers from "@/api/APIHampers";
+import APITransaksi from "@/api/APITransaksi";
+import { useMutation } from "@tanstack/react-query";
+import APICart from "@/api/APICart";
+import { toast } from "sonner";
 
 export default function HampersDetail() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDate, setIsLoadingDate] = useState(false);
   const [hampers, setHampers] = useState(null);
   const { id } = useParams();
   const isLogin = sessionStorage.getItem("role") === "CUST" ? true : false;
+  const isAlreadyPO =
+    sessionStorage.getItem("po_date") !== "null" &&
+    sessionStorage.getItem("po_date") !== null &&
+    sessionStorage.getItem("po_date") !== ""
+      ? true
+      : false;
 
-  const [tanggal, setTanggal] = useState(
-    new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0]
-  );
+  const [limit, setLimit] = useState([]);
+  const [tanggal, setTanggal] = useState("");
   const [pilihan, setPilihan] = useState("READY");
   const [jumlah, setJumlah] = useState(1);
 
@@ -38,8 +46,14 @@ export default function HampersDetail() {
     },
   ]);
 
+  const activeButtonPOKeranjang = useRef(null);
   const refReady = useRef(null);
   const refPO = useRef(null);
+  const refDate = useRef(null);
+  const btnPlus = useRef(null);
+  const btnMinus = useRef(null);
+
+  const navigate = useNavigate();
 
   const fetchHampers = useCallback(
     async (signal) => {
@@ -79,19 +93,181 @@ export default function HampersDetail() {
     };
   }, [fetchHampers]);
 
+  const getCountTransaksi = useCallback(
+    async (tanggal) => {
+      setIsLoadingDate(true);
+      try {
+        const data = {
+          id_hampers: id,
+          po_date: tanggal,
+        };
+
+        const response = await APITransaksi.countTransaksiWithHampers(data);
+
+        setTanggal(tanggal);
+        setLimit(response.data);
+        if (getMinimumLimitAndStok(response.data) === 0) {
+          activeButtonPOKeranjang.current.disabled = true;
+          btnMinus.current.disabled = true;
+          btnPlus.current.disabled = true;
+        }
+      } catch (error) {
+        setLimit([]);
+        console.error(error);
+      } finally {
+        setIsLoadingDate(false);
+      }
+    },
+    [id]
+  );
+
+  // Add Data
+  const add = useMutation({
+    mutationFn: (data) => APICart.createCart(data),
+    onSuccess: async () => {
+      toast.success("Tambah Produk ke keranjang berhasil!");
+      if (!isAlreadyPO) {
+        sessionStorage.setItem("po_date", tanggal);
+      }
+
+      resetField();
+      navigate("/keranjang");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const handleAddKerajang = async () => {
+    if (
+      (tanggal === "" || tanggal === null || tanggal === undefined) &&
+      pilihan === "PO"
+    ) {
+      toast.error("Tanggal tidak boleh kosong!");
+      return;
+    }
+
+    if (jumlah === 0) {
+      toast.error("Jumlah tidak boleh 0!");
+      return;
+    }
+
+    if (
+      limit.some((data) => {
+        return jumlah > data?.stok;
+      }) &&
+      pilihan === "READY"
+    ) {
+      toast.error("Jumlah melebihi stok produk!");
+      return;
+    }
+
+    if (
+      limit.some((data) => {
+        return jumlah > data?.limit && data?.stok === 0;
+      }) &&
+      pilihan === "PO"
+    ) {
+      toast.error("Jumlah melebihi limit produk!");
+      return;
+    }
+
+    const data = {
+      id_hampers: id,
+      jumlah: jumlah,
+      status: pilihan,
+    };
+
+    if (pilihan === "PO" || isAlreadyPO) {
+      data.po_date = tanggal;
+    }
+
+    await add.mutateAsync(data);
+  };
+
+  const resetField = () => {
+    activeButtonPOKeranjang.current.disabled = true;
+    btnMinus.current.disabled = true;
+    btnPlus.current.disabled = true;
+    setTanggal(null);
+    setLimit([]);
+    setJumlah(1);
+  };
+
   useEffect(() => {
     if (hampers) {
+      activeButtonPOKeranjang.current.disabled = true;
       if (hampers.status === "READY") {
         refPO.current?.classList.remove("active");
         refPO.current.disabled = true;
         refReady.current?.classList.add("active");
+        setPilihan("READY");
       } else {
         refReady.current?.classList.remove("active");
         refReady.current.disabled = true;
         refPO.current?.classList.add("active");
+        setPilihan("PO");
+      }
+
+      if (isAlreadyPO) {
+        const date = sessionStorage.getItem("po_date");
+        refDate.current.value = date;
+        getCountTransaksi(date);
+        refDate.current.disabled = true;
       }
     }
-  }, [hampers]);
+  }, [hampers, isAlreadyPO, getCountTransaksi]);
+
+  const mapLimitToString = (limit) => {
+    const array = [];
+    limit.map((data) => {
+      if (data?.stok > 0)
+        array.push(data?.nama_produk + " dengan stok " + data?.stok);
+      else
+        array.push(
+          namaProdukConverter(
+            data?.id_kategori,
+            data?.ukuran,
+            data?.nama_produk
+          ) +
+            " dengan limit " +
+            data?.limit
+        );
+    });
+    return array;
+  };
+
+  const getMinimumLimitAndStok = (limit) => {
+    let min = 0;
+    limit.map((data) => {
+      if (data?.stok > 0) {
+        if (min === 0) {
+          min = data?.stok;
+        } else {
+          if (min > data?.stok) {
+            min = data?.stok;
+          }
+        }
+      } else {
+        if (min === 0) {
+          min = data?.limit;
+        } else {
+          if (min > data?.limit) {
+            min = data?.limit;
+          }
+        }
+      }
+    });
+    return min;
+  };
+
+  const namaProdukConverter = (kategori, ukuran, nama) => {
+    if (kategori === "CK") {
+      return nama + " " + ukuran + " Loyang";
+    }
+
+    return nama;
+  };
 
   return (
     <Container>
@@ -206,16 +382,30 @@ export default function HampersDetail() {
                   Pesan Untuk Tanggal (Khusus PO)
                 </Form.Label>
                 <Form.Control
-                  className="input-border"
+                  className="input-border-produk-tanggal"
                   type="date"
                   min={
                     new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)
                       .toISOString()
                       .split("T")[0]
                   }
-                  placeholder="Masukkan Tanggal Lahir"
+                  value={tanggal}
+                  placeholder="Masukkan Tanggal Pesan"
                   name="tanggal"
-                  onChange={(e) => setTanggal(e.target.value)}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    if (e.target.value === "") {
+                      resetField();
+                      return;
+                    }
+                    activeButtonPOKeranjang.current.disabled = false;
+                    btnMinus.current.disabled = false;
+                    btnPlus.current.disabled = false;
+                    setTanggal(e.target.value);
+                    getCountTransaksi(e.target.value);
+                  }}
+                  disabled={isLoadingDate || isAlreadyPO || add.isPending}
+                  ref={refDate}
                   required
                 />
               </Form.Group>
@@ -243,8 +433,20 @@ export default function HampersDetail() {
                   <Button
                     variant="outline-danger input-border-produk-readypo"
                     onClick={() => {
+                      if (add.isPending) {
+                        return;
+                      }
+
+                      if (limit.some((data) => data?.stok > 0)) {
+                        resetField();
+                        return;
+                      }
+
                       refReady.current.classList.remove("active");
                       refPO.current.classList.add("active");
+                      refDate.current.disabled = false;
+                      refDate.current.value = "";
+                      resetField();
                       setPilihan("PO");
                     }}
                     ref={refPO}
@@ -266,7 +468,8 @@ export default function HampersDetail() {
                         setJumlah(jumlah - 1);
                       }
                     }}
-                    disabled={!isLogin}
+                    ref={btnMinus}
+                    disabled={!isLogin || isLoadingDate || add.isPending}
                   >
                     -
                   </Button>
@@ -288,30 +491,71 @@ export default function HampersDetail() {
                   <Button
                     variant="outline-secondary input-border-produk-plusminus"
                     onClick={() => {
-                      if (jumlah === 10) {
+                      if (jumlah === getMinimumLimitAndStok(limit)) {
                         return;
                       }
                       setJumlah(jumlah + 1);
                     }}
-                    disabled={!isLogin}
+                    ref={btnPlus}
+                    disabled={!isLogin || isLoadingDate || add.isPending}
                   >
                     +
                   </Button>
                 </InputGroup>
               </Form.Group>
+              <Row className="mt-3">
+                <Col md={12}>
+                  {limit.length > 0 && (
+                    <p
+                      className="m-0"
+                      style={{
+                        fontSize: "0.9rem",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {pilihan === "PO"
+                        ? "Limit / Stok pembelian pada hari tersebut : "
+                        : "Stok tersedia :"}
+                    </p>
+                  )}
+
+                  <ul
+                    className="form-label-font"
+                    style={{
+                      color: "#BE1008",
+                      fontSize: "0.9rem",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {pilihan === "PO"
+                      ? tanggal === "" ||
+                        tanggal === null ||
+                        tanggal === undefined
+                        ? []
+                        : isLoadingDate
+                        ? []
+                        : mapLimitToString(limit).map((item, index) => (
+                            <li key={index} style={{ fontSize: "0.9rem" }}>
+                              {item}
+                            </li>
+                          ))
+                      : isLoadingDate
+                      ? []
+                      : mapLimitToString(limit).map((item, index) => (
+                          <li key={index} style={{ fontSize: "0.9rem" }}>
+                            {item}
+                          </li>
+                        ))}
+                  </ul>
+                </Col>
+              </Row>
               <Row className="mt-4">
                 <Col>
                   <Button
-                    variant="outline-secondary button-bayar w-100"
-                    disabled={!isLogin}
-                  >
-                    Beli Sekarang
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
                     variant="outline-secondary button-tambahkeranjang w-100"
-                    disabled={!isLogin}
+                    disabled={!isLogin || isLoadingDate || add.isPending}
+                    onClick={handleAddKerajang}
+                    ref={activeButtonPOKeranjang}
                   >
                     + Keranjang
                   </Button>
@@ -321,7 +565,7 @@ export default function HampersDetail() {
                 <Row
                   className="mt-1 text-center"
                   style={{
-                    fontSize: "1.2rem",
+                    fontSize: "0.9rem",
                     color: "#BE1008",
                   }}
                 >
@@ -333,6 +577,24 @@ export default function HampersDetail() {
                   </Col>
                 </Row>
               )}
+
+              {getMinimumLimitAndStok(limit) === 0 &&
+                !isLoadingDate &&
+                tanggal && (
+                  <Row
+                    className="mt-1 text-center"
+                    style={{
+                      fontSize: "0.9rem",
+                      color: "#BE1008",
+                    }}
+                  >
+                    <Col>
+                      <p>
+                        Produk ini tidak tersedia, silahkan pilih produk lain
+                      </p>
+                    </Col>
+                  </Row>
+                )}
             </Col>
           </Row>
         </>
