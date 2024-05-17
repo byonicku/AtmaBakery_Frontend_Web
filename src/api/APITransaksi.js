@@ -26,9 +26,24 @@ const countTransaksiWithHampers = async (data) => {
   }
 };
 
+const checkoutTransaksi = async (data) => {
+  try {
+    const response = await useAxios.post("/transaksi", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
   countTransaksiWithHampers,
+  checkoutTransaksi,
 };
 
 export default APITransaksi;

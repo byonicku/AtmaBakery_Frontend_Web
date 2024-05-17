@@ -20,6 +20,7 @@ import "./css/Keranjang.css";
 import { useConfirm } from "@/hooks/useConfirm";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import APITransaksi from "@/api/APITransaksi";
 
 export default function Keranjang() {
   const [isLoading, setIsLoading] = useState(false);
@@ -137,6 +138,18 @@ export default function Keranjang() {
     return points;
   };
 
+  const checkout = useMutation({
+    mutationFn: (data) => APITransaksi.checkoutTransaksi(data),
+    onSuccess: async () => {
+      toast.success("Checkout berhasil!");
+      fetchKeranjang();
+      sessionStorage.setItem("po_date", null);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const del = useMutation({
     mutationFn: (id) => APICart.deleteCart(id),
     onSuccess: async () => {
@@ -205,6 +218,66 @@ export default function Keranjang() {
     try {
       setIsLoading(true);
       await delAll.mutateAsync();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!selectedPengiriman) {
+      toast.error("Pilih pengiriman terlebih dahulu!");
+      return;
+    }
+
+    if (selectedPengiriman === "Kurir" && !selectedAlamat) {
+      toast.error("Pilih alamat terlebih dahulu!");
+      return;
+    }
+
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin melakukan checkout?",
+      "",
+      "Ya",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    const nama = sessionStorage.getItem("nama");
+    const no_hp = sessionStorage.getItem("no_hp");
+
+    const data = {
+      nama_penerima: nama,
+      no_telp_penerima: no_hp,
+      lokasi: selectedAlamat.lokasi,
+      tipe_delivery: selectedPengiriman,
+      keterangan: selectedAlamat.keterangan,
+      pengiriman: selectedPengiriman,
+      gunakan_poin: gunakanPoin,
+      total: subtotal,
+      is_using_poin: gunakanPoin,
+      status: "Menunggu Pembayaran",
+    };
+
+    if (
+      sessionStorage.getItem("po_date") !== null ||
+      sessionStorage.getItem("po_date") !== "null"
+    ) {
+      data.po_date = sessionStorage.getItem("po_date");
+      data.nama_penerima = selectedAlamat.nama_lengkap;
+      data.no_telp_penerima = selectedAlamat.no_hp;
+    }
+
+    try {
+      setIsLoading(true);
+      await checkout.mutateAsync(data);
     } catch (error) {
       toast.error(
         error?.data?.message ||
@@ -395,29 +468,7 @@ export default function Keranjang() {
                 </h3>
                 <Card className="shadow">
                   <Card.Body>
-                    <Form.Group>
-                      <Form.Label
-                        style={{ fontWeight: "bold", fontSize: "1rem" }}
-                      >
-                        Alamat
-                      </Form.Label>
-                      <Form.Select
-                        name="alamat"
-                        disabled={alamat?.length === 0}
-                        onChange={(e) => setSelectedAlamat(e.target.value)}
-                        required
-                      >
-                        <option value="" disabled hidden selected>
-                          {alamat?.length === 0
-                            ? "Tambah Alamat di Profile Anda"
-                            : "Pilih Alamat"}
-                        </option>
-                        {alamat?.map((item, index) => (
-                          <option key={index}>{item?.lokasi}</option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                    <Form.Group className="mt-3">
+                    <Form.Group className={!selectedPengiriman ? "" : "mb-3"}>
                       <Form.Label
                         style={{ fontWeight: "bold", fontSize: "1rem" }}
                       >
@@ -436,6 +487,30 @@ export default function Keranjang() {
                         <option value="Ambil">Ambil di tempat</option>
                       </Form.Select>
                     </Form.Group>
+                    {selectedPengiriman === "Kurir" && (
+                      <Form.Group className="my-3">
+                        <Form.Label
+                          style={{ fontWeight: "bold", fontSize: "1rem" }}
+                        >
+                          Alamat
+                        </Form.Label>
+                        <Form.Select
+                          name="alamat"
+                          disabled={alamat?.length === 0}
+                          onChange={(e) => setSelectedAlamat(e.target.value)}
+                          required
+                        >
+                          <option value="" disabled hidden selected>
+                            {alamat?.length === 0
+                              ? "Tambah Alamat di Profile Anda"
+                              : "Pilih Alamat"}
+                          </option>
+                          {alamat?.map((item, index) => (
+                            <option key={index}>{item?.lokasi}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    )}
                   </Card.Body>
                 </Card>
                 <h3
@@ -530,6 +605,7 @@ export default function Keranjang() {
                         variant="secondary"
                         type="submit"
                         className="button-checkout"
+                        onClick={handleCheckout}
                       >
                         Checkout
                       </Button>
