@@ -306,15 +306,16 @@ export default function Keranjang() {
                               className="mb-0"
                               style={{
                                 textOverflow: "ellipsis",
+                                fontSize: "0.9rem",
                               }}
                             >
-                              {item?.produk?.nama_produk ??
-                                item?.hampers?.nama_hampers +
-                                  " " +
-                                  ukuranConverter(
-                                    item?.produk?.ukuran,
-                                    item?.produk?.id_kategori
-                                  )}
+                              {(item?.produk?.nama_produk ??
+                                item?.hampers?.nama_hampers) +
+                                " " +
+                                ukuranConverter(
+                                  item?.produk?.ukuran,
+                                  item?.produk?.id_kategori
+                                )}
                             </p>
                             {item?.po_date && (
                               <p
@@ -372,8 +373,12 @@ export default function Keranjang() {
                 </tbody>
               </Table>
               <Button
-                variant="danger custom-danger-btn w-100 my-3"
+                variant="danger custom-danger-btn w-100 my-2"
                 onClick={handleDeleteAllItem}
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                }}
               >
                 Kosongkan Keranjang
               </Button>
