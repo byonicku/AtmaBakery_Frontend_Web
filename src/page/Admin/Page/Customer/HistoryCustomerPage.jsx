@@ -153,7 +153,7 @@ export default function HistoryCustomerPage() {
                     <td>
                       {history.status == "Terkirim" ? (
                         <Badge bg="success">{history.status}</Badge>
-                      ) : history.status === "Dibatalkan" ? (
+                      ) : history.status === "Ditolak" ? (
                         <Badge bg="danger">{history.status}</Badge>
                       ) : (
                         <Badge bg="secondary">{history.status}</Badge>
@@ -236,7 +236,8 @@ export default function HistoryCustomerPage() {
                   <Col className="text-end">
                     <h4>
                       Nota {selectedNota?.no_nota}
-                      {(selectedNota?.status == "Terkirim" || selectedNota?.status == "Diterima" )? (
+                      {selectedNota?.status == "Terkirim" ||
+                      selectedNota?.status == "Diterima" ? (
                         <Badge className="ms-3 font-size-12" bg="success">
                           {selectedNota?.status}
                         </Badge>
@@ -244,7 +245,8 @@ export default function HistoryCustomerPage() {
                         <Badge className="ms-3 font-size-12" bg="danger">
                           {selectedNota?.status}
                         </Badge>
-                      ) : (selectedNota?.status === "Sedang Diproses" || selectedNota?.status === "Sedang Dikirim") ? (
+                      ) : selectedNota?.status === "Sedang Diproses" ||
+                        selectedNota?.status === "Sedang Dikirim" ? (
                         <Badge className="ms-3 font-size-12" bg="primary">
                           {selectedNota?.status}
                         </Badge>

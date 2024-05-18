@@ -209,7 +209,7 @@ export default function HistoryCustomerPage() {
                     <td>
                       {history.status == "Terkirim" ? (
                         <Badge bg="success">{history.status}</Badge>
-                      ) : history.status === "Dibatalkan" ? (
+                      ) : history.status === "Ditolak" ? (
                         <Badge bg="danger">{history.status}</Badge>
                       ) : (
                         <Badge bg="secondary">{history.status}</Badge>
