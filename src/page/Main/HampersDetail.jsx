@@ -136,11 +136,27 @@ export default function HampersDetail() {
     },
   });
 
-  const handleAddKerajang = async () => {
-    if (
-      (tanggal === "" || tanggal === null || tanggal === undefined) &&
-      pilihan === "PO"
-    ) {
+  const multiplyJumlah = useCallback((detailHampers, jumlah) => {
+    return detailHampers.map((item) => item?.jumlah * jumlah);
+  }, []);
+
+  const getLimitOrStok = useCallback((limits) => {
+    return limits.map((item) =>
+      item?.stok > 0 ? item?.stok : item?.remaining
+    );
+  }, []);
+
+  const checkLimits = useCallback(
+    (detailHampersMult, detailHampersLimitOrStok) => {
+      return !detailHampersLimitOrStok.some(
+        (item, index) => item < detailHampersMult[index]
+      );
+    },
+    []
+  );
+
+  const handleAddKerajang = useCallback(async () => {
+    if ((tanggal === "" || !tanggal) && pilihan === "PO") {
       toast.error("Tanggal tidak boleh kosong!");
       return;
     }
@@ -150,38 +166,48 @@ export default function HampersDetail() {
       return;
     }
 
-    if (
-      limit.some((data) => {
-        return jumlah > data?.stok;
-      }) &&
-      pilihan === "READY"
-    ) {
+    if (limit.some((data) => jumlah > data?.stok) && pilihan === "READY") {
       toast.error("Jumlah melebihi stok produk!");
       return;
     }
 
     if (
-      limit.some((data) => {
-        return jumlah > data?.limit && data?.stok === 0;
-      }) &&
+      limit.some((data) => jumlah > data?.limit && data?.stok === 0) &&
       pilihan === "PO"
     ) {
       toast.error("Jumlah melebihi limit produk!");
       return;
     }
 
-    const data = {
-      id_hampers: id,
-      jumlah: jumlah,
-      status: pilihan,
-    };
+    if (
+      !checkLimits(
+        multiplyJumlah(detail_hampers, jumlah + 1),
+        getLimitOrStok(limit)
+      )
+    ) {
+      toast.error("Jumlah melebihi limit produk!");
+      return;
+    }
 
+    const data = { id_hampers: id, jumlah, status: pilihan };
     if (pilihan === "PO" || isAlreadyPO) {
       data.po_date = tanggal;
     }
 
     await add.mutateAsync(data);
-  };
+  }, [
+    add,
+    checkLimits,
+    detail_hampers,
+    getLimitOrStok,
+    id,
+    isAlreadyPO,
+    jumlah,
+    limit,
+    multiplyJumlah,
+    pilihan,
+    tanggal,
+  ]);
 
   const resetField = () => {
     activeButtonPOKeranjang.current.disabled = true;
@@ -195,6 +221,8 @@ export default function HampersDetail() {
   useEffect(() => {
     if (hampers) {
       activeButtonPOKeranjang.current.disabled = true;
+      btnMinus.current.disabled = true;
+      btnPlus.current.disabled = true;
       if (hampers.status === "READY") {
         refPO.current?.classList.remove("active");
         refPO.current.disabled = true;
@@ -216,24 +244,17 @@ export default function HampersDetail() {
     }
   }, [hampers, isAlreadyPO, getCountTransaksi]);
 
-  const mapLimitToString = (limit) => {
-    const array = [];
-    limit.map((data) => {
-      if (data?.stok > 0)
-        array.push(data?.nama_produk + " dengan stok " + data?.stok);
-      else
-        array.push(
-          namaProdukConverter(
+  const mapLimitToString = useCallback((limit) => {
+    return limit.map((data) =>
+      data?.stok > 0
+        ? `${data?.nama_produk} dengan stok ${data?.stok}`
+        : `${namaProdukConverter(
             data?.id_kategori,
             data?.ukuran,
             data?.nama_produk
-          ) +
-            " dengan limit " +
-            data?.remaining
-        );
-    });
-    return array;
-  };
+          )} dengan limit ${data?.remaining}`
+    );
+  }, []);
 
   const namaProdukConverter = (kategori, ukuran, nama) => {
     if (kategori === "CK") {
@@ -339,12 +360,14 @@ export default function HampersDetail() {
                           listStyleType: "circle",
                         }}
                       >
-                        {item?.produk?.id_kategori === "CK"
+                        {(item?.produk?.id_kategori === "CK"
                           ? item?.produk?.nama_produk +
                             " " +
                             item?.produk?.ukuran +
                             " Loyang"
-                          : item?.produk?.nama_produk}
+                          : item?.produk?.nama_produk) +
+                          " x " +
+                          item?.jumlah}
                       </li>
                     ))}
                   </ul>
@@ -447,7 +470,11 @@ export default function HampersDetail() {
                       !isLogin ||
                       isLoadingDate ||
                       add.isPending ||
-                      minLimitOrStok === 0
+                      minLimitOrStok === 0 ||
+                      !checkLimits(
+                        multiplyJumlah(detail_hampers, jumlah),
+                        getLimitOrStok(limit)
+                      )
                     }
                   >
                     -
@@ -473,14 +500,26 @@ export default function HampersDetail() {
                       if (jumlah === minLimitOrStok) {
                         return;
                       }
-                      setJumlah(jumlah + 1);
+
+                      if (
+                        checkLimits(
+                          multiplyJumlah(detail_hampers, jumlah + 1),
+                          getLimitOrStok(limit)
+                        )
+                      ) {
+                        setJumlah(jumlah + 1);
+                      }
                     }}
                     ref={btnPlus}
                     disabled={
                       !isLogin ||
                       isLoadingDate ||
                       add.isPending ||
-                      minLimitOrStok === 0
+                      minLimitOrStok === 0 ||
+                      !checkLimits(
+                        multiplyJumlah(detail_hampers, jumlah + 1),
+                        getLimitOrStok(limit)
+                      )
                     }
                   >
                     +
@@ -553,7 +592,11 @@ export default function HampersDetail() {
                       !isLogin ||
                       isLoadingDate ||
                       add.isPending ||
-                      minLimitOrStok === 0
+                      minLimitOrStok === 0 ||
+                      !checkLimits(
+                        multiplyJumlah(detail_hampers, jumlah),
+                        getLimitOrStok(limit)
+                      )
                     }
                     onClick={handleAddKerajang}
                     ref={activeButtonPOKeranjang}
@@ -579,22 +622,28 @@ export default function HampersDetail() {
                 </Row>
               )}
 
-              {minLimitOrStok === 0 && !isLoadingDate && tanggal && (
-                <Row
-                  className="mt-1 text-center"
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#BE1008",
-                  }}
-                >
-                  <Col>
-                    <p>
-                      Produk ini tidak tersedia, silahkan pilih produk lain atau
-                      tanggal lain
-                    </p>
-                  </Col>
-                </Row>
-              )}
+              {(minLimitOrStok === 0 ||
+                !checkLimits(
+                  multiplyJumlah(detail_hampers, jumlah),
+                  getLimitOrStok(limit)
+                )) &&
+                !isLoadingDate &&
+                tanggal && (
+                  <Row
+                    className="mt-1 text-center"
+                    style={{
+                      fontSize: "0.9rem",
+                      color: "#BE1008",
+                    }}
+                  >
+                    <Col>
+                      <p>
+                        Produk ini tidak tersedia, silahkan pilih produk lain
+                        atau tanggal lain
+                      </p>
+                    </Col>
+                  </Row>
+                )}
             </Col>
           </Row>
         </>

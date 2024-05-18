@@ -411,28 +411,6 @@ export default function ProdukDetail() {
                 </Col>
               </Row>
 
-              <Row className="mt-3">
-                <Col md={12}>
-                  <Form.Label
-                    className="form-label-font"
-                    style={{
-                      color: "#BE1008",
-                      fontSize: "0.9rem",
-                    }}
-                  >
-                    {produk?.limit > 0
-                      ? tanggal === "" ||
-                        tanggal === null ||
-                        tanggal === undefined
-                        ? "Silahkan Pilih Tanggal Terlebih Dahulu"
-                        : isLoadingDate
-                        ? "Loading..."
-                        : "Limit Produk Sisa " + limit
-                      : "Stok Produk Sisa " + produk?.stok}
-                  </Form.Label>
-                </Col>
-              </Row>
-
               <Form.Group className="mt-2">
                 <Form.Label className="form-label-font">
                   Masukkan Jumlah
@@ -487,13 +465,37 @@ export default function ProdukDetail() {
                       !isLogin ||
                       isLoadingDate ||
                       add.isPending ||
-                      checkMinimium()
+                      checkMinimium() ||
+                      limit === jumlah
                     }
                   >
                     +
                   </Button>
                 </InputGroup>
               </Form.Group>
+
+              <Row className="mt-3">
+                <Col md={12}>
+                  <Form.Label
+                    className="form-label-font"
+                    style={{
+                      color: "#BE1008",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {produk?.limit > 0
+                      ? tanggal === "" ||
+                        tanggal === null ||
+                        tanggal === undefined
+                        ? "Silahkan Pilih Tanggal Terlebih Dahulu"
+                        : isLoadingDate
+                        ? "Loading..."
+                        : "Limit Produk Sisa " + limit
+                      : "Stok Produk Sisa " + produk?.stok}
+                  </Form.Label>
+                </Col>
+              </Row>
+
               <Row className="mt-4">
                 <Col>
                   <Button
