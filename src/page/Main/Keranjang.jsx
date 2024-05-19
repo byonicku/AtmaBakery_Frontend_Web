@@ -138,7 +138,7 @@ export default function Keranjang() {
 
       return calculatePoints(new Date(tanggal_lahir), points);
     },
-    [tanggal_lahir]
+    [tanggal_lahir, gunakanPoin, userPoin]
   );
 
   useEffect(() => {
