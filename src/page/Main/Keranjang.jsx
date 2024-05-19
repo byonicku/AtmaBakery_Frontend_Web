@@ -678,7 +678,10 @@ export default function Keranjang() {
                       </Col>
                       <Col lg={6} md={6} sm={6} xs={6} className="right-detail">
                         {Formatter.moneyFormatter(
-                          Math.max(total - userPoin * 100, 0)
+                          Math.max(
+                            total - (gunakanPoin ? userPoin * 100 : 0),
+                            0
+                          )
                         )}
                       </Col>
                     </Row>
