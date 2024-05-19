@@ -76,6 +76,10 @@ export default function Keranjang() {
 
   const hitungPoint = useCallback(
     (totalAmount, points) => {
+      if (gunakanPoin) {
+        totalAmount -= userPoin * 100;
+      }
+
       while (totalAmount >= 10000) {
         if (totalAmount >= 1000000) {
           points += 200;
