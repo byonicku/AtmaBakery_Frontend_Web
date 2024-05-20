@@ -70,6 +70,10 @@ export default function ProdukDetail() {
             }))
           );
         }
+
+        if (response?.stok > 0) {
+          setLimit(0);
+        }
       } catch (error) {
         setProduk(null);
 
