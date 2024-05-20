@@ -70,6 +70,10 @@ export default function ProdukDetail() {
             }))
           );
         }
+
+        if (response?.stok > 0) {
+          setLimit(0);
+        }
       } catch (error) {
         setProduk(null);
 
@@ -466,7 +470,8 @@ export default function ProdukDetail() {
                       isLoadingDate ||
                       add.isPending ||
                       checkMinimium() ||
-                      limit === jumlah
+                      limit === jumlah ||
+                      jumlah === produk?.stok
                     }
                   >
                     +

@@ -171,19 +171,17 @@ export default function HampersDetail() {
       return;
     }
 
-    if (
-      limit.some((data) => jumlah > data?.limit && data?.stok === 0) &&
-      pilihan === "PO"
-    ) {
+    if (limit.some((data) => jumlah > data?.remaining) && pilihan === "PO") {
       toast.error("Jumlah melebihi limit produk!");
       return;
     }
 
     if (
       !checkLimits(
-        multiplyJumlah(detail_hampers, jumlah + 1),
+        multiplyJumlah(detail_hampers, jumlah),
         getLimitOrStok(limit)
-      )
+      ) &&
+      pilihan === "PO"
     ) {
       toast.error("Jumlah melebihi limit produk!");
       return;
