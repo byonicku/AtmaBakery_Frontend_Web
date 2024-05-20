@@ -348,6 +348,8 @@ export default function Keranjang() {
           error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
