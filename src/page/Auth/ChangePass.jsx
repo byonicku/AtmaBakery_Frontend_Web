@@ -23,8 +23,8 @@ import Header from "@/component/Auth/Header";
 
 export default function ResetPass() {
   const { key } = useParams();
-  // eslint-disable-next-line no-unused-vars
-  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingVerify, setIsLoadingVerify] = useState(true);

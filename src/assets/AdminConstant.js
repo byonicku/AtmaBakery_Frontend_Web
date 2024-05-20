@@ -8,6 +8,7 @@ import {
   FaUsers,
   FaHome,
   FaBell,
+  FaLocationArrow,
 } from "react-icons/fa";
 
 const MORoute = [
@@ -20,6 +21,11 @@ const MORoute = [
     label: "Pembelian Bahan Baku",
   },
   { to: "./pengeluaran_lain", icon: FaFileInvoice, label: "Pengeluaran Lain" },
+  {
+    to: "./konfirmasi_pesanan",
+    icon: FaShoppingBasket,
+    label: "Konfirmasi Pesanan",
+  },
 ];
 
 const AdminRoute = [
@@ -29,6 +35,12 @@ const AdminRoute = [
   { to: "./bahan_baku", icon: BsJournalText, label: "Bahan Baku" },
   { to: "./hampers", icon: BsBox2Heart, label: "Hampers" },
   { to: "./customer", icon: FaUsers, label: "Customer" },
+  { to: "./input_jarak", icon: FaLocationArrow, label: "Input Jarak" },
+  {
+    to: "./konfirmasi_pembayaran",
+    icon: FaFileInvoice,
+    label: "Konfirmasi Pembayaran",
+  },
 ];
 
 const OwnerRoute = [

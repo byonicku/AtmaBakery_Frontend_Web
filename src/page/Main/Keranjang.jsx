@@ -203,7 +203,7 @@ export default function Keranjang() {
       if (gunakanPoin) {
         sessionStorage.setItem("poin", 0);
       }
-      navigate("/profile/pemesanan");
+      navigate("/profile/pemesanan?status=Menunggu Pembayaran");
     },
     onError: (error) => {
       console.error(error);

@@ -11,8 +11,10 @@ import {
   Image,
   Dropdown,
 } from "react-bootstrap";
+
 import { useState, useEffect, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
+import propTypes from "prop-types";
 
 import { BsInbox, BsSearch } from "react-icons/bs";
 
@@ -26,10 +28,8 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { toast } from "sonner";
-import { useSearchParams } from "react-router-dom";
 
-export default function HistoryCustomerPage() {
-  const [searchParams] = useSearchParams();
+export default function KonfirmasiPage({ status }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(true);
   const [selectedNota, setSelectedNota] = useState(null);
@@ -40,11 +40,8 @@ export default function HistoryCustomerPage() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState(
-    searchParams.get("status") ? searchParams.get("status") : "Semua"
-  );
+  const [filter, setFilter] = useState(status ? status : "Semua");
   const [showModal, setShowModal] = useState(false);
-  const [image, setImage] = useState(null);
   const [bukti_bayar, setBuktiBayar] = useState(null);
 
   const handleCloseModal = () => {
@@ -58,66 +55,9 @@ export default function HistoryCustomerPage() {
   const handleCloseGambarModal = () => setShowGambarModal(false);
   const handleShowGambarModal = () => setShowGambarModal(true);
 
-  const [formData, setFormData] = useState({
-    no_nota: "",
-    bukti_bayar: "",
-  });
-
-  const validationSchema = {
-    no_nota: {
-      required: true,
-      alias: "no_nota",
-    },
-    bukti_bayar: {
-      required: true,
-      alias: "bukti_bayar",
-    },
-  };
-
-  const onSubmit = async (formData) => {
-    if (isLoading) return;
-    const data = new FormData();
-    data.append("no_nota", formData.no_nota);
-    data.append("bukti_bayar", formData.bukti_bayar);
-    try {
-      console.log(formData.bukti_bayar);
-      await confirmBayar.mutateAsync(formData);
-      return;
-    } catch (error) {
-      toast.error(
-        error?.data?.message ||
-          error?.message ||
-          "Sesuatu sedang bermasalah pada server!"
-      );
-    }
-  };
-
-  const confirmBayar = useMutation({
-    mutationFn: (data) => APITransaksi.confirmBayar(data),
-    onSuccess: async () => {
-      toast.success("Upload Bukti Bayar Berhasil!");
-      const abortController = new AbortController();
-      const signal = abortController.signal;
-      fetchHistoryCust(signal);
-      handleCloseAddEditModal();
-      handleCloseModal();
-      setFilter("Menunggu Konfirmasi Pembayaran");
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
-
-  const inputHelper = new InputHelper(
-    formData,
-    setFormData,
-    validationSchema,
-    onSubmit
-  );
-
   const handleShowModal = useCallback(async (data) => {
     setShowModal(true);
-    const response = await APIHistory.getNotaPesananSelf(data);
+    const response = await APIHistory.getNotaPesanan(data);
     setSelectedNota(response);
     setBuktiBayar(data?.bukti_pembayaran);
     setIsLoadingModal(false);
@@ -125,9 +65,8 @@ export default function HistoryCustomerPage() {
 
   const fetchHistoryCust = useCallback(
     async (signal, filter) => {
-      setIsLoading(true);
       try {
-        const response = await APIHistory.getCustHistoryByPageSelf(
+        const response = await APIHistory.getCustHistoryByPageAll(
           page,
           signal,
           filter
@@ -154,15 +93,26 @@ export default function HistoryCustomerPage() {
     setPage(newPage);
   }, []);
 
+  useEffect(() => {
+    setFilter(status);
+  }, [status]);
+
   // Pas masuk load customer
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    fetchHistoryCust(signal, filter);
+    setIsLoading(true);
+    const fetchData = async () => {
+      await fetchHistoryCust(signal, filter);
+    };
+
+    fetchData();
+
     if (filter) {
       setSearch("");
     }
+
     return () => {
       abortController.abort();
     };
@@ -176,7 +126,7 @@ export default function HistoryCustomerPage() {
 
     setIsLoading(true);
     try {
-      const response = await APIHistory.searchHistoryCustSelf(search, filter);
+      const response = await APIHistory.searchCustHistoryAll(search, filter);
       setHistory(response);
     } catch (error) {
       setHistory([]);
@@ -186,12 +136,64 @@ export default function HistoryCustomerPage() {
     }
   };
 
+  const statusNotFound = (status) => {
+    if (status === "Menunggu Perhitungan Ongkir") {
+      return "Tidak ada pesanan yang menunggu ongkir";
+    }
+
+    if (status === "Menunggu Konfirmasi Pembayaran") {
+      return "Tidak ada pesanan yang menunggu konfirmasi pembayaran";
+    }
+
+    if (status === "Menunggu Konfirmasi Pesanan") {
+      return "Tidak ada pesanan yang menunggu konfirmasi pesanan";
+    }
+
+    if (!status && search) {
+      return "History Tidak Ditemukan";
+    }
+
+    return "Belum Ada History Disini";
+  };
+
+  const outletHeaderData = (status) => {
+    if (status === "Menunggu Perhitungan Ongkir") {
+      return {
+        title: "Penginputan Jarak Pesanan Customer",
+        desc: "Lakukan penginputan jarak pesanan customer",
+        breadcrumb: "Input Jarak",
+      };
+    }
+
+    if (status === "Menunggu Konfirmasi Pembayaran") {
+      return {
+        title: "Konfirmasi Pembayaran Customer",
+        desc: "Lakukan konfirmasi pembayaran customer",
+        breadcrumb: "Konfirmasi Pembayaran",
+      };
+    }
+
+    if (status === "Menunggu Konfirmasi Pesanan") {
+      return {
+        title: "Konfirmasi Pesanan Customer",
+        desc: "Lakukan konfirmasi pesanan customer",
+        breadcrumb: "Konfirmasi Pesanan",
+      };
+    }
+
+    return {
+      title: "History Pesanan Customer",
+      desc: "Lihat history pesanan customer",
+      breadcrumb: "History Pesanan",
+    };
+  };
+
   return (
     <>
       <OutlerHeader
-        title="Kelola Data History Customer"
-        desc="Lakukan pengelolaan data History Customer Atma Bakery"
-        breadcrumb="History Customer"
+        title={outletHeaderData(status).title}
+        desc={outletHeaderData(status).desc}
+        breadcrumb={outletHeaderData(status).breadcrumb}
       />
       <section className="content px-3">
         <Row className="pb-3 gap-1 gap-lg-0 gap-md-0">
@@ -201,112 +203,7 @@ export default function HistoryCustomerPage() {
             lg={6}
             md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-          >
-            <Dropdown>
-              <Dropdown.Toggle variant="secondary">{filter}</Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Semua");
-                  }}
-                >
-                  Semua
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Menunggu Perhitungan Ongkir");
-                  }}
-                >
-                  Menunggu Perhitungan Ongkir
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Menunggu Pembayaran");
-                  }}
-                >
-                  Menunggu Pembayaran
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Menunggu Konfirmasi Pembayaran");
-                  }}
-                >
-                  Menunggu Konfirmasi Pembayaran
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Menunggu Konfirmasi Pesanan");
-                  }}
-                >
-                  Menunggu Konfirmasi Pesanan
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Pesanan Diterima");
-                  }}
-                >
-                  Pesanan Diterima
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Sedang Diproses");
-                  }}
-                >
-                  Sedang Diproses
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Siap Pick Up");
-                  }}
-                >
-                  Siap Pick Up
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Siap Kirim");
-                  }}
-                >
-                  Siap Kirim
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Sedang Diantar Kurir");
-                  }}
-                >
-                  Sedang Diantar Kurir
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Sedang Diantar Ojol");
-                  }}
-                >
-                  Sedang Diantar Ojol
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Terkirim");
-                  }}
-                >
-                  Terkirim
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Selesai");
-                  }}
-                >
-                  Selesai
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Ditolak");
-                  }}
-                >
-                  Ditolak
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Col>
+          ></Col>
           <Col
             xs={12}
             sm={12}
@@ -443,13 +340,7 @@ export default function HistoryCustomerPage() {
             )}
           </>
         ) : (
-          <NotFound
-            text={
-              search || history
-                ? "History Tidak Ditemukan"
-                : "Belum Ada History Disini"
-            }
-          />
+          <NotFound text={statusNotFound(status)} />
         )}
 
         <Modal show={showModal} onHide={handleCloseModal} size="xl">
@@ -686,19 +577,6 @@ export default function HistoryCustomerPage() {
           {isLoadingModal ? null : (
             <Modal.Footer>
               <p>{selectedNota?.status}</p>
-              {selectedNota?.status.includes("Menunggu Pembayaran") && (
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    handleShowAddEditModal();
-                    setFormData({
-                      no_nota: selectedNota?.no_nota,
-                    });
-                  }}
-                >
-                  Bayar
-                </Button>
-              )}
               {bukti_bayar && (
                 <Button
                   variant="primary"
@@ -715,57 +593,6 @@ export default function HistoryCustomerPage() {
             </Modal.Footer>
           )}
         </Modal>
-        <AddEditModal
-          show={showAddEditModal}
-          onHide={() => {
-            handleCloseAddEditModal();
-            setTimeout(() => {
-              setImage(null);
-            }, 125);
-          }}
-          size="md"
-          title={"Upload Bukti Pembayaran"}
-          text={"Pastikan bukti pembayaran yang telah anda upload telah benar"}
-          onSubmit={inputHelper.handleSubmit}
-          add={confirmBayar}
-          isLoadingModal={isLoading}
-        >
-          <Form.Group className="text-start mt-3">
-            <Form.Label>Bukti Pembayaran {formData?.no_nota}</Form.Label>
-            <Form.Control
-              type="file"
-              style={{ border: "1px solid #808080" }}
-              name="bukti_bayar"
-              accept="image/png, image/jpeg"
-              onChange={(e) => {
-                if (e.target.files[0].size > 2000000) {
-                  e.target.value = null;
-                  toast.error("Bukti bayar tidak boleh lebih dari 2MB!");
-                  return;
-                }
-
-                setImage(e.target.files[0]);
-                setFormData({
-                  no_nota: selectedNota?.no_nota,
-                  bukti_bayar: e.target.files[0],
-                });
-              }}
-              disabled={confirmBayar.isPending}
-              required
-            />
-            {image !== null && (
-              <div className="image-container">
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt="preview"
-                  width="200"
-                  height="200"
-                  className="img-thumbnail my-2 mx-1"
-                />
-              </div>
-            )}
-          </Form.Group>
-        </AddEditModal>
         <Modal show={showGambarModal} onHide={handleCloseGambarModal}>
           <Image src={bukti_bayar} alt="bukti_bayar" />
         </Modal>
@@ -773,3 +600,7 @@ export default function HistoryCustomerPage() {
     </>
   );
 }
+
+KonfirmasiPage.propTypes = {
+  status: propTypes.string,
+};

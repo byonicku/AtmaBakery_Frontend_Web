@@ -17,6 +17,7 @@ import DashboardRoute from "@/page/Routes/Guards/DashboardRoute";
 import RoleRoute from "@/page/Routes/Guards/RoleRoute";
 import PembelianBahanBakuPage from "@/page/Admin/Page/PembelianBahanBaku/PembelianBahanBakuPage";
 import NotFound404 from "@/page/Admin/Page/NotFound404";
+import KonfirmasiPage from "@/page/Admin/Page/KonfirmasiPage";
 
 export default function getAdminRoutes() {
   return (
@@ -129,6 +130,30 @@ export default function getAdminRoutes() {
         element={
           <RoleRoute roles={["ADM"]}>
             <AddEditProdukPage isEdit={true} />
+          </RoleRoute>
+        }
+      />
+      <Route
+        path="input_jarak"
+        element={
+          <RoleRoute roles={["ADM"]}>
+            <KonfirmasiPage status={"Menunggu Perhitungan Ongkir"} />
+          </RoleRoute>
+        }
+      />
+      <Route
+        path="konfirmasi_pembayaran"
+        element={
+          <RoleRoute roles={["ADM"]}>
+            <KonfirmasiPage status={"Menunggu Konfirmasi Pembayaran"} />
+          </RoleRoute>
+        }
+      />
+      <Route
+        path="konfirmasi_pesanan"
+        element={
+          <RoleRoute roles={["MO"]}>
+            <KonfirmasiPage status={"Menunggu Konfirmasi Pesanan"} />
           </RoleRoute>
         }
       />
