@@ -1,23 +1,31 @@
 div[role="dialog"][aria-modal="true"]:nth-last-child(1) {
-  z-index: 1125;
+  z-index: 1200;
 }
 
 .modal-backdrop.show:nth-last-child(2) {
-  z-index: 1100;
+  z-index: 1175;
 }
 
 div[role="dialog"][aria-modal="true"]:nth-last-child(3) {
-  z-index: 1075;
+  z-index: 1150;
 }
 
 .modal-backdrop.show:nth-last-child(4) {
-  z-index: 1050;
+  z-index: 1125;
 }
 
 div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
-  z-index: 1025;
+  z-index: 1100;
 }
 
 .modal-backdrop.show:nth-last-child(6) {
-  z-index: 1000;
+  z-index: 1075;
+}
+
+div[role="dialog"][aria-modal="true"]:nth-last-child(7) {
+  z-index: 1050;
+}
+
+.modal-backdrop.show:nth-last-child(8) {
+  z-index: 1025;
 }

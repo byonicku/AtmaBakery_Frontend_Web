@@ -8,6 +8,7 @@ import {
   Badge,
   InputGroup,
   Form,
+  Image,
 } from "react-bootstrap";
 import { useState, useEffect, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -28,12 +29,14 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
+import { toast } from "sonner";
 
 export default function HistoryCustomerPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(true);
   const [selectedNota, setSelectedNota] = useState(null);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showGambarModal, setShowGambarModal] = useState(false);
 
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
@@ -41,13 +44,18 @@ export default function HistoryCustomerPage() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState(null);
-
-  const { handleRefresh } = useRefresh();
+  const [bukti_bayar, setBuktiBayar] = useState(null);
 
   const handleCloseModal = () => {
     setShowModal(false);
     setIsLoadingModal(false);
   };
+
+  const handleCloseAddEditModal = () => setShowAddEditModal(false);
+  const handleShowAddEditModal = () => setShowAddEditModal(true);
+
+  const handleCloseGambarModal = () => setShowGambarModal(false);
+  const handleShowGambarModal = () => setShowGambarModal(true);
 
   const [formData, setFormData] = useState({
     no_nota: "",
@@ -63,14 +71,14 @@ export default function HistoryCustomerPage() {
       required: true,
       alias: "bukti_bayar",
     },
-  }
+  };
 
   const onSubmit = async (formData) => {
-    if(isLoading) return;
+    if (isLoading) return;
     const data = new FormData();
-  data.append("no_nota", formData.no_nota);
-  data.append("bukti_bayar", formData.bukti_bayar);
-    try{
+    data.append("no_nota", formData.no_nota);
+    data.append("bukti_bayar", formData.bukti_bayar);
+    try {
       console.log(formData.bukti_bayar);
       await confirmBayar.mutateAsync(formData);
       return;
@@ -81,19 +89,22 @@ export default function HistoryCustomerPage() {
           "Sesuatu sedang bermasalah pada server!"
       );
     }
-  }
+  };
 
   const confirmBayar = useMutation({
     mutationFn: (data) => APITransaksi.confirmBayar(data),
     onSuccess: async () => {
       toast.success("Upload Bukti Bayar Berhasil!");
-      handleRefresh();
+      const abortController = new AbortController();
+      const signal = abortController.signal;
+      fetchHistoryCust(signal);
+      handleCloseAddEditModal();
+      handleCloseModal();
     },
     onError: (error) => {
       console.error(error);
     },
   });
-
 
   const inputHelper = new InputHelper(
     formData,
@@ -101,15 +112,12 @@ export default function HistoryCustomerPage() {
     validationSchema,
     onSubmit
   );
-  
-  
-  const handleCloseAddEditModal = () => setShowAddEditModal(false);
-  const handleShowAddEditModal = () => setShowAddEditModal(true);
 
   const handleShowModal = useCallback(async (data) => {
     setShowModal(true);
     const response = await APIHistory.getNotaPesananSelf(data);
     setSelectedNota(response);
+    setBuktiBayar(data?.bukti_pembayaran);
     setIsLoadingModal(false);
   }, []);
 
@@ -276,18 +284,22 @@ export default function HistoryCustomerPage() {
                     </td>
                     <td>{Formatter.dateFormatter(history.tanggal_ambil)}</td>
                     <td>
-                    {history.status.includes("Terkirim") || history.status.includes("Selesai") || history.status.includes("Pesanan Diterima") ? (
-                      <Badge bg="success">{history.status}</Badge>
-                    ) : history.status.includes("Sedang Diproses") ? (
-                      <Badge bg="warning">{history.status}</Badge>
-                    ) : history.status.includes("Siap Pick Up") || history.status.includes("Siap Kirim") || history.status.includes("Sedang Diantar Kurir") || history.status.includes("Sedang Diantar Ojol") ? (
-                      <Badge bg="primary">{history.status}</Badge>
-                    ) : history.status === "Ditolak" ? (
-                      <Badge bg="danger">{history.status}</Badge>
-                    ) : (
-                      <Badge bg="secondary">{history.status}</Badge>
-                    )}
-
+                      {history.status.includes("Terkirim") ||
+                      history.status.includes("Selesai") ||
+                      history.status.includes("Pesanan Diterima") ? (
+                        <Badge bg="success">{history.status}</Badge>
+                      ) : history.status.includes("Sedang Diproses") ? (
+                        <Badge bg="warning">{history.status}</Badge>
+                      ) : history.status.includes("Siap Pick Up") ||
+                        history.status.includes("Siap Kirim") ||
+                        history.status.includes("Sedang Diantar Kurir") ||
+                        history.status.includes("Sedang Diantar Ojol") ? (
+                        <Badge bg="primary">{history.status}</Badge>
+                      ) : history.status === "Ditolak" ? (
+                        <Badge bg="danger">{history.status}</Badge>
+                      ) : (
+                        <Badge bg="secondary">{history.status}</Badge>
+                      )}
                     </td>
                     <td>{Formatter.moneyFormatter(history.total)}</td>
                     <td>
@@ -562,16 +574,29 @@ export default function HistoryCustomerPage() {
           {isLoadingModal ? null : (
             <Modal.Footer>
               <p>{selectedNota?.status}</p>
-              {selectedNota?.status.includes("Menunggu Pembayaran") ? (
-                <Button variant="primary" 
+              {selectedNota?.status.includes("Menunggu Pembayaran") && (
+                <Button
+                  variant="primary"
                   onClick={() => {
-                  handleShowAddEditModal();
-                  setFormData({
-                    no_nota: selectedNota?.no_nota,
-                  });
-                }}
-                >Bayar</Button>
-              ) : null}
+                    handleShowAddEditModal();
+                    setFormData({
+                      no_nota: selectedNota?.no_nota,
+                    });
+                  }}
+                >
+                  Bayar
+                </Button>
+              )}
+              {bukti_bayar && (
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    handleShowGambarModal();
+                  }}
+                >
+                  Lihat Bukti Bayar
+                </Button>
+              )}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
               </Button>
@@ -582,46 +607,56 @@ export default function HistoryCustomerPage() {
           show={showAddEditModal}
           onHide={() => {
             handleCloseAddEditModal();
+            setTimeout(() => {
+              setImage(null);
+            }, 125);
           }}
-          size="xl"
+          size="md"
           title={"Upload Bukti Pembayaran"}
-          text={
-            "Pastikan bukti pembayaran yang telah anda upload telah benar"
-          }
+          text={"Pastikan bukti pembayaran yang telah anda upload telah benar"}
           onSubmit={inputHelper.handleSubmit}
+          add={confirmBayar}
           isLoadingModal={isLoading}
         >
           <Form.Group className="text-start mt-3">
-            <Form.Label>
-              Bukti Pembayaran {formData?.no_nota}
-            </Form.Label>
-            <Form.Control 
-              type="file" 
+            <Form.Label>Bukti Pembayaran {formData?.no_nota}</Form.Label>
+            <Form.Control
+              type="file"
               style={{ border: "1px solid #808080" }}
               name="bukti_bayar"
               accept="image/png, image/jpeg"
               onChange={(e) => {
-                
-  
-                if (e.target.files[0].size > 1000000) {
+                if (e.target.files[0].size > 2000000) {
                   e.target.value = null;
-                  toast.error("Bukti bayar tidak boleh lebih dari 1MB!");
+                  toast.error("Bukti bayar tidak boleh lebih dari 2MB!");
                   return;
                 }
-  
+
                 setImage(e.target.files[0]);
-                console.log(e.target.files[0]);
                 setFormData({
                   no_nota: selectedNota?.no_nota,
                   bukti_bayar: e.target.files[0],
-                })
+                });
               }}
               disabled={confirmBayar.isPending}
-              required  
+              required
             />
-
+            {image !== null && (
+              <div className="image-container">
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="preview"
+                  width="200"
+                  height="200"
+                  className="img-thumbnail my-2 mx-1"
+                />
+              </div>
+            )}
           </Form.Group>
         </AddEditModal>
+        <Modal show={showGambarModal} onHide={handleCloseGambarModal}>
+          <Image src={bukti_bayar} alt="bukti_bayar" />
+        </Modal>
       </section>
     </>
   );
