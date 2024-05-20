@@ -54,6 +54,7 @@ export default function Keranjang() {
     } catch (error) {
       setProduk([]);
       console.error(error);
+      sessionStorage.setItem("po_date", "null"); // ilangin po_date
     } finally {
       setIsLoading(false);
     }
