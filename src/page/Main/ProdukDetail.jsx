@@ -470,7 +470,8 @@ export default function ProdukDetail() {
                       isLoadingDate ||
                       add.isPending ||
                       checkMinimium() ||
-                      limit === jumlah
+                      limit === jumlah ||
+                      jumlah === produk?.stok
                     }
                   >
                     +
