@@ -388,14 +388,17 @@ export default function HampersDetail() {
                   placeholder="Masukkan Tanggal Pesan"
                   name="tanggal"
                   onChange={(e) => {
-                    console.log(e.target.value);
                     if (e.target.value === "") {
                       resetField();
                       return;
                     }
-                    activeButtonPOKeranjang.current.disabled = false;
-                    btnMinus.current.disabled = false;
-                    btnPlus.current.disabled = false;
+
+                    if (isLogin) {
+                      activeButtonPOKeranjang.current.disabled = false;
+                      btnMinus.current.disabled = false;
+                      btnPlus.current.disabled = false;
+                    }
+
                     setTanggal(e.target.value);
                     getCountTransaksi(e.target.value);
                   }}

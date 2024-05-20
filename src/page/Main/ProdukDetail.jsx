@@ -222,7 +222,7 @@ export default function ProdukDetail() {
         refDate.current.disabled = true;
       }
     }
-  }, [produk, getCountTransaksi, isAlreadyPO]);
+  }, [produk, getCountTransaksi, isAlreadyPO, isLogin]);
 
   const namaProdukConverter = (kategori, ukuran, nama) => {
     if (kategori === "CK") {
@@ -342,9 +342,13 @@ export default function ProdukDetail() {
                       resetField();
                       return;
                     }
-                    activeButtonPOKeranjang.current.disabled = false;
-                    btnMinus.current.disabled = false;
-                    btnPlus.current.disabled = false;
+
+                    if (isLogin) {
+                      activeButtonPOKeranjang.current.disabled = false;
+                      btnMinus.current.disabled = false;
+                      btnPlus.current.disabled = false;
+                    }
+
                     setTanggal(e.target.value);
                     getCountTransaksi(e.target.value);
                   }}
