@@ -22,6 +22,7 @@ import InputHelper from "@/page/InputHelper";
 
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIHistory from "@/api/APICustomer";
+import APITransaksi from "@/api/APITransaksi";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
@@ -39,6 +40,7 @@ export default function HistoryCustomerPage() {
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [image, setImage] = useState(null);
 
   const { handleRefresh } = useRefresh();
 
@@ -49,6 +51,7 @@ export default function HistoryCustomerPage() {
 
   const [formData, setFormData] = useState({
     no_nota: "",
+    bukti_bayar: "",
   });
 
   const validationSchema = {
@@ -56,19 +59,19 @@ export default function HistoryCustomerPage() {
       required: true,
       alias: "no_nota",
     },
+    bukti_bayar: {
+      required: true,
+      alias: "bukti_bayar",
+    },
   }
 
   const onSubmit = async (formData) => {
     if(isLoading) return;
-    
+    const data = new FormData();
+  data.append("no_nota", formData.no_nota);
+  data.append("bukti_bayar", formData.bukti_bayar);
     try{
-      if (
-        formData.no_nota === "" ||
-        formData.no_nota === null
-      ) {
-        delete formData.no_nota;
-      }
-  
+      console.log(formData.bukti_bayar);
       await confirmBayar.mutateAsync(formData);
       return;
     } catch (error) {
@@ -81,9 +84,9 @@ export default function HistoryCustomerPage() {
   }
 
   const confirmBayar = useMutation({
-    mutationFn: (data) => APIUser.updateUserSelf(data),
+    mutationFn: (data) => APITransaksi.confirmBayar(data),
     onSuccess: async () => {
-      toast.success("Edit Profil Berhasil!");
+      toast.success("Upload Bukti Bayar Berhasil!");
       handleRefresh();
     },
     onError: (error) => {
@@ -559,8 +562,15 @@ export default function HistoryCustomerPage() {
           {isLoadingModal ? null : (
             <Modal.Footer>
               <p>{selectedNota?.status}</p>
-              {selectedNota?.status == "Menunggu Pembayaran" ? (
-                <Button variant="primary" onClick={handleShowAddEditModal}>Bayar</Button>
+              {selectedNota?.status.includes("Menunggu Pembayaran") ? (
+                <Button variant="primary" 
+                  onClick={() => {
+                  handleShowAddEditModal();
+                  setFormData({
+                    no_nota: selectedNota?.no_nota,
+                  });
+                }}
+                >Bayar</Button>
               ) : null}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
@@ -572,11 +582,8 @@ export default function HistoryCustomerPage() {
           show={showAddEditModal}
           onHide={() => {
             handleCloseAddEditModal();
-            setTimeout(() => {
-              setSelectedNota(null);
-            }, 125);
           }}
-          size="md"
+          size="xl"
           title={"Upload Bukti Pembayaran"}
           text={
             "Pastikan bukti pembayaran yang telah anda upload telah benar"
@@ -585,7 +592,34 @@ export default function HistoryCustomerPage() {
           isLoadingModal={isLoading}
         >
           <Form.Group className="text-start mt-3">
-          
+            <Form.Label>
+              Bukti Pembayaran {formData?.no_nota}
+            </Form.Label>
+            <Form.Control 
+              type="file" 
+              style={{ border: "1px solid #808080" }}
+              name="bukti_bayar"
+              accept="image/png, image/jpeg"
+              onChange={(e) => {
+                
+  
+                if (e.target.files[0].size > 1000000) {
+                  e.target.value = null;
+                  toast.error("Bukti bayar tidak boleh lebih dari 1MB!");
+                  return;
+                }
+  
+                setImage(e.target.files[0]);
+                console.log(e.target.files[0]);
+                setFormData({
+                  no_nota: selectedNota?.no_nota,
+                  bukti_bayar: e.target.files[0],
+                })
+              }}
+              disabled={confirmBayar.isPending}
+              required  
+            />
+
           </Form.Group>
         </AddEditModal>
       </section>

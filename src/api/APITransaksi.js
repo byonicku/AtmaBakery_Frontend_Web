@@ -40,10 +40,29 @@ const checkoutTransaksi = async (data) => {
   }
 };
 
+const confirmBayar = async (data) => {
+  console.log(data.bukti_bayar);
+  const formData = new FormData();
+    formData.append('no_nota', data.no_nota);
+    formData.append('bukti_bayar', data.bukti_bayar);
+  try {
+    const response = await useAxios.post("/transaksi/bayar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
   countTransaksiWithHampers,
   checkoutTransaksi,
+  confirmBayar,
 };
 
 export default APITransaksi;
