@@ -10,21 +10,29 @@ import {
   Form,
 } from "react-bootstrap";
 import { useState, useEffect, useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
+
+import { useRefresh } from "@/component/RefreshProvider";
 
 import { BsInbox, BsSearch } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
+
+import InputHelper from "@/page/InputHelper";
 
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIHistory from "@/api/APICustomer";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
+import AddEditModal from "@/component/Admin/Modal/AddEditModal";
+import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
 
 export default function HistoryCustomerPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(true);
   const [selectedNota, setSelectedNota] = useState(null);
+  const [showAddEditModal, setShowAddEditModal] = useState(false);
 
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
@@ -32,10 +40,68 @@ export default function HistoryCustomerPage() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
 
+  const { handleRefresh } = useRefresh();
+
   const handleCloseModal = () => {
     setShowModal(false);
     setIsLoadingModal(false);
   };
+
+  const [formData, setFormData] = useState({
+    no_nota: "",
+  });
+
+  const validationSchema = {
+    no_nota: {
+      required: true,
+      alias: "no_nota",
+    },
+  }
+
+  const onSubmit = async (formData) => {
+    if(isLoading) return;
+    
+    try{
+      if (
+        formData.no_nota === "" ||
+        formData.no_nota === null
+      ) {
+        delete formData.no_nota;
+      }
+  
+      await confirmBayar.mutateAsync(formData);
+      return;
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  }
+
+  const confirmBayar = useMutation({
+    mutationFn: (data) => APIUser.updateUserSelf(data),
+    onSuccess: async () => {
+      toast.success("Edit Profil Berhasil!");
+      handleRefresh();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+
+  const inputHelper = new InputHelper(
+    formData,
+    setFormData,
+    validationSchema,
+    onSubmit
+  );
+  
+  
+  const handleCloseAddEditModal = () => setShowAddEditModal(false);
+  const handleShowAddEditModal = () => setShowAddEditModal(true);
 
   const handleShowModal = useCallback(async (data) => {
     setShowModal(true);
@@ -207,13 +273,18 @@ export default function HistoryCustomerPage() {
                     </td>
                     <td>{Formatter.dateFormatter(history.tanggal_ambil)}</td>
                     <td>
-                      {history.status == "Terkirim" ? (
-                        <Badge bg="success">{history.status}</Badge>
-                      ) : history.status === "Ditolak" ? (
-                        <Badge bg="danger">{history.status}</Badge>
-                      ) : (
-                        <Badge bg="secondary">{history.status}</Badge>
-                      )}
+                    {history.status.includes("Terkirim") || history.status.includes("Selesai") || history.status.includes("Pesanan Diterima") ? (
+                      <Badge bg="success">{history.status}</Badge>
+                    ) : history.status.includes("Sedang Diproses") ? (
+                      <Badge bg="warning">{history.status}</Badge>
+                    ) : history.status.includes("Siap Pick Up") || history.status.includes("Siap Kirim") || history.status.includes("Sedang Diantar Kurir") || history.status.includes("Sedang Diantar Ojol") ? (
+                      <Badge bg="primary">{history.status}</Badge>
+                    ) : history.status === "Ditolak" ? (
+                      <Badge bg="danger">{history.status}</Badge>
+                    ) : (
+                      <Badge bg="secondary">{history.status}</Badge>
+                    )}
+
                     </td>
                     <td>{Formatter.moneyFormatter(history.total)}</td>
                     <td>
@@ -487,8 +558,9 @@ export default function HistoryCustomerPage() {
           </Modal.Body>
           {isLoadingModal ? null : (
             <Modal.Footer>
+              <p>{selectedNota?.status}</p>
               {selectedNota?.status == "Menunggu Pembayaran" ? (
-                <Button variant="primary">Bayar</Button>
+                <Button variant="primary" onClick={handleShowAddEditModal}>Bayar</Button>
               ) : null}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
@@ -496,6 +568,26 @@ export default function HistoryCustomerPage() {
             </Modal.Footer>
           )}
         </Modal>
+        <AddEditModal
+          show={showAddEditModal}
+          onHide={() => {
+            handleCloseAddEditModal();
+            setTimeout(() => {
+              setSelectedNota(null);
+            }, 125);
+          }}
+          size="md"
+          title={"Upload Bukti Pembayaran"}
+          text={
+            "Pastikan bukti pembayaran yang telah anda upload telah benar"
+          }
+          onSubmit={inputHelper.handleSubmit}
+          isLoadingModal={isLoading}
+        >
+          <Form.Group className="text-start mt-3">
+          
+          </Form.Group>
+        </AddEditModal>
       </section>
     </>
   );

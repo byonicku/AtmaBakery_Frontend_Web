@@ -151,13 +151,17 @@ export default function HistoryCustomerPage() {
                       )}
                     </td>
                     <td>
-                      {history.status == "Terkirim" ? (
-                        <Badge bg="success">{history.status}</Badge>
-                      ) : history.status === "Ditolak" ? (
-                        <Badge bg="danger">{history.status}</Badge>
-                      ) : (
-                        <Badge bg="secondary">{history.status}</Badge>
-                      )}
+                    {history.status.includes("Terkirim") || history.status.includes("Selesai") || history.status.includes("Pesanan Diterima") ? (
+                      <Badge bg="success">{history.status}</Badge>
+                    ) : history.status.includes("Sedang Diproses") ? (
+                      <Badge bg="orange" style={{ backgroundColor: 'orange', color: 'white !important' }}>{history.status}</Badge>
+                    ) : history.status.includes("Siap Pick Up") || history.status.includes("Siap Kirim") || history.status.includes("Sedang Diantar Kurir") || history.status.includes("Sedang Diantar Ojol") ? (
+                      <Badge bg="primary">{history.status}</Badge>
+                    ) : history.status === "Ditolak" ? (
+                      <Badge bg="danger">{history.status}</Badge>
+                    ) : (
+                      <Badge bg="secondary">{history.status}</Badge>
+                    )}
                     </td>
                     <td>{Formatter.moneyFormatter(history.total)}</td>
                     <td>
