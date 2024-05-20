@@ -27,6 +27,9 @@ import Formatter from "@/assets/Formatter";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PDFCetak from "./PDFCetak";
+import { FaDownload } from "react-icons/fa";
 
 export default function HistoryCustomerPage() {
   const [searchParams] = useSearchParams();
@@ -76,12 +79,12 @@ export default function HistoryCustomerPage() {
 
   const onSubmit = async (formData) => {
     if (isLoading) return;
+
     const data = new FormData();
     data.append("no_nota", formData.no_nota);
     data.append("bukti_bayar", formData.bukti_bayar);
     try {
-      console.log(formData.bukti_bayar);
-      await confirmBayar.mutateAsync(formData);
+      await confirmBayar.mutateAsync(data);
       return;
     } catch (error) {
       toast.error(
@@ -96,9 +99,7 @@ export default function HistoryCustomerPage() {
     mutationFn: (data) => APITransaksi.confirmBayar(data),
     onSuccess: async () => {
       toast.success("Upload Bukti Bayar Berhasil!");
-      const abortController = new AbortController();
-      const signal = abortController.signal;
-      fetchHistoryCust(signal);
+      fetchHistoryCust(null, filter);
       handleCloseAddEditModal();
       handleCloseModal();
       setFilter("Menunggu Konfirmasi Pembayaran");
@@ -203,7 +204,9 @@ export default function HistoryCustomerPage() {
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             <Dropdown>
-              <Dropdown.Toggle variant="secondary">{filter}</Dropdown.Toggle>
+              <Dropdown.Toggle variant="secondary" disabled={isLoading}>
+                {filter}
+              </Dropdown.Toggle>
 
               <Dropdown.Menu>
                 <Dropdown.Item
@@ -729,6 +732,15 @@ export default function HistoryCustomerPage() {
                   Lihat Bukti Bayar
                 </Button>
               )}
+              {selectedNota?.status.includes("Selesai") && (
+                <PDFDownloadLink
+                  document={<PDFCetak selectedNota={selectedNota} />}
+                  fileName={"nota-" + selectedNota?.no_nota + ".pdf"}
+                  className="btn btn-primary"
+                >
+                  <FaDownload className="mb-1" /> Cetak Nota
+                </PDFDownloadLink>
+              )}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
               </Button>
@@ -787,7 +799,7 @@ export default function HistoryCustomerPage() {
           </Form.Group>
         </AddEditModal>
         <Modal show={showGambarModal} onHide={handleCloseGambarModal}>
-          <Image src={bukti_bayar} alt="bukti_bayar" />
+          <Image fluid src={bukti_bayar} alt="bukti_bayar" />
         </Modal>
       </section>
     </>

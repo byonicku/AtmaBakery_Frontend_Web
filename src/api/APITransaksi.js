@@ -41,12 +41,8 @@ const checkoutTransaksi = async (data) => {
 };
 
 const confirmBayar = async (data) => {
-  console.log(data.bukti_bayar);
-  const formData = new FormData();
-    formData.append('no_nota', data.no_nota);
-    formData.append('bukti_bayar', data.bukti_bayar);
   try {
-    const response = await useAxios.post("/transaksi/bayar", formData, {
+    const response = await useAxios.post("/transaksi/bayar", data, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -58,11 +54,45 @@ const confirmBayar = async (data) => {
   }
 };
 
+const addJarak = async (data) => {
+  try {
+    const response = await useAxios.post("/konfirmasi/transaksi/ongkir", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const konfirmasiTransaksiAdmin = async (data) => {
+  try {
+    const response = await useAxios.post(
+      "/konfirmasi/transaksi/pembayaran",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
   countTransaksiWithHampers,
   checkoutTransaksi,
   confirmBayar,
+  addJarak,
+  konfirmasiTransaksiAdmin,
 };
 
 export default APITransaksi;

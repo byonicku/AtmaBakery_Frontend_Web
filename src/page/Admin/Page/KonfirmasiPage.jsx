@@ -9,7 +9,6 @@ import {
   InputGroup,
   Form,
   Image,
-  Dropdown,
 } from "react-bootstrap";
 
 import { useState, useEffect, useCallback } from "react";
@@ -28,12 +27,14 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { toast } from "sonner";
+import { FaCheck } from "react-icons/fa";
 
 export default function KonfirmasiPage({ status }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(true);
   const [selectedNota, setSelectedNota] = useState(null);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
   const [showGambarModal, setShowGambarModal] = useState(false);
 
   const [history, setHistory] = useState([]);
@@ -51,6 +52,9 @@ export default function KonfirmasiPage({ status }) {
 
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
+
+  const handleCloseAdminModal = () => setShowAdminModal(false);
+  const handleShowAdminModal = () => setShowAdminModal(true);
 
   const handleCloseGambarModal = () => setShowGambarModal(false);
   const handleShowGambarModal = () => setShowGambarModal(true);
@@ -96,6 +100,150 @@ export default function KonfirmasiPage({ status }) {
   useEffect(() => {
     setFilter(status);
   }, [status]);
+
+  // Input Jarak
+  const [formDataJarak, setFormDataJarak] = useState({
+    no_nota: selectedNota?.no_nota,
+    radius: "",
+    ongkir: "",
+  });
+
+  const validationSchemaJarak = {
+    radius: {
+      required: true,
+      alias: "Radius",
+    },
+  };
+
+  const onSubmitJarak = async (formData) => {
+    if (isLoading) return;
+    const data = new FormData();
+    data.append("no_nota", selectedNota.no_nota);
+    data.append("radius", formData.radius);
+    data.append("ongkir", hitungOngkir(formData.radius));
+    try {
+      await inputJarak.mutateAsync(data);
+      return;
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const inputJarak = useMutation({
+    mutationFn: (data) => APITransaksi.addJarak(data),
+    onSuccess: async () => {
+      toast.success("Input Jarak Berhasil!");
+      fetchHistoryCust(null, filter);
+      handleCloseAddEditModal();
+      handleCloseModal();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const inputHelperJarak = new InputHelper(
+    formDataJarak,
+    setFormDataJarak,
+    validationSchemaJarak,
+    onSubmitJarak
+  );
+
+  const validateJarak = () => {
+    if (!formDataJarak.radius) {
+      toast.error("Radius perlu diisi!");
+      return 0;
+    }
+
+    if (formDataJarak.radius <= 0) {
+      toast.error("Radius tidak boleh kurang dari 0!");
+      return 0;
+    }
+
+    return 1;
+  };
+
+  const hitungOngkir = (radius) => {
+    if (!radius) {
+      return 0;
+    }
+
+    if (radius <= 5) {
+      return 10000;
+    } else if (radius > 5 && radius <= 10) {
+      return 15000;
+    } else if (radius > 10 && radius <= 15) {
+      return 20000;
+    } else {
+      return 25000;
+    }
+  };
+
+  // Input Jarak
+  const [formDataAdmin, setFormDataAdmin] = useState({
+    tip: 0,
+  });
+
+  const validationSchemaAdmin = {
+    tip: {
+      required: false,
+      alias: "Tip",
+    },
+  };
+
+  const onSubmitAdmin = async () => {
+    if (isLoading) return;
+    const data = new FormData();
+    data.append("no_nota", selectedNota.no_nota);
+    data.append("tip", formDataAdmin.tip);
+    try {
+      await inputAdmin.mutateAsync(data);
+      return;
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const inputAdmin = useMutation({
+    mutationFn: (data) => APITransaksi.konfirmasiTransaksiAdmin(data),
+    onSuccess: async () => {
+      toast.success("Konfirmasi oleh Admin Berhasil!");
+      fetchHistoryCust(null, filter);
+      handleCloseAdminModal();
+      handleCloseModal();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const inputHelperAdmin = new InputHelper(
+    formDataAdmin,
+    setFormDataAdmin,
+    validationSchemaAdmin,
+    onSubmitAdmin
+  );
+
+  function validateAdmin() {
+    if (formDataAdmin.tip === "") {
+      toast.error("Tip perlu diisi!");
+      return 0;
+    }
+
+    if (formDataAdmin.tip < 0) {
+      toast.error("Tip tidak boleh kurang dari 0!");
+      return 0;
+    }
+    return 1;
+  }
 
   // Pas masuk load customer
   useEffect(() => {
@@ -607,6 +755,26 @@ export default function KonfirmasiPage({ status }) {
                   Lihat Bukti Bayar
                 </Button>
               )}
+              {status === "Menunggu Perhitungan Ongkir" && (
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    handleShowAddEditModal();
+                  }}
+                >
+                  Input Jarak
+                </Button>
+              )}
+              {status === "Menunggu Konfirmasi Pembayaran" && (
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    handleShowAdminModal();
+                  }}
+                >
+                  <FaCheck className="mb-1" /> Konfirmasi Pembayaran
+                </Button>
+              )}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
               </Button>
@@ -616,6 +784,71 @@ export default function KonfirmasiPage({ status }) {
         <Modal show={showGambarModal} onHide={handleCloseGambarModal}>
           <Image src={bukti_bayar} alt="bukti_bayar" />
         </Modal>
+        <AddEditModal
+          show={showAddEditModal}
+          handleClose={handleCloseAddEditModal}
+          title="Input Jarak"
+          text="Pastikan jarak sudah sesuai dengan radius pesanan"
+          onSubmitJarak={onSubmitJarak}
+          onHide={() => {
+            handleCloseAddEditModal();
+            setFormDataJarak({ radius: "" });
+          }}
+          isLoading={inputJarak.isLoading}
+          add={inputJarak}
+          validate={validateJarak}
+        >
+          <Form.Group className="text-start mb-3">
+            <Form.Label>Radius (km)</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Masukkan radius"
+              name="radius"
+              value={formDataJarak.radius}
+              onChange={inputHelperJarak.handleInputChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="text-start mb-3">
+            <Form.Label>Ongkos Kirim</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Ongkos Kirim"
+              name="ongkir"
+              value={Formatter.moneyFormatter(
+                hitungOngkir(formDataJarak.radius)
+              )}
+              readOnly
+            />
+          </Form.Group>
+        </AddEditModal>
+        <AddEditModal
+          show={showAdminModal}
+          handleClose={handleCloseAdminModal}
+          title="Konfirmasi Pembayaran"
+          text="Pastikan pembayaran sudah sesuai"
+          onSubmit={onSubmitAdmin}
+          onHide={() => {
+            handleCloseAdminModal();
+            setFormDataAdmin({ tip: 0 });
+          }}
+          isLoading={inputAdmin.isLoading}
+          add={inputAdmin}
+          validate={validateAdmin}
+        >
+          <Image fluid src={bukti_bayar} alt="bukti_bayar" />
+
+          <Form.Group className="text-start mb-3">
+            <Form.Label>Tip</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Masukkan Tip"
+              name="tip"
+              value={formDataAdmin.tip}
+              onChange={inputHelperAdmin.handleInputChange}
+            />
+          </Form.Group>
+        </AddEditModal>
       </section>
     </>
   );
