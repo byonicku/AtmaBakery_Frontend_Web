@@ -492,11 +492,31 @@ export default function HistoryCustomerPage() {
                   <Col className="text-end">
                     <h4>
                       Nota {selectedNota?.no_nota}
-                      {selectedNota?.status == "Terkirim" ? (
+                      {selectedNota?.status.includes("Terkirim") ||
+                      selectedNota?.status.includes("Selesai") ||
+                      selectedNota?.status.includes("Pesanan Diterima") ? (
                         <Badge className="ms-3 font-size-12" bg="success">
                           {selectedNota?.status}
                         </Badge>
-                      ) : selectedNota?.status === "Dibatalkan" ? (
+                      ) : selectedNota?.status.includes("Sedang Diproses") ? (
+                        <Badge
+                          className="ms-3 font-size-12"
+                          bg="orange"
+                          style={{
+                            backgroundColor: "orange",
+                            color: "white !important",
+                          }}
+                        >
+                          {selectedNota?.status}
+                        </Badge>
+                      ) : selectedNota?.status.includes("Siap Pick Up") ||
+                        selectedNota?.status.includes("Siap Kirim") ||
+                        selectedNota?.status.includes("Sedang Diantar Kurir") ||
+                        selectedNota?.status.includes("Sedang Diantar Ojol") ? (
+                        <Badge className="ms-3 font-size-12" bg="primary">
+                          {selectedNota?.status}
+                        </Badge>
+                      ) : selectedNota?.status === "Ditolak" ? (
                         <Badge className="ms-3 font-size-12" bg="danger">
                           {selectedNota?.status}
                         </Badge>

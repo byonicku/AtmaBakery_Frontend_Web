@@ -6,6 +6,7 @@ import {
   Table,
   Spinner,
   Badge,
+  Image,
 } from "react-bootstrap";
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
@@ -25,11 +26,16 @@ export default function HistoryCustomerPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [selectedNota, setSelectedNota] = useState(null);
+  const [showGambarModal, setShowGambarModal] = useState(false);
+
+  const handleCloseGambarModal = () => setShowGambarModal(false);
+  const handleShowGambarModal = () => setShowGambarModal(true);
 
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [bukti_bayar, setBuktiBayar] = useState(null);
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -52,7 +58,7 @@ export default function HistoryCustomerPage() {
           page,
           signal
         );
-        setHistory(response);
+        setHistory(response.data);
         setLastPage(response.last_page);
       } catch (error) {
         // Handle ketika data terakhir di suatu page dihapus, jadi mundur ke page sebelumnya
@@ -139,8 +145,10 @@ export default function HistoryCustomerPage() {
                 {history.map((history, index) => (
                   <tr key={index}>
                     <td>{history.no_nota}</td>
-                    <td>{history.tanggal_pesan}</td>
-                    <td>{history.tanggal_ambil}</td>
+                    <td>
+                      {Formatter.dateTimeFormatter(history.tanggal_pesan)}
+                    </td>
+                    <td>{Formatter.dateFormatter(history.tanggal_ambil)}</td>
                     <td>
                       {history.tipe_delivery == "Ojol" ? (
                         <Badge bg="success">{history.tipe_delivery}</Badge>
@@ -151,17 +159,30 @@ export default function HistoryCustomerPage() {
                       )}
                     </td>
                     <td>
-                    {history.status.includes("Terkirim") || history.status.includes("Selesai") || history.status.includes("Pesanan Diterima") ? (
-                      <Badge bg="success">{history.status}</Badge>
-                    ) : history.status.includes("Sedang Diproses") ? (
-                      <Badge bg="orange" style={{ backgroundColor: 'orange', color: 'white !important' }}>{history.status}</Badge>
-                    ) : history.status.includes("Siap Pick Up") || history.status.includes("Siap Kirim") || history.status.includes("Sedang Diantar Kurir") || history.status.includes("Sedang Diantar Ojol") ? (
-                      <Badge bg="primary">{history.status}</Badge>
-                    ) : history.status === "Ditolak" ? (
-                      <Badge bg="danger">{history.status}</Badge>
-                    ) : (
-                      <Badge bg="secondary">{history.status}</Badge>
-                    )}
+                      {history.status.includes("Terkirim") ||
+                      history.status.includes("Selesai") ||
+                      history.status.includes("Pesanan Diterima") ? (
+                        <Badge bg="success">{history.status}</Badge>
+                      ) : history.status.includes("Sedang Diproses") ? (
+                        <Badge
+                          bg="orange"
+                          style={{
+                            backgroundColor: "orange",
+                            color: "white !important",
+                          }}
+                        >
+                          {history.status}
+                        </Badge>
+                      ) : history.status.includes("Siap Pick Up") ||
+                        history.status.includes("Siap Kirim") ||
+                        history.status.includes("Sedang Diantar Kurir") ||
+                        history.status.includes("Sedang Diantar Ojol") ? (
+                        <Badge bg="primary">{history.status}</Badge>
+                      ) : history.status === "Ditolak" ? (
+                        <Badge bg="danger">{history.status}</Badge>
+                      ) : (
+                        <Badge bg="secondary">{history.status}</Badge>
+                      )}
                     </td>
                     <td>{Formatter.moneyFormatter(history.total)}</td>
                     <td>
@@ -173,7 +194,7 @@ export default function HistoryCustomerPage() {
                             disabled={isLoadingModal}
                             onClick={() => {
                               setSelectedNota(history);
-
+                              setBuktiBayar(history.bukti_pembayaran);
                               handleShowModal(history);
                               setIsLoadingModal(true);
                             }}
@@ -240,18 +261,32 @@ export default function HistoryCustomerPage() {
                   <Col className="text-end">
                     <h4>
                       Nota {selectedNota?.no_nota}
-                      {selectedNota?.status == "Terkirim" ||
-                      selectedNota?.status == "Diterima" ? (
+                      {selectedNota?.status.includes("Terkirim") ||
+                      selectedNota?.status.includes("Selesai") ||
+                      selectedNota?.status.includes("Pesanan Diterima") ? (
                         <Badge className="ms-3 font-size-12" bg="success">
                           {selectedNota?.status}
                         </Badge>
-                      ) : selectedNota?.status === "Dibatalkan" ? (
-                        <Badge className="ms-3 font-size-12" bg="danger">
+                      ) : selectedNota?.status.includes("Sedang Diproses") ? (
+                        <Badge
+                          className="ms-3 font-size-12"
+                          bg="orange"
+                          style={{
+                            backgroundColor: "orange",
+                            color: "white !important",
+                          }}
+                        >
                           {selectedNota?.status}
                         </Badge>
-                      ) : selectedNota?.status === "Sedang Diproses" ||
-                        selectedNota?.status === "Sedang Dikirim" ? (
+                      ) : selectedNota?.status.includes("Siap Pick Up") ||
+                        selectedNota?.status.includes("Siap Kirim") ||
+                        selectedNota?.status.includes("Sedang Diantar Kurir") ||
+                        selectedNota?.status.includes("Sedang Diantar Ojol") ? (
                         <Badge className="ms-3 font-size-12" bg="primary">
+                          {selectedNota?.status}
+                        </Badge>
+                      ) : selectedNota?.status === "Ditolak" ? (
+                        <Badge className="ms-3 font-size-12" bg="danger">
                           {selectedNota?.status}
                         </Badge>
                       ) : (
@@ -277,7 +312,7 @@ export default function HistoryCustomerPage() {
                       style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
                     >
                       Tanggal Ambil :{" "}
-                      {Formatter.dateTimeFormatter(selectedNota?.tanggal_ambil)}
+                      {Formatter.dateFormatter(selectedNota?.tanggal_ambil)}
                     </h5>
                   </Col>
                 </Row>
@@ -439,11 +474,24 @@ export default function HistoryCustomerPage() {
           </Modal.Body>
           {isLoadingModal ? null : (
             <Modal.Footer>
+              {bukti_bayar && (
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    handleShowGambarModal();
+                  }}
+                >
+                  Lihat Bukti Bayar
+                </Button>
+              )}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
               </Button>
             </Modal.Footer>
           )}
+        </Modal>
+        <Modal show={showGambarModal} onHide={handleCloseGambarModal}>
+          <Image src={bukti_bayar} alt="bukti_bayar" />
         </Modal>
       </section>
     </>
