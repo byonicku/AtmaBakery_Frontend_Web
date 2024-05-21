@@ -183,7 +183,7 @@ export default function KonfirmasiPage({ status }) {
     }
   };
 
-  // Input Jarak
+  // Konfirmasi Admin
   const [formDataAdmin, setFormDataAdmin] = useState({
     tip: 0,
   });
