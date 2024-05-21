@@ -364,6 +364,11 @@ export default function HistoryCustomerPage() {
           </div>
         ) : history?.length > 0 ? (
           <>
+            <p className="text-muted">
+              *Pemesanan PO akan secara otomatis ditolak H-1 sebelum tanggal
+              ambil, dan untuk Ready Stock akan ditolak setelah jam 12 malam
+              pada hari yang sama
+            </p>
             <Table responsive striped>
               <thead>
                 <tr>
