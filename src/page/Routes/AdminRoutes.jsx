@@ -157,6 +157,14 @@ export default function getAdminRoutes() {
           </RoleRoute>
         }
       />
+      <Route
+        path="konfirmasi_pemrosesan_pesanan"
+        element={
+          <RoleRoute roles={["MO"]}>
+            <KonfirmasiPage status={"date"} />
+          </RoleRoute>
+        }
+      />
       <Route index element={<HomeAdmin />} />
       <Route path="*" element={<NotFound404 />} />
     </Route>

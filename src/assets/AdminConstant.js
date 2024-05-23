@@ -9,6 +9,7 @@ import {
   FaHome,
   FaBell,
   FaLocationArrow,
+  FaCheckDouble,
 } from "react-icons/fa";
 
 const MORoute = [
@@ -25,6 +26,11 @@ const MORoute = [
     to: "./konfirmasi_pesanan",
     icon: FaShoppingBasket,
     label: "Konfirmasi Pesanan",
+  },
+  {
+    to: "./konfirmasi_pemrosesan_pesanan",
+    icon: FaCheckDouble,
+    label: "Pemrosesan Pesanan",
   },
 ];
 

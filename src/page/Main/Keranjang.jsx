@@ -203,7 +203,11 @@ export default function Keranjang() {
       if (gunakanPoin) {
         sessionStorage.setItem("poin", 0);
       }
-      navigate("/profile/pemesanan?status=Menunggu Pembayaran");
+      let status = "Menunggu Pembayaran";
+      if (selectedPengiriman === "Kurir") {
+        status = "Menunggu Perhitungan Ongkir";
+      }
+      navigate("/profile/pemesanan?status=" + status);
     },
     onError: (error) => {
       console.error(error);

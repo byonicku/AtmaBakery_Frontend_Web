@@ -27,21 +27,26 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { toast } from "sonner";
-import { FaCheck, FaXingSquare } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { useConfirm } from "@/hooks/useConfirm";
-
 
 export default function KonfirmasiPage({ status }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(true);
   const [selectedNota, setSelectedNota] = useState(null);
   const [listBahanBaku, setListBahanBaku] = useState([]);
+  const [listBahanBakuUsed, setListBahanBakuUsed] = useState([]);
+  const [listNotaBerhasil, setListNotaBerhasil] = useState([]);
+  const [listNotaGagal, setListNotaGagal] = useState([]);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showGambarModal, setShowGambarModal] = useState(false);
   const [showBahanBakuModal, setShowBahanBakuModal] = useState(false);
+  const [showBahanBakuProsesModal, setShowBahanBakuProsesModal] =
+    useState(false);
 
+  const [showBothModal, setShowBothModal] = useState(false);
 
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
@@ -50,7 +55,7 @@ export default function KonfirmasiPage({ status }) {
   const [filter, setFilter] = useState(status ? status : "Semua");
   const [showModal, setShowModal] = useState(false);
   const [bukti_bayar, setBuktiBayar] = useState(null);
-  const { confirm, modalElement} = useConfirm();
+  const { confirm, modalElement } = useConfirm();
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -60,6 +65,11 @@ export default function KonfirmasiPage({ status }) {
   const handleCloseBahanBakuModal = () => setShowBahanBakuModal(false);
   const handleShowBahanBakuModal = () => setShowBahanBakuModal(true);
 
+  const handleCloseBahanBakuProsesModal = () =>
+    setShowBahanBakuProsesModal(false);
+  const handleShowBahanBakuProsesModal = () =>
+    setShowBahanBakuProsesModal(true);
+
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
 
@@ -68,6 +78,9 @@ export default function KonfirmasiPage({ status }) {
 
   const handleCloseGambarModal = () => setShowGambarModal(false);
   const handleShowGambarModal = () => setShowGambarModal(true);
+
+  const handleCloseBothModal = () => setShowBothModal(false);
+  const handleShowBothModal = () => setShowBothModal(true);
 
   const handleShowModal = useCallback(async (data) => {
     setShowModal(true);
@@ -125,12 +138,12 @@ export default function KonfirmasiPage({ status }) {
     },
   };
 
-  const onSubmitJarak = async (formData) => {
+  const onSubmitJarak = async () => {
     if (isLoading) return;
     const data = new FormData();
     data.append("no_nota", selectedNota.no_nota);
-    data.append("radius", formData.radius);
-    data.append("ongkir", hitungOngkir(formData.radius));
+    data.append("radius", formDataJarak.radius);
+    data.append("ongkir", hitungOngkir(formDataJarak.radius));
     try {
       await inputJarak.mutateAsync(data);
       return;
@@ -163,7 +176,7 @@ export default function KonfirmasiPage({ status }) {
     onSubmitJarak
   );
 
-  const validateJarak = () => {
+  function validateJarak() {
     if (!formDataJarak.radius) {
       toast.error("Radius perlu diisi!");
       return 0;
@@ -175,7 +188,7 @@ export default function KonfirmasiPage({ status }) {
     }
 
     return 1;
-  };
+  }
 
   const hitungOngkir = (radius) => {
     if (!radius) {
@@ -205,7 +218,7 @@ export default function KonfirmasiPage({ status }) {
     },
   };
 
-  const onSubmitAdmin = async () => {
+  async function onSubmitAdmin() {
     if (isLoading) return;
     const data = new FormData();
     data.append("no_nota", selectedNota.no_nota);
@@ -220,7 +233,7 @@ export default function KonfirmasiPage({ status }) {
           "Sesuatu sedang bermasalah pada server!"
       );
     }
-  };
+  }
 
   const inputAdmin = useMutation({
     mutationFn: (data) => APITransaksi.konfirmasiTransaksiAdmin(data),
@@ -307,6 +320,10 @@ export default function KonfirmasiPage({ status }) {
       return "Tidak ada pesanan yang menunggu konfirmasi pesanan";
     }
 
+    if (status === "date") {
+      return "Tidak ada pesanan yang menunggu pemrosesan";
+    }
+
     if (!status && search) {
       return "History Tidak Ditemukan";
     }
@@ -339,6 +356,14 @@ export default function KonfirmasiPage({ status }) {
       };
     }
 
+    if (status === "date") {
+      return {
+        title: "Konfirmasi Pemrosesan Pesanan Customer",
+        desc: "Lakukan konfirmasi pemrosesan pesanan customer",
+        breadcrumb: "Konfirmasi Pemrosesan Pesanan",
+      };
+    }
+
     return {
       title: "History Pesanan Customer",
       desc: "Lihat history pesanan customer",
@@ -346,12 +371,11 @@ export default function KonfirmasiPage({ status }) {
     };
   };
 
-
   const handleConfirmMOItem = async () => {
-    const data ={
+    const data = {
       no_nota: selectedNota?.no_nota,
-    }
-    
+    };
+
     const isConfirmed = await confirm(
       "Apakah anda yakin ingin mengonfirmasi transaksi ini?",
       "",
@@ -370,7 +394,7 @@ export default function KonfirmasiPage({ status }) {
       fetchHistoryCust(null, filter);
       console.log(response.bahan_baku);
       setListBahanBaku(response.bahan_baku);
-      if(response.bahan_baku.length != 0) {
+      if (response.bahan_baku.length != 0) {
         handleShowBahanBakuModal();
       }
       toast.success("Konfirmasi oleh MO Berhasil!");
@@ -384,10 +408,163 @@ export default function KonfirmasiPage({ status }) {
     }
   };
 
-  const handleRejectMOItem = async () => {
-    const data ={
+  const handleConfirmMOProses = async () => {
+    const data = {
       no_nota: selectedNota?.no_nota,
+    };
+
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin memproses pesanan ini?",
+      "",
+      "Proses",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
     }
+
+    try {
+      setIsLoading(true);
+      const response = await APITransaksi.konfirmasiPemrosesanMO(data);
+
+      if (response.bahan_baku) {
+        setListBahanBaku(response.bahan_baku);
+        if (response.bahan_baku.length != 0) {
+          handleShowBahanBakuModal();
+          toast.warning(
+            "Konfirmasi Pemrosesan oleh MO Gagal! Silahkan cek bahan baku yang tersedia"
+          );
+          return;
+        }
+      }
+
+      if (response.histori) {
+        setListBahanBaku(response.histori);
+        if (response?.histori?.length != 0) {
+          handleShowBahanBakuProsesModal();
+        }
+      }
+
+      fetchHistoryCust(null, filter);
+      toast.success("Konfirmasi Pemrosesan oleh MO Berhasil!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const handleConfirmMOProsesAll = async () => {
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin memproses semua pesanan ini?",
+      "",
+      "Proses",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      let isSuccess = true;
+      const bahanBakuUsed = [];
+      const bahanBakuNeeded = [];
+      const bahanBakuUsedResult = [];
+      const bahanBakuNeededResult = [];
+
+      for (const data of history) {
+        try {
+          const response = await APITransaksi.konfirmasiPemrosesanMO({
+            no_nota: data.no_nota,
+          });
+
+          if (response.bahan_baku) {
+            bahanBakuNeeded.push(...response.bahan_baku);
+          }
+
+          if (response.histori) {
+            bahanBakuUsed.push(...response.histori);
+          }
+
+          if (
+            response.message ===
+            "Transaksi tidak berhasil diproses karena stok bahan baku tidak mencukupi"
+          ) {
+            isSuccess = false;
+            listNotaGagal.push(data.no_nota);
+          } else {
+            listNotaBerhasil.push(data.no_nota);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      bahanBakuNeeded.forEach(function (a) {
+        if (!this[a.id_bahan_baku]) {
+          this[a.id_bahan_baku] = {
+            id_bahan_baku: a.id_bahan_baku,
+            nama_bahan_baku: a.nama_bahan_baku,
+            stok_sekarang: a.stok_sekarang,
+            jumlah_dibutuhkan: 0,
+            stok_yang_harus_dibeli: 0,
+          };
+          bahanBakuNeededResult.push(this[a.id_bahan_baku]);
+        }
+        this.stok_sekarang = a.stok_sekarang;
+        this[a.id_bahan_baku].jumlah_dibutuhkan += a.jumlah_dibutuhkan;
+        this[a.id_bahan_baku].stok_yang_harus_dibeli +=
+          a.stok_yang_harus_dibeli;
+      }, Object.create(null));
+
+      bahanBakuUsed.forEach(function (a) {
+        if (!this[a.id_bahan_baku]) {
+          this[a.id_bahan_baku] = {
+            id_bahan_baku: a.id_bahan_baku,
+            nama_bahan_baku: a.nama_bahan_baku,
+            stok: a.stok,
+            jumlah: 0,
+          };
+          bahanBakuUsedResult.push(this[a.id_bahan_baku]);
+        }
+        this.stok = a.stok;
+        this[a.id_bahan_baku].jumlah += a.jumlah;
+      }, Object.create(null));
+
+      setListBahanBaku(bahanBakuNeededResult);
+      setListBahanBakuUsed(bahanBakuUsedResult);
+
+      handleShowBothModal();
+
+      fetchHistoryCust(null, filter);
+
+      if (!isSuccess) {
+        toast.warning(
+          "Konfirmasi Semua Pemrosesan oleh MO terdapat yang Gagal! Silahkan cek bahan baku yang tersedia"
+        );
+        return;
+      }
+      toast.success("Konfirmasi Semua Pemrosesan oleh MO Berhasil!");
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const handleRejectMOItem = async () => {
+    const data = {
+      no_nota: selectedNota?.no_nota,
+    };
     const isConfirmed = await confirm(
       "Apakah anda yakin ingin menolak transaksi ini?",
       "",
@@ -402,8 +579,8 @@ export default function KonfirmasiPage({ status }) {
 
     try {
       setIsLoading(true);
-      const response = await APITransaksi.tolakPesananMO(data);
-      
+      await APITransaksi.tolakPesananMO(data);
+
       fetchHistoryCust(null, filter);
       toast.success("Penolakan Transaksi oleh MO Berhasil!");
       handleCloseModal();
@@ -413,9 +590,8 @@ export default function KonfirmasiPage({ status }) {
           error?.message ||
           "Sesuatu sedang bermasalah pada server!"
       );
-    } 
+    }
   };
-  
 
   return (
     <>
@@ -432,7 +608,17 @@ export default function KonfirmasiPage({ status }) {
             lg={6}
             md={12}
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-          ></Col>
+          >
+            {status === "date" && (
+              <Button
+                variant="success"
+                onClick={() => handleConfirmMOProsesAll()}
+                disabled={isLoading || history?.length === 0}
+              >
+                <FaCheck className="mb-1" /> Konfirmasi Semua
+              </Button>
+            )}
+          </Col>
           <Col
             xs={12}
             sm={12}
@@ -858,24 +1044,34 @@ export default function KonfirmasiPage({ status }) {
 
               {status === "Menunggu Konfirmasi Pesanan" && (
                 <>
+                  <Button
+                    variant="success"
+                    onClick={() => {
+                      handleConfirmMOItem();
+                    }}
+                  >
+                    <FaCheck className="mb-1" /> Konfirmasi Pesanan
+                  </Button>
+
+                  <Button
+                    variant="danger"
+                    onClick={() => {
+                      handleRejectMOItem();
+                    }}
+                  >
+                    <FaX className="mb-1" /> Tolak Pesanan
+                  </Button>
+                </>
+              )}
+              {status === "date" && (
                 <Button
                   variant="success"
                   onClick={() => {
-                    handleConfirmMOItem();
+                    handleConfirmMOProses();
                   }}
                 >
-                  <FaCheck className="mb-1" /> Konfirmasi Pesanan
+                  <FaCheck className="mb-1" /> Lakukan Pemrosesan
                 </Button>
-                
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    handleRejectMOItem();
-                  }}
-                >
-                  <FaX className="mb-1" /> Tolak Pesanan
-                </Button>
-                </>
               )}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
@@ -891,7 +1087,7 @@ export default function KonfirmasiPage({ status }) {
           handleClose={handleCloseAddEditModal}
           title="Input Jarak"
           text="Pastikan jarak sudah sesuai dengan radius pesanan"
-          onSubmitJarak={onSubmitJarak}
+          onSubmit={onSubmitJarak}
           onHide={() => {
             handleCloseAddEditModal();
             setFormDataJarak({ radius: "" });
@@ -952,39 +1148,172 @@ export default function KonfirmasiPage({ status }) {
           </Form.Group>
         </AddEditModal>
 
-        <Modal show={showBahanBakuModal} centered size="lg" 
-          onHide={()=>{
+        <Modal
+          show={showBahanBakuModal}
+          centered
+          size="lg"
+          onHide={() => {
             handleCloseBahanBakuModal();
-            setListBahanBaku([]);
+            setTimeout(() => {
+              setListBahanBaku([]);
+            }, 125);
           }}
         >
           <Modal.Body className="text-center p-4 m-2">
             <h5 style={{ fontWeight: "bold" }}>Bahan Baku Yang Kurang</h5>
-            <Table responsive
-                  className="text-start align-middle table-nowrap">
+            <Table responsive className="text-start align-middle table-nowrap">
               <thead>
                 <tr>
-                  <th className="th-style">
-                    Nama Bahan Baku
-                  </th>
-                  <th className="th-style">
-                    Stok Sekarang
-                  </th>
-                  <th className="th-style" style={{color:"red", fontWeight:"bolder"}}>
+                  <th className="th-style">Nama Bahan Baku</th>
+                  <th className="th-style">Stok Sekarang</th>
+                  <th
+                    className="th-style"
+                    style={{ color: "red", fontWeight: "bolder" }}
+                  >
                     Stok Yang Dibutuhkan
                   </th>
                 </tr>
               </thead>
               <tbody>
-              {listBahanBaku?.map((detail, idx) => (
+                {listBahanBaku?.map((detail, idx) => (
                   <tr key={idx}>
                     <td>{detail.nama_bahan_baku}</td>
                     <td>{detail.stok_sekarang}</td>
-                    <td style={{color:"red", fontWeight:"bolder"}}>{detail.stok_dibutuhkan}</td>
+                    <td style={{ color: "red", fontWeight: "bolder" }}>
+                      {detail.jumlah_dibutuhkan}
+                    </td>
                   </tr>
-              ))}
+                ))}
               </tbody>
             </Table>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showBahanBakuProsesModal}
+          centered
+          size="lg"
+          onHide={() => {
+            handleCloseBahanBakuProsesModal();
+            setTimeout(() => {
+              setListBahanBaku([]);
+              setListBahanBakuUsed([]);
+            }, 125);
+          }}
+        >
+          <Modal.Body className="text-center p-4 m-2">
+            <h5 style={{ fontWeight: "bold" }}>Bahan Baku Yang Terpakai</h5>
+            <Table responsive className="text-start align-middle table-nowrap">
+              <thead>
+                <tr>
+                  <th className="th-style">Nama Bahan Baku</th>
+                  <th className="th-style">Stok Sekarang</th>
+                  <th className="th-style">Stok Yang Terpakai</th>
+                </tr>
+              </thead>
+              <tbody>
+                {listBahanBaku?.map((detail, idx) => (
+                  <tr key={idx}>
+                    <td>{detail.nama_bahan_baku}</td>
+                    <td>{detail.stok}</td>
+                    <td>{detail.jumlah}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showBothModal}
+          centered
+          size="lg"
+          onHide={() => {
+            handleCloseBothModal();
+            setTimeout(() => {
+              setListBahanBaku([]);
+              setListBahanBakuUsed([]);
+              setListNotaBerhasil([]);
+              setListNotaGagal([]);
+            }, 125);
+          }}
+        >
+          <Modal.Body className="text-center p-4 m-2">
+            {listBahanBaku.length > 0 && (
+              <>
+                <h5 style={{ fontWeight: "bold" }}>Bahan Baku Yang Kurang</h5>
+                <Table
+                  responsive
+                  className="text-start align-middle table-nowrap"
+                >
+                  <thead>
+                    <tr>
+                      <th className="th-style">Nama Bahan Baku</th>
+                      <th className="th-style">Stok Sekarang</th>
+                      <th
+                        className="th-style"
+                        style={{ color: "red", fontWeight: "bolder" }}
+                      >
+                        Stok Yang Dibutuhkan
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {listBahanBaku?.map((detail, idx) => (
+                      <tr key={idx}>
+                        <td>{detail.nama_bahan_baku}</td>
+                        <td>{detail.stok_sekarang}</td>
+                        <td style={{ color: "red", fontWeight: "bolder" }}>
+                          {detail.jumlah_dibutuhkan}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </>
+            )}
+            {listBahanBakuUsed.length > 0 && (
+              <>
+                <h5 style={{ fontWeight: "bold" }}>Bahan Baku Yang Terpakai</h5>
+                <Table
+                  responsive
+                  className="text-start align-middle table-nowrap"
+                >
+                  <thead>
+                    <tr>
+                      <th className="th-style">Nama Bahan Baku</th>
+                      <th className="th-style">Stok Sekarang</th>
+                      <th className="th-style">Stok Yang Terpakai</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {listBahanBakuUsed?.map((detail, idx) => (
+                      <tr key={idx}>
+                        <td>{detail.nama_bahan_baku}</td>
+                        <td>{detail.stok}</td>
+                        <td>{detail.jumlah}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </>
+            )}
+            {(listBahanBaku.length > 0 || listBahanBakuUsed.length > 0) && (
+              <>
+                <h5 style={{ fontWeight: "bold" }}>Keterangan</h5>
+                {listNotaBerhasil.length > 0 && (
+                  <h5 style={{ color: "green" }}>
+                    Berhasil diproses : {listNotaBerhasil.join(", ")}
+                  </h5>
+                )}
+
+                {listNotaGagal.length > 0 && (
+                  <h5 style={{ color: "red" }}>
+                    Gagal diproses : {listNotaGagal.join(", ")}
+                  </h5>
+                )}
+              </>
+            )}
           </Modal.Body>
         </Modal>
         {modalElement}

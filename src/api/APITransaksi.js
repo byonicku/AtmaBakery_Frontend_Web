@@ -104,10 +104,10 @@ const konfirmasiPesananMO = async (data) => {
   }
 };
 
-const tolakPesananMO = async (data) => {
+const konfirmasiPemrosesanMO = async (data) => {
   try {
     const response = await useAxios.post(
-      "/tolak/transaksi/pesanan",
+      "/konfirmasi/transaksi/pemrosesan",
       data,
       {
         headers: {
@@ -122,6 +122,20 @@ const tolakPesananMO = async (data) => {
   }
 };
 
+const tolakPesananMO = async (data) => {
+  try {
+    const response = await useAxios.post("/tolak/transaksi/pesanan", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
   countTransaksiWithHampers,
@@ -130,6 +144,7 @@ const APITransaksi = {
   addJarak,
   konfirmasiTransaksiAdmin,
   konfirmasiPesananMO,
+  konfirmasiPemrosesanMO,
   tolakPesananMO,
 };
 
