@@ -86,6 +86,42 @@ const konfirmasiTransaksiAdmin = async (data) => {
   }
 };
 
+const konfirmasiPesananMO = async (data) => {
+  try {
+    const response = await useAxios.post(
+      "/konfirmasi/transaksi/pesanan",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const tolakPesananMO = async (data) => {
+  try {
+    const response = await useAxios.post(
+      "/tolak/transaksi/pesanan",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
   countTransaksiWithHampers,
@@ -93,6 +129,8 @@ const APITransaksi = {
   confirmBayar,
   addJarak,
   konfirmasiTransaksiAdmin,
+  konfirmasiPesananMO,
+  tolakPesananMO,
 };
 
 export default APITransaksi;

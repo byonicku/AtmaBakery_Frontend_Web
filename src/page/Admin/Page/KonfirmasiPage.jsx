@@ -27,15 +27,21 @@ import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { toast } from "sonner";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaXingSquare } from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
+import { useConfirm } from "@/hooks/useConfirm";
+
 
 export default function KonfirmasiPage({ status }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(true);
   const [selectedNota, setSelectedNota] = useState(null);
+  const [listBahanBaku, setListBahanBaku] = useState([]);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showGambarModal, setShowGambarModal] = useState(false);
+  const [showBahanBakuModal, setShowBahanBakuModal] = useState(false);
+
 
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
@@ -44,11 +50,15 @@ export default function KonfirmasiPage({ status }) {
   const [filter, setFilter] = useState(status ? status : "Semua");
   const [showModal, setShowModal] = useState(false);
   const [bukti_bayar, setBuktiBayar] = useState(null);
+  const { confirm, modalElement} = useConfirm();
 
   const handleCloseModal = () => {
     setShowModal(false);
     setIsLoadingModal(false);
   };
+
+  const handleCloseBahanBakuModal = () => setShowBahanBakuModal(false);
+  const handleShowBahanBakuModal = () => setShowBahanBakuModal(true);
 
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
@@ -335,6 +345,77 @@ export default function KonfirmasiPage({ status }) {
       breadcrumb: "History Pesanan",
     };
   };
+
+
+  const handleConfirmMOItem = async () => {
+    const data ={
+      no_nota: selectedNota?.no_nota,
+    }
+    
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin mengonfirmasi transaksi ini?",
+      "",
+      "Konfirmasi",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await APITransaksi.konfirmasiPesananMO(data);
+      fetchHistoryCust(null, filter);
+      console.log(response.bahan_baku);
+      setListBahanBaku(response.bahan_baku);
+      if(response.bahan_baku.length != 0) {
+        handleShowBahanBakuModal();
+      }
+      toast.success("Konfirmasi oleh MO Berhasil!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const handleRejectMOItem = async () => {
+    const data ={
+      no_nota: selectedNota?.no_nota,
+    }
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin menolak transaksi ini?",
+      "",
+      "Tolak Konfirmasi",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await APITransaksi.tolakPesananMO(data);
+      
+      fetchHistoryCust(null, filter);
+      toast.success("Penolakan Transaksi oleh MO Berhasil!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    } 
+  };
+  
 
   return (
     <>
@@ -744,7 +825,6 @@ export default function KonfirmasiPage({ status }) {
           </Modal.Body>
           {isLoadingModal ? null : (
             <Modal.Footer>
-              <p>{selectedNota?.status}</p>
               {bukti_bayar && (
                 <Button
                   variant="primary"
@@ -774,6 +854,28 @@ export default function KonfirmasiPage({ status }) {
                 >
                   <FaCheck className="mb-1" /> Konfirmasi Pembayaran
                 </Button>
+              )}
+
+              {status === "Menunggu Konfirmasi Pesanan" && (
+                <>
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    handleConfirmMOItem();
+                  }}
+                >
+                  <FaCheck className="mb-1" /> Konfirmasi Pesanan
+                </Button>
+                
+                <Button
+                  variant="danger"
+                  onClick={() => {
+                    handleRejectMOItem();
+                  }}
+                >
+                  <FaX className="mb-1" /> Tolak Pesanan
+                </Button>
+                </>
               )}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
@@ -849,6 +951,43 @@ export default function KonfirmasiPage({ status }) {
             />
           </Form.Group>
         </AddEditModal>
+
+        <Modal show={showBahanBakuModal} centered size="lg" 
+          onHide={()=>{
+            handleCloseBahanBakuModal();
+            setListBahanBaku([]);
+          }}
+        >
+          <Modal.Body className="text-center p-4 m-2">
+            <h5 style={{ fontWeight: "bold" }}>Bahan Baku Yang Kurang</h5>
+            <Table responsive
+                  className="text-start align-middle table-nowrap">
+              <thead>
+                <tr>
+                  <th className="th-style">
+                    Nama Bahan Baku
+                  </th>
+                  <th className="th-style">
+                    Stok Sekarang
+                  </th>
+                  <th className="th-style" style={{color:"red", fontWeight:"bolder"}}>
+                    Stok Yang Dibutuhkan
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+              {listBahanBaku?.map((detail, idx) => (
+                  <tr key={idx}>
+                    <td>{detail.nama_bahan_baku}</td>
+                    <td>{detail.stok_sekarang}</td>
+                    <td style={{color:"red", fontWeight:"bolder"}}>{detail.stok_dibutuhkan}</td>
+                  </tr>
+              ))}
+              </tbody>
+            </Table>
+          </Modal.Body>
+        </Modal>
+        {modalElement}
       </section>
     </>
   );
