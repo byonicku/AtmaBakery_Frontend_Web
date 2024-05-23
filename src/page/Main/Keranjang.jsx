@@ -211,7 +211,10 @@ export default function Keranjang() {
       fetchKeranjang();
       sessionStorage.setItem("po_date", null);
       if (gunakanPoin) {
-        sessionStorage.setItem("poin", 0);
+        sessionStorage.setItem(
+          "poin",
+          userPoin - (userPoin > maxPoin ? maxPoin : userPoin)
+        );
       }
       let status = "Menunggu Pembayaran";
       if (selectedPengiriman === "Kurir") {
