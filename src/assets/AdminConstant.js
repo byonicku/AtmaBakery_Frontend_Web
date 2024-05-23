@@ -47,6 +47,11 @@ const AdminRoute = [
     icon: FaFileInvoice,
     label: "Konfirmasi Pembayaran",
   },
+  {
+    to: "./ubah_status_pesanan",
+    icon: FaBell,
+    label: "Ubah Status Pesanan",
+  },
 ];
 
 const OwnerRoute = [

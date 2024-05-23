@@ -150,6 +150,14 @@ export default function getAdminRoutes() {
         }
       />
       <Route
+        path="ubah_status_pesanan"
+        element={
+          <RoleRoute roles={["ADM"]}>
+            <KonfirmasiPage status={"ubah"} />
+          </RoleRoute>
+        }
+      />
+      <Route
         path="konfirmasi_pesanan"
         element={
           <RoleRoute roles={["MO"]}>
