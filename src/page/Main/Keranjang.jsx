@@ -39,6 +39,7 @@ export default function Keranjang() {
   const [poin, setPoin] = useState(0);
   const [selectedPengiriman, setSelectedPengiriman] = useState("");
   const [gunakanPoin, setGunakanPoin] = useState(false);
+  const [maxPoin, setMaxPoin] = useState(0);
   const [userPoin, setUserPoin] = useState(0);
   const { confirm, modalElement } = useConfirm();
 
@@ -78,7 +79,7 @@ export default function Keranjang() {
   const hitungPoint = useCallback(
     (totalAmount, points) => {
       if (gunakanPoin) {
-        totalAmount -= userPoin * 100;
+        totalAmount -= userPoin > maxPoin ? maxPoin * 100 : userPoin * 100;
       }
 
       while (totalAmount >= 10000) {
@@ -139,7 +140,7 @@ export default function Keranjang() {
 
       return calculatePoints(new Date(tanggal_lahir), points);
     },
-    [tanggal_lahir, gunakanPoin, userPoin]
+    [tanggal_lahir, gunakanPoin, maxPoin, userPoin]
   );
 
   useEffect(() => {
@@ -171,6 +172,15 @@ export default function Keranjang() {
         ),
         0
       )
+    );
+
+    setMaxPoin(
+      produk?.reduce(
+        (total, item) =>
+          total +
+          parseInt(item?.produk?.harga ?? item?.hampers?.harga) * item?.jumlah,
+        0
+      ) / 100
     );
   }, [gunakanPoin, produk, userPoin, hitungPoint]);
 
@@ -325,7 +335,11 @@ export default function Keranjang() {
       pengiriman: selectedPengiriman,
       total: subtotal,
       status: "Menunggu Pembayaran",
-      is_using_poin: gunakanPoin,
+      penggunaan_poin: gunakanPoin
+        ? userPoin > maxPoin
+          ? maxPoin
+          : userPoin
+        : 0,
       tanggal_ambil: tanggal_ambil,
     };
 
@@ -669,7 +683,8 @@ export default function Keranjang() {
                           xs={6}
                           className="left-detail"
                         >
-                          Potongan {userPoin} Poin
+                          Potongan {userPoin > maxPoin ? maxPoin : userPoin}{" "}
+                          Poin
                         </Col>
                         <Col
                           lg={6}
@@ -678,7 +693,10 @@ export default function Keranjang() {
                           xs={6}
                           className="right-detail"
                         >
-                          - {Formatter.moneyFormatter(userPoin * 100)}
+                          -{" "}
+                          {Formatter.moneyFormatter(
+                            userPoin > maxPoin ? maxPoin * 100 : userPoin * 100
+                          )}
                         </Col>
                       </Row>
                     )}
@@ -694,7 +712,12 @@ export default function Keranjang() {
                       <Col lg={6} md={6} sm={6} xs={6} className="right-detail">
                         {Formatter.moneyFormatter(
                           Math.max(
-                            total - (gunakanPoin ? userPoin * 100 : 0),
+                            total -
+                              (gunakanPoin
+                                ? userPoin > maxPoin
+                                  ? maxPoin * 100
+                                  : userPoin * 100
+                                : 0),
                             0
                           )
                         )}

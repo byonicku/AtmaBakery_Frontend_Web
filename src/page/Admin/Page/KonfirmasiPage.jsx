@@ -161,6 +161,7 @@ export default function KonfirmasiPage({ status }) {
     onSuccess: async () => {
       toast.success("Input Jarak Berhasil!");
       fetchHistoryCust(null, filter);
+      setFormDataJarak({ radius: "", ongkir: "" });
       handleCloseAddEditModal();
       handleCloseModal();
     },
@@ -240,6 +241,7 @@ export default function KonfirmasiPage({ status }) {
     onSuccess: async () => {
       toast.success("Konfirmasi oleh Admin Berhasil!");
       fetchHistoryCust(null, filter);
+      setFormDataAdmin({ tip: 0 });
       handleCloseAdminModal();
       handleCloseModal();
     },
