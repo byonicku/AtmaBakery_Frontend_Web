@@ -392,10 +392,11 @@ export default function KonfirmasiPage({ status }) {
       setIsLoading(true);
       const response = await APITransaksi.konfirmasiPesananMO(data);
       fetchHistoryCust(null, filter);
-      console.log(response.bahan_baku);
-      setListBahanBaku(response.bahan_baku);
-      if (response.bahan_baku.length != 0) {
-        handleShowBahanBakuModal();
+      if (response.bahan_baku) {
+        setListBahanBaku(response?.bahan_baku);
+        if (response?.bahan_baku?.length != 0) {
+          handleShowBahanBakuModal();
+        }
       }
       toast.success("Konfirmasi oleh MO Berhasil!");
       handleCloseModal();

@@ -547,7 +547,11 @@ export default function Keranjang() {
                       <Form.Select
                         name="pengiriman"
                         defaultValue=""
-                        onChange={(e) => setSelectedPengiriman(e.target.value)}
+                        onChange={(e) => {
+                          setSelectedPengiriman(e.target.value);
+                          setSelectedAlamat("");
+                          document.getElementById("alamat").value = "";
+                        }}
                         required
                       >
                         <option value="" disabled hidden>
