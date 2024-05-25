@@ -406,6 +406,7 @@ export default function ProdukDetail() {
                       refReady.current.classList.add("active");
                       refDate.current.disabled = true;
                       refDate.current.value = "";
+                      setPilihan("READY");
 
                       if (!isLogin) {
                         return;
@@ -417,7 +418,6 @@ export default function ProdukDetail() {
                         setJumlah(1);
                         activeButtonPOKeranjang.current.disabled = false;
                       }
-                      setPilihan("READY");
                     }}
                     ref={refReady}
                   >
@@ -439,13 +439,13 @@ export default function ProdukDetail() {
                       refPO.current.classList.add("active");
                       refDate.current.disabled = false;
                       refDate.current.value = "";
+                      setPilihan("PO");
 
                       if (!isLogin) {
                         return;
                       }
 
                       resetField();
-                      setPilihan("PO");
                     }}
                     ref={refPO}
                   >
