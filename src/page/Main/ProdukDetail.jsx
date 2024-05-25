@@ -402,14 +402,15 @@ export default function ProdukDetail() {
                         return;
                       }
 
-                      if (!isLogin) {
-                        return;
-                      }
-
                       refPO.current.classList.remove("active");
                       refReady.current.classList.add("active");
                       refDate.current.disabled = true;
                       refDate.current.value = "";
+
+                      if (!isLogin) {
+                        return;
+                      }
+
                       btnMinus.current.disabled = false;
                       btnPlus.current.disabled = false;
                       if (produk.stok > 0) {
@@ -434,14 +435,15 @@ export default function ProdukDetail() {
                         return;
                       }
 
-                      if (!isLogin) {
-                        return;
-                      }
-
                       refReady.current.classList.remove("active");
                       refPO.current.classList.add("active");
                       refDate.current.disabled = false;
                       refDate.current.value = "";
+
+                      if (!isLogin) {
+                        return;
+                      }
+
                       resetField();
                       setPilihan("PO");
                     }}
