@@ -29,7 +29,8 @@ import { toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFCetak from "./PDFCetak";
-import { FaDownload } from "react-icons/fa";
+import { FaCheck, FaDownload } from "react-icons/fa";
+import { useConfirm } from "@/hooks/useConfirm";
 
 export default function HistoryCustomerPage() {
   const [searchParams] = useSearchParams();
@@ -49,6 +50,8 @@ export default function HistoryCustomerPage() {
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState(null);
   const [bukti_bayar, setBuktiBayar] = useState(null);
+
+  const { confirm, modalElement } = useConfirm();
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -184,6 +187,38 @@ export default function HistoryCustomerPage() {
       console.error(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSelesaiTransaksi = async () => {
+    const data = {
+      no_nota: selectedNota?.no_nota,
+    };
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin menyelesaikan transaksi ini?",
+      "",
+      "Selesai",
+      true
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await APITransaksi.updateStatusSelesaiSelf(data);
+
+      fetchHistoryCust(null, filter);
+      toast.success("Transaksi Selesai!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
     }
   };
 
@@ -713,7 +748,6 @@ export default function HistoryCustomerPage() {
           </Modal.Body>
           {isLoadingModal ? null : (
             <Modal.Footer>
-              <p>{selectedNota?.status}</p>
               {selectedNota?.status.includes("Menunggu Pembayaran") && (
                 <Button
                   variant="primary"
@@ -737,6 +771,18 @@ export default function HistoryCustomerPage() {
                   Lihat Bukti Bayar
                 </Button>
               )}
+              {selectedNota?.status.includes("Sedang Diantar Ojol") ||
+                selectedNota?.status.includes("Sedang Diantar Kurir") ||
+                (selectedNota?.status.includes("Siap Pick Up") && (
+                  <Button
+                    variant="success"
+                    onClick={() => {
+                      handleSelesaiTransaksi();
+                    }}
+                  >
+                    <FaCheck className="mb-1" /> Selesaikan Transaksi
+                  </Button>
+                ))}
               {selectedNota?.status.includes("Selesai") && (
                 <PDFDownloadLink
                   document={<PDFCetak selectedNota={selectedNota} />}
@@ -807,6 +853,7 @@ export default function HistoryCustomerPage() {
           <Image fluid src={bukti_bayar} alt="bukti_bayar" />
         </Modal>
       </section>
+      {modalElement}
     </>
   );
 }

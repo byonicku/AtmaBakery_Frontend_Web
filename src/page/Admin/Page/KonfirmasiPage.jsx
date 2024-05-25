@@ -596,6 +596,70 @@ export default function KonfirmasiPage({ status }) {
     }
   };
 
+  const handleConfirmSelesai = async () => {
+    const data = {
+      no_nota: selectedNota?.no_nota,
+    };
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin menyelesaikan transaksi ini?",
+      "",
+      "Selesai",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await APITransaksi.updateStatusSelesai(data);
+
+      fetchHistoryCust(null, filter);
+      toast.success("Transaksi Selesai!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const handleSelesaiProses = async () => {
+    const data = {
+      no_nota: selectedNota?.no_nota,
+    };
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin selesai memproses transaksi ini?",
+      "",
+      "Selesai",
+      false
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await APITransaksi.updateStatusKirimPickUp(data);
+
+      fetchHistoryCust(null, filter);
+      toast.success("Proses Transaksi Selesai!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
   return (
     <>
       <OutlerHeader
@@ -1076,6 +1140,30 @@ export default function KonfirmasiPage({ status }) {
                   <FaCheck className="mb-1" /> Lakukan Pemrosesan
                 </Button>
               )}
+              {status === "ubah" &&
+                (selectedNota?.status === "Sedang Diantar Kurir" ||
+                  selectedNota?.status === "Sedang Diantar Ojol" ||
+                  selectedNota?.status === "Siap Pick Up") && (
+                  <Button
+                    variant="success"
+                    onClick={() => {
+                      handleConfirmSelesai();
+                    }}
+                  >
+                    <FaCheck className="mb-1" /> Selesaikan Pesanan
+                  </Button>
+                )}
+              {status === "ubah" &&
+                selectedNota?.status === "Sedang Diproses" && (
+                  <Button
+                    variant="success"
+                    onClick={() => {
+                      handleSelesaiProses();
+                    }}
+                  >
+                    <FaCheck className="mb-1" /> Selesaikan Proses
+                  </Button>
+                )}
               <Button variant="secondary" onClick={handleCloseModal}>
                 Tutup
               </Button>

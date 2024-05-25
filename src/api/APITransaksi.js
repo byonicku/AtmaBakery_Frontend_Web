@@ -136,6 +136,48 @@ const tolakPesananMO = async (data) => {
   }
 };
 
+const updateStatusKirimPickUp = async (data) => {
+  try {
+    const response = await useAxios.post("/update/transaksi", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const updateStatusSelesai = async (data) => {
+  try {
+    const response = await useAxios.post("/update/transaksi/selesai", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
+const updateStatusSelesaiSelf = async (data) => {
+  try {
+    const response = await useAxios.post("/update/transaksi/self", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
   countTransaksiWithHampers,
@@ -146,6 +188,9 @@ const APITransaksi = {
   konfirmasiPesananMO,
   konfirmasiPemrosesanMO,
   tolakPesananMO,
+  updateStatusKirimPickUp,
+  updateStatusSelesai,
+  updateStatusSelesaiSelf,
 };
 
 export default APITransaksi;
