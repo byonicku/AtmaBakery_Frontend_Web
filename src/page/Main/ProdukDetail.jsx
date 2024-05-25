@@ -129,7 +129,8 @@ export default function ProdukDetail() {
   const handleAddKerajang = async () => {
     if (
       (tanggal === "" || tanggal === null || tanggal === undefined) &&
-      pilihan === "PO"
+      pilihan === "PO" &&
+      produk?.stok === 0
     ) {
       toast.error("Tanggal tidak boleh kosong!");
       return;
@@ -147,6 +148,15 @@ export default function ProdukDetail() {
 
     if (jumlah > produk.limit && pilihan === "PO") {
       toast.error("Jumlah melebihi limit produk!");
+      return;
+    }
+
+    if (
+      jumlah > produk.stok &&
+      pilihan === "READY" &&
+      produk?.status === "PO"
+    ) {
+      toast.error("Jumlah melebihi stok produk!");
       return;
     }
 
@@ -205,7 +215,15 @@ export default function ProdukDetail() {
         refPO.current.disabled = false;
       }
 
-      if (produk?.status === "PO") {
+      if (produk?.status === "PO" && produk?.stok > 0) {
+        refPO.current.disabled = false;
+        refReady.current.disabled = false;
+        activeButtonPOKeranjang.current.disabled = true;
+        refDate.current.disabled = false;
+        btnMinus.current.disabled = true;
+        btnPlus.current.disabled = true;
+        setPilihan("PO");
+      } else if (produk?.status === "PO") {
         refReady.current.disabled = true;
         activeButtonPOKeranjang.current.disabled = true;
         btnMinus.current.disabled = true;
@@ -379,15 +397,21 @@ export default function ProdukDetail() {
                         return;
                       }
 
-                      if (produk.limit > 0) {
+                      if (produk.limit > 0 && produk.stok === 0) {
                         resetField();
                         return;
                       }
+
                       refPO.current.classList.remove("active");
                       refReady.current.classList.add("active");
                       refDate.current.disabled = true;
                       refDate.current.value = "";
-                      resetField();
+                      btnMinus.current.disabled = false;
+                      btnPlus.current.disabled = false;
+                      if (produk.stok > 0) {
+                        setJumlah(1);
+                        activeButtonPOKeranjang.current.disabled = false;
+                      }
                       setPilihan("READY");
                     }}
                     ref={refReady}
@@ -401,10 +425,11 @@ export default function ProdukDetail() {
                         return;
                       }
 
-                      if (produk.stok > 0) {
+                      if (produk.stok > 0 && produk.limit === 0) {
                         resetField();
                         return;
                       }
+
                       refReady.current.classList.remove("active");
                       refPO.current.classList.add("active");
                       refDate.current.disabled = false;
@@ -432,12 +457,7 @@ export default function ProdukDetail() {
                       }
                     }}
                     ref={btnMinus}
-                    disabled={
-                      !isLogin ||
-                      isLoadingDate ||
-                      add.isPending ||
-                      checkMinimium()
-                    }
+                    disabled={!isLogin || isLoadingDate || add.isPending}
                   >
                     -
                   </Button>
@@ -460,10 +480,11 @@ export default function ProdukDetail() {
                     variant="outline-secondary input-border-produk-plusminus"
                     onClick={() => {
                       if (
-                        jumlah === produk?.stok ||
+                        (jumlah === produk?.stok && pilihan === "READY") ||
                         jumlah === limit ||
                         !isLogin
                       ) {
+                        console.log("masuk");
                         return;
                       }
                       setJumlah(jumlah + 1);
@@ -473,9 +494,8 @@ export default function ProdukDetail() {
                       !isLogin ||
                       isLoadingDate ||
                       add.isPending ||
-                      checkMinimium() ||
                       limit === jumlah ||
-                      jumlah === produk?.stok
+                      (jumlah === produk?.stok && pilihan === "READY")
                     }
                   >
                     +
@@ -492,7 +512,7 @@ export default function ProdukDetail() {
                       fontSize: "0.9rem",
                     }}
                   >
-                    {produk?.limit > 0
+                    {produk?.limit > 0 && pilihan === "PO"
                       ? tanggal === "" ||
                         tanggal === null ||
                         tanggal === undefined
@@ -509,12 +529,7 @@ export default function ProdukDetail() {
                 <Col>
                   <Button
                     variant="outline-secondary button-tambahkeranjang w-100"
-                    disabled={
-                      !isLogin ||
-                      isLoadingDate ||
-                      add.isPending ||
-                      checkMinimium()
-                    }
+                    disabled={!isLogin || isLoadingDate || add.isPending}
                     ref={activeButtonPOKeranjang}
                     onClick={handleAddKerajang}
                   >
@@ -539,22 +554,23 @@ export default function ProdukDetail() {
                 </Row>
               )}
 
-              {checkMinimium() && (
-                <Row
-                  className="mt-1 text-center"
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#BE1008",
-                  }}
-                >
-                  <Col>
-                    <p>
-                      Produk ini tidak tersedia, silahkan pilih produk lain atau
-                      tanggal lain
-                    </p>
-                  </Col>
-                </Row>
-              )}
+              {produk?.status === "PO" ||
+                (produk?.stok === 0 && checkMinimium() && (
+                  <Row
+                    className="mt-1 text-center"
+                    style={{
+                      fontSize: "0.9rem",
+                      color: "#BE1008",
+                    }}
+                  >
+                    <Col>
+                      <p>
+                        Produk ini tidak tersedia, silahkan pilih produk lain
+                        atau tanggal lain
+                      </p>
+                    </Col>
+                  </Row>
+                ))}
             </Col>
           </Row>
         </>

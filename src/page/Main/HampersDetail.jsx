@@ -124,7 +124,7 @@ export default function HampersDetail() {
     mutationFn: (data) => APICart.createCart(data),
     onSuccess: async () => {
       toast.success("Tambah Produk ke keranjang berhasil!");
-      if (!isAlreadyPO) {
+      if (!isAlreadyPO && hampers.status === "PO") {
         sessionStorage.setItem("po_date", tanggal);
       }
 
@@ -218,18 +218,20 @@ export default function HampersDetail() {
 
   useEffect(() => {
     if (hampers) {
-      activeButtonPOKeranjang.current.disabled = true;
-      btnMinus.current.disabled = true;
-      btnPlus.current.disabled = true;
       if (hampers.status === "READY") {
         refPO.current?.classList.remove("active");
         refPO.current.disabled = true;
         refReady.current?.classList.add("active");
+        refDate.current.disabled = true;
+        getCountTransaksi(new Date().toISOString().split("T")[0]);
         setPilihan("READY");
       } else {
         refReady.current?.classList.remove("active");
         refReady.current.disabled = true;
         refPO.current?.classList.add("active");
+        activeButtonPOKeranjang.current.disabled = true;
+        btnMinus.current.disabled = true;
+        btnPlus.current.disabled = true;
         setPilihan("PO");
       }
 
@@ -402,7 +404,12 @@ export default function HampersDetail() {
                     setTanggal(e.target.value);
                     getCountTransaksi(e.target.value);
                   }}
-                  disabled={isLoadingDate || isAlreadyPO || add.isPending}
+                  disabled={
+                    isLoadingDate ||
+                    isAlreadyPO ||
+                    add.isPending ||
+                    hampers?.status === "READY"
+                  }
                   ref={refDate}
                   required
                 />
