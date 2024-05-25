@@ -18,6 +18,7 @@ import RoleRoute from "@/page/Routes/Guards/RoleRoute";
 import PembelianBahanBakuPage from "@/page/Admin/Page/PembelianBahanBaku/PembelianBahanBakuPage";
 import NotFound404 from "@/page/Admin/Page/NotFound404";
 import KonfirmasiPage from "@/page/Admin/Page/KonfirmasiPage";
+import HistoriSaldo from "@/page/Admin/Page/HistoriSaldo/HistoriSaldoPage";
 
 export default function getAdminRoutes() {
   return (
@@ -138,6 +139,14 @@ export default function getAdminRoutes() {
         element={
           <RoleRoute roles={["ADM"]}>
             <KonfirmasiPage status={"Menunggu Perhitungan Ongkir"} />
+          </RoleRoute>
+        }
+      />
+      <Route
+        path="histori_saldo_customer"
+        element={
+          <RoleRoute roles={["ADM"]}>
+            <HistoriSaldo/>
           </RoleRoute>
         }
       />

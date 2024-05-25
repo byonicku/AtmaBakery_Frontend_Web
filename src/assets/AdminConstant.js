@@ -8,6 +8,7 @@ import {
   FaUsers,
   FaHome,
   FaBell,
+  FaMoneyBill,
   FaLocationArrow,
   FaCheckDouble,
 } from "react-icons/fa";
@@ -51,6 +52,11 @@ const AdminRoute = [
     to: "./ubah_status_pesanan",
     icon: FaBell,
     label: "Ubah Status Pesanan",
+  },
+  {
+    to: "./histori_saldo_customer",
+    icon: FaMoneyBill,
+    label: "Transfer Saldo Customer",
   },
 ];
 
