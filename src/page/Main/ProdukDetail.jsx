@@ -402,6 +402,10 @@ export default function ProdukDetail() {
                         return;
                       }
 
+                      if (!isLogin) {
+                        return;
+                      }
+
                       refPO.current.classList.remove("active");
                       refReady.current.classList.add("active");
                       refDate.current.disabled = true;
@@ -427,6 +431,10 @@ export default function ProdukDetail() {
 
                       if (produk.stok > 0 && produk.limit === 0) {
                         resetField();
+                        return;
+                      }
+
+                      if (!isLogin) {
                         return;
                       }
 
