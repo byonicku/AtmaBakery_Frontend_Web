@@ -178,6 +178,20 @@ const updateStatusSelesaiSelf = async (data) => {
   }
 };
 
+const batalkanSemuaTransaksi = async () => {
+  try {
+    const response = await useAxios.get("/batal/transaksi", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const APITransaksi = {
   countTransaksi,
   countTransaksiWithHampers,
@@ -191,6 +205,7 @@ const APITransaksi = {
   updateStatusKirimPickUp,
   updateStatusSelesai,
   updateStatusSelesaiSelf,
+  batalkanSemuaTransaksi,
 };
 
 export default APITransaksi;

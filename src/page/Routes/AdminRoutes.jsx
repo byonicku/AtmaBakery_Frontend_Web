@@ -146,7 +146,7 @@ export default function getAdminRoutes() {
         path="histori_saldo_customer"
         element={
           <RoleRoute roles={["ADM"]}>
-            <HistoriSaldo/>
+            <HistoriSaldo />
           </RoleRoute>
         }
       />
@@ -179,6 +179,14 @@ export default function getAdminRoutes() {
         element={
           <RoleRoute roles={["MO"]}>
             <KonfirmasiPage status={"date"} />
+          </RoleRoute>
+        }
+      />
+      <Route
+        path="batalkan_pesanan"
+        element={
+          <RoleRoute roles={["ADM"]}>
+            <KonfirmasiPage status={"batal"} />
           </RoleRoute>
         }
       />

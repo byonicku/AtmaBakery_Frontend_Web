@@ -12,6 +12,7 @@ import {
   FaLocationArrow,
   FaCheckDouble,
 } from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
 
 const MORoute = [
   { to: "/admin", icon: BsGrid, label: "Beranda" },
@@ -57,6 +58,11 @@ const AdminRoute = [
     to: "./histori_saldo_customer",
     icon: FaMoneyBill,
     label: "Transfer Saldo Customer",
+  },
+  {
+    to: "./batalkan_pesanan",
+    icon: FaX,
+    label: "Batalkan Pesanan",
   },
 ];
 

@@ -326,6 +326,10 @@ export default function KonfirmasiPage({ status }) {
       return "Tidak ada pesanan yang menunggu pemrosesan";
     }
 
+    if (status === "batal") {
+      return "Tidak ada pesanan yang dapat dibatalkan";
+    }
+
     if (!status && search) {
       return "History Tidak Ditemukan";
     }
@@ -363,6 +367,14 @@ export default function KonfirmasiPage({ status }) {
         title: "Konfirmasi Pemrosesan Pesanan Customer",
         desc: "Lakukan konfirmasi pemrosesan pesanan customer",
         breadcrumb: "Konfirmasi Pemrosesan Pesanan",
+      };
+    }
+
+    if (status === "batal") {
+      return {
+        title: "Batalkan Pesanan Customer",
+        desc: "Batalkan pesanan customer",
+        breadcrumb: "Batalkan Pesanan",
       };
     }
 
@@ -660,6 +672,35 @@ export default function KonfirmasiPage({ status }) {
     }
   };
 
+  const handleBatalkanTransaksiSemua = async () => {
+    const isConfirmed = await confirm(
+      "Apakah anda yakin ingin menolak semua transaksi ini?",
+      "",
+      "Tolak Semua",
+      true
+    );
+
+    if (!isConfirmed) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await APITransaksi.batalkanSemuaTransaksi();
+
+      fetchHistoryCust(null, filter);
+      toast.success("Batalkan Transaksi Berhasil!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
   return (
     <>
       <OutlerHeader
@@ -681,8 +722,19 @@ export default function KonfirmasiPage({ status }) {
                 variant="success"
                 onClick={() => handleConfirmMOProsesAll()}
                 disabled={isLoading || history?.length === 0}
+                className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
               >
                 <FaCheck className="mb-1" /> Konfirmasi Semua
+              </Button>
+            )}
+            {status === "batal" && (
+              <Button
+                variant="danger"
+                className="custom-danger-btn me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+                onClick={() => handleBatalkanTransaksiSemua()}
+                disabled={isLoading}
+              >
+                <FaX className="mb-1" /> Tolak Semua
               </Button>
             )}
           </Col>
