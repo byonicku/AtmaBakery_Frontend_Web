@@ -9,19 +9,21 @@ import {
   InputGroup,
   Form,
   Image,
+  Container,
 } from "react-bootstrap";
 
 import { useState, useEffect, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import propTypes from "prop-types";
 
-import { BsInbox, BsSearch } from "react-icons/bs";
+import { BsEnvelopePaper, BsInbox, BsSearch } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
 import InputHelper from "@/page/InputHelper";
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import APIHistory from "@/api/APICustomer";
 import APITransaksi from "@/api/APITransaksi";
+import APILaporan from "@/api/APILaporan";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import Formatter from "@/assets/Formatter";
@@ -56,6 +58,94 @@ export default function KonfirmasiPage({ status }) {
   const [showModal, setShowModal] = useState(false);
   const [bukti_bayar, setBuktiBayar] = useState(null);
   const { confirm, modalElement } = useConfirm();
+
+  const [dataNota, setDataNota] = useState([]);
+  const [dataBahanBaku, setDataBahanBaku] = useState([]);
+  const [dataBahanBakuKeseluruhan, setDataBahanBakuKeseluruhan] = useState([]);
+  const [dataRekapProduk, setDataRekapProduk] = useState([]);
+  const [dataRekapProdukDibuat, setDataRekapProdukDibuat] = useState([]);
+
+  const fetchData = async () => {
+    setIsLoadingModal(true);
+
+    try {
+      const response = await APILaporan.getRekapProduk();
+      setDataRekapProduk(response);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const response = await APILaporan.getRekapProdukPerluDibuat();
+      setDataRekapProdukDibuat(response);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const response = await APILaporan.getRekapBahanBakuPerProduk();
+      setDataBahanBaku(response);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const response = await APILaporan.getRekapBahanBaku();
+      setDataBahanBakuKeseluruhan(response);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const response = await APILaporan.getRekapNotaHarian();
+      setDataNota(response);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setIsLoadingModal(false);
+  };
+
+  const formatData = (data) => {
+    const groupedData = data.reduce((acc, item) => {
+      if (!acc[item.nama_produk]) {
+        acc[item.nama_produk] = [];
+      }
+
+      acc[item.nama_produk].push(item);
+      return acc;
+    }, {});
+
+    return Object.entries(groupedData).map(([productName, ingredients]) => (
+      <div key={productName}>
+        <h5 className="text-bold pt-2">{productName}</h5>
+        {ingredients.map((ingredient, index) => {
+          if (
+            ingredient?.nama_bahan_baku.startsWith("Box") ||
+            ingredient?.nama_bahan_baku.startsWith("Kartu") ||
+            ingredient?.nama_bahan_baku.startsWith("Botol") ||
+            ingredient?.nama_bahan_baku.startsWith("Tas")
+          ) {
+            return null;
+          }
+          return (
+            <p key={index} className="p-0 m-0">
+              {ingredient.total_jumlah_dibutuhkan} {ingredient.satuan}{" "}
+              {ingredient.nama_bahan_baku}
+            </p>
+          );
+        })}
+      </div>
+    ));
+  };
+
+  const [showModalRekapHarian, setShowModalRekapHarian] = useState(false);
+
+  const handleCloseModalRekapHarian = () => setShowModalRekapHarian(false);
+  const handleShowModalRekapHarian = () => {
+    setShowModalRekapHarian(true);
+    fetchData();
+  };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -448,7 +538,6 @@ export default function KonfirmasiPage({ status }) {
     }
   };
 
-
   const handleConfirmMOProses = async () => {
     const data = {
       no_nota: selectedNota?.no_nota,
@@ -472,8 +561,9 @@ export default function KonfirmasiPage({ status }) {
 
       if (response.bahan_baku) {
         setListBahanBaku(response.bahan_baku);
+        listNotaGagal.push(data.no_nota);
         if (response.bahan_baku.length != 0) {
-          handleShowBahanBakuModal();
+          handleShowBothModal();
           toast.warning(
             "Konfirmasi Pemrosesan oleh MO Gagal! Silahkan cek bahan baku yang tersedia"
           );
@@ -727,6 +817,27 @@ export default function KonfirmasiPage({ status }) {
     }
   };
 
+  const namaProdukConverter = (kategori, ukuran, nama) => {
+    if (kategori === "CK") {
+      return nama + " " + ukuran + " Loyang";
+    }
+
+    return nama;
+  };
+
+  const namaProdukConverterDibuat = (kategori, jumlah, nama) => {
+    const ukuran =
+      jumlah - Math.floor(jumlah) !== 0
+        ? Math.floor(jumlah) + " 1/2"
+        : Math.floor(jumlah);
+
+    if (kategori === "CK") {
+      return nama + " " + ukuran + " Loyang";
+    }
+
+    return nama;
+  };
+
   return (
     <>
       <OutlerHeader
@@ -744,14 +855,24 @@ export default function KonfirmasiPage({ status }) {
             className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
           >
             {status === "date" && (
-              <Button
-                variant="success"
-                onClick={() => handleConfirmMOProsesAll()}
-                disabled={isLoading || history?.length === 0}
-                className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
-              >
-                <FaCheck className="mb-1" /> Konfirmasi Semua
-              </Button>
+              <>
+                <Button
+                  variant="success"
+                  onClick={() => handleConfirmMOProsesAll()}
+                  disabled={isLoading || history?.length === 0}
+                  className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+                >
+                  <FaCheck className="mb-1" /> Konfirmasi Semua
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => handleShowModalRekapHarian()}
+                  disabled={isLoading || history?.length === 0}
+                  className="mb-2 mb-lg-1 mb-md-2 mb-sm-2"
+                >
+                  <BsEnvelopePaper className="mb-1" /> Rekap Harian
+                </Button>
+              </>
             )}
             {status === "batal" && (
               <Button
@@ -1328,31 +1449,31 @@ export default function KonfirmasiPage({ status }) {
             handleCloseBahanBakuModal();
           }}
         >
-            <Table responsive className="text-start align-middle table-nowrap">
-              <thead>
-                <tr>
-                  <th className="th-style">Nama Bahan Baku</th>
-                  <th className="th-style">Stok Sekarang</th>
-                  <th
-                    className="th-style"
-                    style={{ color: "red", fontWeight: "bolder" }}
-                  >
-                    Stok Yang Dibutuhkan
-                  </th>
+          <Table responsive className="text-start align-middle table-nowrap">
+            <thead>
+              <tr>
+                <th className="th-style">Nama Bahan Baku</th>
+                <th className="th-style">Stok Sekarang</th>
+                <th
+                  className="th-style"
+                  style={{ color: "red", fontWeight: "bolder" }}
+                >
+                  Stok Yang Dibutuhkan
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {listBahanBaku?.map((detail, idx) => (
+                <tr key={idx}>
+                  <td>{detail.nama_bahan_baku}</td>
+                  <td>{detail.stok_sekarang}</td>
+                  <td style={{ color: "red", fontWeight: "bolder" }}>
+                    {detail.jumlah_dibutuhkan}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {listBahanBaku?.map((detail, idx) => (
-                  <tr key={idx}>
-                    <td>{detail.nama_bahan_baku}</td>
-                    <td>{detail.stok_sekarang}</td>
-                    <td style={{ color: "red", fontWeight: "bolder" }}>
-                      {detail.jumlah_dibutuhkan}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+              ))}
+            </tbody>
+          </Table>
         </AddEditModal>
 
         <Modal
@@ -1480,6 +1601,173 @@ export default function KonfirmasiPage({ status }) {
                 )}
               </>
             )}
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showModalRekapHarian}
+          centered
+          size="xl"
+          onHide={() => {
+            handleCloseModalRekapHarian();
+            setTimeout(() => {
+              setDataBahanBaku([]);
+              setDataNota([]);
+              setDataBahanBakuKeseluruhan([]);
+              setDataRekapProduk([]);
+              setDataRekapProdukDibuat([]);
+            }, 125);
+          }}
+        >
+          <Modal.Body>
+            <Container
+              className={isLoadingModal ? "" : "border border-dark rounded-1"}
+            >
+              {isLoadingModal ? (
+                <div className="text-center">
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    variant="primary"
+                    size="lg"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                  <h6 className="mt-2 mb-0">Loading...</h6>
+                </div>
+              ) : (
+                <>
+                  <h4 className="text-center text-bold">List Pesanan Harian</h4>
+                  <h5 className="text-center border-dark pb-1">
+                    Tanggal : {Formatter.dateFormatter(new Date())}
+                  </h5>
+
+                  <Row>
+                    <Col
+                      xl={6}
+                      lg={6}
+                      md={12}
+                      sm={12}
+                      className="border-right border-top border-bottom border-dark"
+                    >
+                      <h5 className="text-center text-bold pt-2">
+                        List Pemesanan
+                      </h5>
+                      <Table
+                        responsive
+                        className="text-start align-middle table-nowrap"
+                      >
+                        <thead>
+                          <tr>
+                            <th className="th-style">No Nota</th>
+                            <th className="th-style">Nama</th>
+                            <th className="th-style">Pesanan</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {dataNota?.map((detail, idx) => (
+                            <tr key={idx}>
+                              <td>{detail?.no_nota}</td>
+                              <td>{detail?.user?.nama}</td>
+                              <td>
+                                {detail?.detail_transaksi?.map(
+                                  (detail, idx) => (
+                                    <div key={idx}>
+                                      {detail?.jumlah +
+                                        " " +
+                                        (namaProdukConverter(
+                                          detail?.produk?.id_kategori,
+                                          detail?.produk?.ukuran,
+                                          detail?.produk?.nama_produk
+                                        ) ?? detail?.hampers?.nama_hampers)}
+                                    </div>
+                                  )
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                    </Col>
+                    <Col
+                      xl={6}
+                      lg={6}
+                      md={12}
+                      sm={12}
+                      className="border-top border-bottom border-dark"
+                    >
+                      <h5 className="text-center text-bold pt-2">Rekap</h5>
+                      {dataRekapProduk?.map((detail, idx) => (
+                        <div key={idx}>
+                          {detail?.jumlah +
+                            " " +
+                            namaProdukConverter(
+                              detail?.id_kategori,
+                              detail?.ukuran,
+                              detail?.nama
+                            )}
+                        </div>
+                      ))}
+
+                      <h5 className="text-center text-bold border-top border-dark pt-2">
+                        Yang Perlu Dibuat
+                      </h5>
+                      {dataRekapProdukDibuat?.map((detail, idx) => (
+                        <div key={idx}>
+                          {namaProdukConverterDibuat(
+                            detail?.id_kategori,
+                            detail?.jumlah,
+                            detail?.nama
+                          )}
+                        </div>
+                      ))}
+                    </Col>
+                    <Col
+                      xl={6}
+                      lg={6}
+                      md={12}
+                      sm={12}
+                      className="border-right border-dark"
+                    >
+                      <h5 className="text-center text-bold pt-2">Bahan</h5>
+                      {formatData(dataBahanBaku)}
+                    </Col>
+                    <Col xl={6} lg={6} md={12} sm={12}>
+                      <h5 className="text-center text-bold pt-2">
+                        Rekap Bahan
+                      </h5>
+                      {dataBahanBakuKeseluruhan?.map((detail, idx) => {
+                        if (
+                          detail?.nama_bahan_baku.startsWith("Box") ||
+                          detail?.nama_bahan_baku.startsWith("Kartu") ||
+                          detail?.nama_bahan_baku.startsWith("Botol") ||
+                          detail?.nama_bahan_baku.startsWith("Tas")
+                        ) {
+                          return null;
+                        }
+                        return (
+                          <div key={idx}>
+                            {detail?.total_jumlah_dibutuhkan +
+                              " " +
+                              detail?.satuan +
+                              " " +
+                              detail?.nama_bahan_baku}
+                            {detail?.stok_sekarang <
+                              detail?.total_jumlah_dibutuhkan && (
+                              <span style={{ color: "red" }}>
+                                {" "}
+                                (Warning Stok : {detail?.stok_sekarang}
+                                {" " + detail?.satuan})
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </Col>
+                  </Row>
+                </>
+              )}
+            </Container>
           </Modal.Body>
         </Modal>
         {modalElement}

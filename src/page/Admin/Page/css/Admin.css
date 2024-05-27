@@ -38,3 +38,21 @@
     Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol";
 }
+
+@media screen and (max-width: 1024px) {
+  .border-top {
+    border: none !important;
+  }
+
+  .border-bottom {
+    border: none !important;
+  }
+
+  .border-left {
+    border: none !important;
+  }
+
+  .border-right {
+    border: none !important;
+  }
+}
