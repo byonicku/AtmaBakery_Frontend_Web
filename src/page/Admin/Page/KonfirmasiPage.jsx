@@ -390,6 +390,32 @@ export default function KonfirmasiPage({ status }) {
       no_nota: selectedNota?.no_nota,
     };
 
+    try {
+      setIsLoading(true);
+      const response = await APITransaksi.konfirmasiPesananMO(data);
+      fetchHistoryCust(null, filter);
+      if (response.bahan_baku) {
+        setListBahanBaku(response?.bahan_baku);
+        if (response?.bahan_baku?.length != 0) {
+          handleCloseBahanBakuModal();
+        }
+      }
+      toast.success("Konfirmasi oleh MO Berhasil!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error?.data?.message ||
+          error?.message ||
+          "Sesuatu sedang bermasalah pada server!"
+      );
+    }
+  };
+
+  const showBahanBakuKurang = async () => {
+    const data = {
+      no_nota: selectedNota?.no_nota,
+    };
+
     const isConfirmed = await confirm(
       "Apakah anda yakin ingin mengonfirmasi transaksi ini?",
       "",
@@ -404,7 +430,7 @@ export default function KonfirmasiPage({ status }) {
 
     try {
       setIsLoading(true);
-      const response = await APITransaksi.konfirmasiPesananMO(data);
+      const response = await APITransaksi.tampilBahanBakuKurang(data);
       fetchHistoryCust(null, filter);
       if (response.bahan_baku) {
         setListBahanBaku(response?.bahan_baku);
@@ -412,7 +438,6 @@ export default function KonfirmasiPage({ status }) {
           handleShowBahanBakuModal();
         }
       }
-      toast.success("Konfirmasi oleh MO Berhasil!");
       handleCloseModal();
     } catch (error) {
       toast.error(
@@ -422,6 +447,7 @@ export default function KonfirmasiPage({ status }) {
       );
     }
   };
+
 
   const handleConfirmMOProses = async () => {
     const data = {
@@ -1166,7 +1192,7 @@ export default function KonfirmasiPage({ status }) {
                   <Button
                     variant="success"
                     onClick={() => {
-                      handleConfirmMOItem();
+                      showBahanBakuKurang();
                     }}
                   >
                     <FaCheck className="mb-1" /> Konfirmasi Pesanan
@@ -1291,19 +1317,17 @@ export default function KonfirmasiPage({ status }) {
           </Form.Group>
         </AddEditModal>
 
-        <Modal
+        <AddEditModal
           show={showBahanBakuModal}
           centered
           size="lg"
+          handleClose={handleCloseBahanBakuModal}
+          title="Bahan Baku Yang Kurang"
+          onSubmit={handleConfirmMOItem}
           onHide={() => {
             handleCloseBahanBakuModal();
-            setTimeout(() => {
-              setListBahanBaku([]);
-            }, 125);
           }}
         >
-          <Modal.Body className="text-center p-4 m-2">
-            <h5 style={{ fontWeight: "bold" }}>Bahan Baku Yang Kurang</h5>
             <Table responsive className="text-start align-middle table-nowrap">
               <thead>
                 <tr>
@@ -1329,8 +1353,7 @@ export default function KonfirmasiPage({ status }) {
                 ))}
               </tbody>
             </Table>
-          </Modal.Body>
-        </Modal>
+        </AddEditModal>
 
         <Modal
           show={showBahanBakuProsesModal}

@@ -104,6 +104,24 @@ const konfirmasiPesananMO = async (data) => {
   }
 };
 
+const tampilBahanBakuKurang = async (data) => {
+  try {
+    const response = await useAxios.post(
+      "/get-bahan-kurang",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response || error;
+  }
+};
+
 const konfirmasiPemrosesanMO = async (data) => {
   try {
     const response = await useAxios.post(
@@ -206,6 +224,7 @@ const APITransaksi = {
   updateStatusSelesai,
   updateStatusSelesaiSelf,
   batalkanSemuaTransaksi,
+  tampilBahanBakuKurang,
 };
 
 export default APITransaksi;
