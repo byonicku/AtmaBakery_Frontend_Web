@@ -771,18 +771,18 @@ export default function HistoryCustomerPage() {
                   Lihat Bukti Bayar
                 </Button>
               )}
-              {selectedNota?.status.includes("Sedang Diantar Ojol") ||
+              {(selectedNota?.status.includes("Sedang Diantar Ojol") ||
                 selectedNota?.status.includes("Sedang Diantar Kurir") ||
-                (selectedNota?.status.includes("Siap Pick Up") && (
-                  <Button
-                    variant="success"
-                    onClick={() => {
-                      handleSelesaiTransaksi();
-                    }}
-                  >
-                    <FaCheck className="mb-1" /> Selesaikan Transaksi
-                  </Button>
-                ))}
+                selectedNota?.status.includes("Siap Pick Up")) && (
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    handleSelesaiTransaksi();
+                  }}
+                >
+                  <FaCheck className="mb-1" /> Selesaikan Transaksi
+                </Button>
+              )}
               {selectedNota?.status.includes("Selesai") && (
                 <PDFDownloadLink
                   document={<PDFCetak selectedNota={selectedNota} />}

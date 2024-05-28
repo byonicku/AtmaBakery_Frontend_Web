@@ -521,13 +521,22 @@ export default function KonfirmasiPage({ status }) {
     try {
       setIsLoading(true);
       const response = await APITransaksi.tampilBahanBakuKurang(data);
-      fetchHistoryCust(null, filter);
+
       if (response.bahan_baku) {
         setListBahanBaku(response?.bahan_baku);
         if (response?.bahan_baku?.length != 0) {
           handleShowBahanBakuModal();
         }
+      } else {
+        try {
+          await APITransaksi.konfirmasiPesananMO(data);
+          toast.success("Konfirmasi oleh MO Berhasil!");
+        } catch (error) {
+          console.error(error);
+        }
       }
+
+      fetchHistoryCust(null, filter);
       handleCloseModal();
     } catch (error) {
       toast.error(
@@ -826,16 +835,22 @@ export default function KonfirmasiPage({ status }) {
   };
 
   const namaProdukConverterDibuat = (kategori, jumlah, nama) => {
-    const ukuran =
-      jumlah - Math.floor(jumlah) !== 0
-        ? Math.floor(jumlah) + " 1/2"
-        : Math.floor(jumlah);
+    const newJumlah = Math.floor(jumlah);
+    const ukuran = jumlah - newJumlah !== 0 ? newJumlah + " 1/2" : newJumlah;
 
     if (kategori === "CK") {
       return nama + " " + ukuran + " Loyang";
     }
 
-    return nama;
+    if (kategori === "RT") {
+      return nama + " " + newJumlah + " Pcs";
+    }
+
+    if (kategori === "MNM") {
+      return nama + " " + newJumlah + " Liter";
+    }
+
+    return nama + " " + newJumlah + " Pcs";
   };
 
   return (
