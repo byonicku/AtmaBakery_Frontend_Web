@@ -302,13 +302,6 @@ export default function HistoryCustomerPage() {
                 </Dropdown.Item>
                 <Dropdown.Item
                   onClick={() => {
-                    setFilter("Siap Kirim");
-                  }}
-                >
-                  Siap Kirim
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
                     setFilter("Sedang Diantar Kurir");
                   }}
                 >
@@ -320,13 +313,6 @@ export default function HistoryCustomerPage() {
                   }}
                 >
                   Sedang Diantar Ojol
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => {
-                    setFilter("Terkirim");
-                  }}
-                >
-                  Terkirim
                 </Dropdown.Item>
                 <Dropdown.Item
                   onClick={() => {
@@ -535,8 +521,7 @@ export default function HistoryCustomerPage() {
                   <Col className="text-end">
                     <h4>
                       Nota {selectedNota?.no_nota}
-                      {selectedNota?.status.includes("Terkirim") ||
-                      selectedNota?.status.includes("Selesai") ||
+                      {selectedNota?.status.includes("Selesai") ||
                       selectedNota?.status.includes("Pesanan Diterima") ? (
                         <Badge className="ms-3 font-size-12" bg="success">
                           {selectedNota?.status}
@@ -553,7 +538,6 @@ export default function HistoryCustomerPage() {
                           {selectedNota?.status}
                         </Badge>
                       ) : selectedNota?.status.includes("Siap Pick Up") ||
-                        selectedNota?.status.includes("Siap Kirim") ||
                         selectedNota?.status.includes("Sedang Diantar Kurir") ||
                         selectedNota?.status.includes("Sedang Diantar Ojol") ? (
                         <Badge className="ms-3 font-size-12" bg="primary">
