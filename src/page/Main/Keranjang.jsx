@@ -628,15 +628,33 @@ export default function Keranjang() {
                       }}
                       className="pb-2"
                     >
-                      <Col lg={6} md={6} sm={6} xs={6} className="left-detail">
-                        Gunakan Poin?
+                      <Col
+                        lg={6}
+                        md={6}
+                        sm={6}
+                        xs={6}
+                        className="left-detail"
+                        style={{
+                          color: userPoin > 0 ? "#0BA42D" : "#FF0000",
+                        }}
+                      >
+                        {userPoin > 0 ? "Gunakan Poin?" : "Tidak Memiliki Poin"}
                       </Col>
-                      <Col lg={6} md={6} sm={6} xs={6} className="right-detail">
-                        <Form.Check
-                          type="checkbox"
-                          onChange={() => setGunakanPoin(!gunakanPoin)}
-                        />
-                      </Col>
+                      {userPoin > 0 && (
+                        <Col
+                          lg={6}
+                          md={6}
+                          sm={6}
+                          xs={6}
+                          className="right-detail"
+                        >
+                          <Form.Check
+                            type="checkbox"
+                            disabled={userPoin === 0}
+                            onChange={() => setGunakanPoin(!gunakanPoin)}
+                          />
+                        </Col>
+                      )}
                     </Row>
                     <Row
                       className={
