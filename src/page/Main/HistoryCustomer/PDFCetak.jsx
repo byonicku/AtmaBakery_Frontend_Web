@@ -195,7 +195,8 @@ const PDFCetak = ({ selectedNota }) => (
           Poin dari pesanan ini: {selectedNota?.penambahan_poin}
         </Text>
         <Text style={styles.subHeader}>
-          Total Poin Customer: {selectedNota?.poin_user_setelah_penambahan}
+          Poin User Setelah Penambahan:{" "}
+          {selectedNota?.poin_user_setelah_penambahan}
         </Text>
       </View>
     </Page>
