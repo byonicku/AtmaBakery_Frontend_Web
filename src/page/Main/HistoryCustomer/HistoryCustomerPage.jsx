@@ -724,7 +724,7 @@ export default function HistoryCustomerPage() {
                   style={{ color: "rgb(18,19,20,70%)", fontSize: "1.1em" }}
                   className="mt-1"
                 >
-                  Total Poin Customer :{" "}
+                  Poin User Setelah Penambahan :{" "}
                   {selectedNota?.poin_user_setelah_penambahan}
                 </h5>
               </>

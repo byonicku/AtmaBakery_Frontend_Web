@@ -29,7 +29,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [eyeToggle, setEyeToggle] = useState(true);
   const [eyeToggle1, setEyeToggle1] = useState(true);
   const [eyeToggle2, setEyeToggle2] = useState(true);
@@ -69,30 +69,31 @@ export default function Profile() {
       sessionStorage.setItem("foto_profil", data.foto_profil);
       sessionStorage.setItem("saldo", data.saldo);
       sessionStorage.setItem("poin", data.poin);
+      handleRefresh();
       setUser(data);
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setUser({
-      nama: sessionStorage.getItem("nama"),
-      tanggal_lahir: sessionStorage.getItem("tanggal_lahir"),
-      email: sessionStorage.getItem("email"),
-      no_telp: sessionStorage.getItem("no_telp"),
-      jenis_kelamin: sessionStorage.getItem("jenis_kelamin"),
-      foto_profil:
-        sessionStorage.getItem("foto_profil") === "null"
-          ? null
-          : sessionStorage.getItem("foto_profil"),
-      saldo: sessionStorage.getItem("saldo"),
-      poin: sessionStorage.getItem("poin"),
-    });
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    const fetch = async () => {
+      await fetchUser(signal);
+    };
+
+    fetch();
     setImage(null);
-  }, []);
+
+    return () => {
+      abortController.abort();
+    };
+  }, [fetchUser]);
 
   const [formData, setFormData] = useState({
     old_password: "",
