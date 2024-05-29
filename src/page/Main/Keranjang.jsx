@@ -94,13 +94,6 @@ export default function Keranjang() {
         }
       }
 
-      if (
-        new Date(tanggal_lahir).getMonth() === new Date().getMonth() &&
-        new Date(tanggal_lahir).getDate() === new Date().getDate()
-      ) {
-        points *= 2;
-      }
-
       function calculatePoints(user_birthday, points) {
         function formatDate(date) {
           const d = new Date(date);
