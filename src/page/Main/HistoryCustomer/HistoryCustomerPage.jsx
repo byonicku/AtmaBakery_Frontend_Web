@@ -86,6 +86,7 @@ export default function HistoryCustomerPage() {
     const data = new FormData();
     data.append("no_nota", formData.no_nota);
     data.append("bukti_bayar", formData.bukti_bayar);
+
     try {
       await confirmBayar.mutateAsync(data);
       return;
@@ -737,8 +738,10 @@ export default function HistoryCustomerPage() {
                   variant="primary"
                   onClick={() => {
                     handleShowAddEditModal();
+                    setImage(null);
                     setFormData({
                       no_nota: selectedNota?.no_nota,
+                      bukti_bayar: null,
                     });
                   }}
                 >
