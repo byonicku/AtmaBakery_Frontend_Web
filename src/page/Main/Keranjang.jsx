@@ -78,10 +78,6 @@ export default function Keranjang() {
 
   const hitungPoint = useCallback(
     (totalAmount, points) => {
-      if (gunakanPoin) {
-        totalAmount -= userPoin > maxPoin ? maxPoin * 100 : userPoin * 100;
-      }
-
       while (totalAmount >= 10000) {
         if (totalAmount >= 1000000) {
           points += 200;
@@ -140,7 +136,7 @@ export default function Keranjang() {
 
       return calculatePoints(new Date(tanggal_lahir), points);
     },
-    [tanggal_lahir, gunakanPoin, maxPoin, userPoin]
+    [tanggal_lahir]
   );
 
   useEffect(() => {
