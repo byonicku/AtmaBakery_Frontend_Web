@@ -33,7 +33,7 @@ export default function HampersDetail() {
   const [minLimitOrStok, setMinLimitOrStok] = useState(null);
   const [limit, setLimit] = useState([]);
   const [tanggal, setTanggal] = useState("");
-  const [pilihan, setPilihan] = useState("READY");
+  const [pilihan, setPilihan] = useState("PO");
   const [jumlah, setJumlah] = useState(1);
 
   const [detail_hampers, setDetailHampers] = useState([]);
@@ -63,6 +63,7 @@ export default function HampersDetail() {
         const response = await APIHampers.showHampers(id, signal);
 
         setHampers(response);
+        setPilihan(response?.status);
         setDetailHampers(response?.detail_hampers);
         if (response.gambar?.length > 0) {
           setGambar(
@@ -223,7 +224,11 @@ export default function HampersDetail() {
         refPO.current.disabled = true;
         refReady.current?.classList.add("active");
         refDate.current.disabled = true;
-        getCountTransaksi(new Date().toISOString().split("T")[0]);
+        getCountTransaksi(
+          isAlreadyPO
+            ? sessionStorage.getItem("po_date")
+            : new Date().toISOString().split("T")[0]
+        );
         setPilihan("READY");
       } else {
         refReady.current?.classList.remove("active");

@@ -492,7 +492,7 @@ export default function Keranjang() {
                                 color: "#0BA42D",
                               }}
                             >
-                              {item?.produk?.status === "PO" &&
+                              {item?.produk?.status === "PO" ||
                               item?.status === "PO"
                                 ? "Pre Order"
                                 : "Ready Stok"}
