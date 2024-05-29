@@ -2,7 +2,8 @@ import axios from "axios";
 
 // const productionBaseUrl = "http://127.0.0.1:8000/"; // Local
 const productionBaseUrl = "https://api-atma-bakery.vercel.app/"; // Vercel
-const fallbackBaseUrl = "https://api-atma-bakery.azurewebsites.net/"; // Azure
+// const fallbackBaseUrl = "https://api-atma-bakery.azurewebsites.net/"; // Azure
+const fallbackBaseUrl = "https://api-atma-bakery.vercel.app/"; // Azure
 
 const useAxios = axios.create({ baseURL: productionBaseUrl });
 

@@ -46,9 +46,9 @@ export default function ProdukView() {
   const applyFilter = (produkList, kategori) => {
     switch (kategori) {
       case "PO":
-        return produkList.filter((item) => item.stok === 0);
+        return produkList.filter((item) => item.status === "PO");
       case "READY":
-        return produkList.filter((item) => item.stok > 0);
+        return produkList.filter((item) => item.status === "READY");
       case "Hampers":
         return produkList.filter((item) => item.id_hampers !== undefined);
       case "CK":
