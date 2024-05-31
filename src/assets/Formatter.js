@@ -34,10 +34,18 @@ function moneyFormatter(value) {
   }).format(value);
 }
 
+function formatDateToIndonesian(value) {
+  const date = new Date(value);
+  const options = { day: "numeric", month: "long", year: "numeric" };
+  const indonesianDate = new Intl.DateTimeFormat("id-ID", options).format(date);
+  return indonesianDate;
+}
+
 const Formatter = {
   dateFormatter,
   dateTimeFormatter,
   moneyFormatter,
+  formatDateToIndonesian,
 };
 
 export default Formatter;
