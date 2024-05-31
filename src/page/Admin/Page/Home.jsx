@@ -4,9 +4,10 @@ import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import LaporanPenggunaanBahanBaku from "./Laporan/LaporanPenggunaanBahanBaku";
 import { FaDownload } from "react-icons/fa";
 import APILaporan from "@/api/APILaporan";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Formatter from "@/assets/Formatter";
 import FileSaver from "file-saver";
+import PDFPreview from "@/page/Main/HistoryCustomer/PDFPreview";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,7 @@ export default function Home() {
         response.tanggal_cetak
       );
       generatePDFBahanBaku(response);
+      // setBahanBaku(response);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -38,10 +40,21 @@ export default function Home() {
     FileSaver.saveAs(blob, filename);
   };
 
+  // const [bahan_baku, setBahanBaku] = useState([]);
+
+  // useEffect(() => {
+  //   if (isMOorOwner) {
+  //     fetchBahanBaku();
+  //   }
+  // }, [isMOorOwner]);
+
   return (
     <>
       <OutlerHeader title="Dashboard" breadcrumb="Dashboard" />
       <section className="content">
+        {/* <PDFPreview>
+          <LaporanPenggunaanBahanBaku bahan_baku={bahan_baku} />
+        </PDFPreview> */}
         {isMOorOwner && (
           <>
             {loading ? (
