@@ -1,14 +1,14 @@
 import OutlerHeader from "@/component/Admin/OutlerHeader";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Card, Col, Row, Spinner } from "react-bootstrap";
+import { pdf } from "@react-pdf/renderer";
+import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import LaporanPenggunaanBahanBaku from "./Laporan/LaporanPenggunaanBahanBaku";
 import { FaDownload } from "react-icons/fa";
 import APILaporan from "@/api/APILaporan";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Formatter from "@/assets/Formatter";
+import FileSaver from "file-saver";
 
 export default function Home() {
-  const [bahan_baku_list, setBahanBakuList] = useState([]);
   const [loading, setLoading] = useState(false);
   const isMOorOwner =
     sessionStorage.getItem("role") === "OWN" ||
@@ -21,7 +21,7 @@ export default function Home() {
       response.tanggal_cetak = Formatter.formatDateToIndonesian(
         response.tanggal_cetak
       );
-      setBahanBakuList(response);
+      generatePDFBahanBaku(response);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -29,11 +29,14 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    if (isMOorOwner) {
-      fetchBahanBaku();
-    }
-  }, [isMOorOwner]);
+  const generatePDFBahanBaku = async (data) => {
+    const blob = await pdf(
+      <LaporanPenggunaanBahanBaku bahan_baku={data} />
+    ).toBlob();
+    const filename =
+      "Laporan Penggunaan Bahan Baku-" + new Date().getTime() + ".pdf";
+    FileSaver.saveAs(blob, filename);
+  };
 
   return (
     <>
@@ -63,18 +66,15 @@ export default function Home() {
                       </h3>
                     </Col>
                     <Col md={12} lg={6} xl={6} className="text-end">
-                      <PDFDownloadLink
-                        id="pdfDownloadButton"
-                        document={
-                          <LaporanPenggunaanBahanBaku
-                            bahan_baku={bahan_baku_list}
-                          />
-                        }
-                        fileName="Laporan Penggunaan Bahan Baku.pdf"
-                        className="btn btn-primary"
+                      <Button
+                        variant="primary"
+                        onClick={async () => {
+                          await fetchBahanBaku();
+                        }}
                       >
-                        <FaDownload className="mb-1" /> Cetak
-                      </PDFDownloadLink>
+                        <FaDownload className="me-2" />
+                        Cetak
+                      </Button>
                     </Col>
                   </Row>
                 </Card.Body>
