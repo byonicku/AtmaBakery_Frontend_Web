@@ -202,25 +202,7 @@ export default function Home() {
                           ></Form.Control>
                         </Col>
                         <Col md={12} lg={2} xl={2} className="text-end">
-                          <Button
-                            variant="primary"
-                            onClick={async () => {
-                              if (
-                                document.getElementById("bulanProduk").value &&
-                                document.getElementById("tahunProduk").value
-                              ) {
-                                await fetchProdukPerBulan(
-                                  parseInt(
-                                    document.getElementById("bulanProduk").value
-                                  ),
-                                  document.getElementById("tahunProduk").value
-                                );
-                              }
-
-                              await fetchProdukPerBulan();
-                            }}
-                            type="submit"
-                          >
+                          <Button variant="primary" type="submit">
                             <FaDownload className="me-2" />
                             Cetak
                           </Button>
