@@ -128,7 +128,7 @@ export default function Home() {
                 <h6 className="mt-2 mb-0">Loading...</h6>
               </div>
             ) : (
-              <Container fluid className="content-row">
+              <Container fluid>
                 <Row>
                   <Col md={12} lg={6} xl={6}>
                     <Card>
