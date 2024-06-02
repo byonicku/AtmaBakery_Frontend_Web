@@ -251,7 +251,7 @@ export default function HampersDetail() {
 
   const mapLimitToString = useCallback((limit) => {
     return limit.map((data) =>
-      data?.stok > 0 && data?.status === "READY"
+      data?.stok >= 0 && data?.status === "READY"
         ? `${data?.nama_produk} dengan stok ${data?.stok}`
         : `${namaProdukConverter(
             data?.id_kategori,
