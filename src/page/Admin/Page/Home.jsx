@@ -153,13 +153,23 @@ export default function Home() {
                       }}
                     >
                       <Row>
-                        <Col md={12} lg={6} xl={6}>
+                        <Col
+                          md={12}
+                          lg={6}
+                          xl={6}
+                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
+                        >
                           <h3 className="text-bold">
                             Laporan Penjualan Bulanan Per Produk
                           </h3>
                         </Col>
 
-                        <Col md={12} lg={2} xl={2}>
+                        <Col
+                          md={12}
+                          lg={2}
+                          xl={2}
+                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
+                        >
                           <Form.Select
                             onChange={(e) => {
                               setBulanTahunProduk({
@@ -186,7 +196,12 @@ export default function Home() {
                             <option value="12">Desember</option>
                           </Form.Select>
                         </Col>
-                        <Col md={12} lg={2} xl={2}>
+                        <Col
+                          md={12}
+                          lg={2}
+                          xl={2}
+                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
+                        >
                           <Form.Control
                             placeholder="Masukan Tahun"
                             defaultValue={new Date().getFullYear()}
@@ -201,7 +216,12 @@ export default function Home() {
                             type="number"
                           ></Form.Control>
                         </Col>
-                        <Col md={12} lg={2} xl={2} className="text-end">
+                        <Col
+                          md={12}
+                          lg={2}
+                          xl={2}
+                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1 text-end"
+                        >
                           <Button variant="primary" type="submit">
                             <FaDownload className="me-2" />
                             Cetak
