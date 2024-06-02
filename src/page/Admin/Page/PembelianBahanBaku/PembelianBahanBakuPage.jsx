@@ -17,7 +17,6 @@ import {
   BsPlusSquare,
   BsPencilSquare,
   BsFillTrash3Fill,
-  BsPrinterFill,
 } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
@@ -27,7 +26,6 @@ import APIPembelianBahanBaku from "@/api/APIPembelianBahanBaku";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
-import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import APIBahanBaku from "@/api/APIBahanBaku";
 import Formatter from "@/assets/Formatter";
@@ -36,7 +34,6 @@ import Checker from "@/assets/Checker";
 export default function PembelianBahanBakuPage() {
   const [showDelModal, setShowDelModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
-  const [showPrintModal, setshowPrintModal] = useState(false);
   const [selectedPembelianBahanBaku, setSelectedPembelianBahanBaku] =
     useState(null);
   const [selectedSatuan, setSelectedSatuan] = useState(null);
@@ -49,9 +46,6 @@ export default function PembelianBahanBakuPage() {
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
 
-  const handleClosePrintModal = () => setshowPrintModal(false);
-  const handleShowPrintModal = () => setshowPrintModal(true);
-
   const [mode, setMode] = useState("add");
   const ref = useRef();
 
@@ -61,12 +55,6 @@ export default function PembelianBahanBakuPage() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState("");
-
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-
-  const startDateRef = useRef();
-  const endDateRef = useRef();
 
   const fetchPembelianBahanBaku = useCallback(
     async (signal) => {
@@ -325,15 +313,6 @@ export default function PembelianBahanBakuPage() {
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
             </Button>
-            <Button
-              variant="secondary"
-              onClick={handleShowPrintModal}
-              disabled={isLoading}
-              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
-            >
-              <BsPrinterFill className="mb-1 me-2" />
-              Print Laporan
-            </Button>
           </Col>
           <Col
             xs={12}
@@ -503,44 +482,6 @@ export default function PembelianBahanBakuPage() {
           />
         )}
         {/* ini modal modalnya */}
-        <PrintModal
-          show={showPrintModal}
-          onHide={handleClosePrintModal}
-          title="Print Laporan Penggunaan Pembelian Bahan Baku"
-          text="Pilih tanggal Penggunaan Pembelian Bahan Baku"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleClosePrintModal();
-          }}
-        >
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Pilih Tanggal Awal
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              type="date"
-              max={new Date().toISOString().split("T")[0]}
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              ref={startDateRef}
-            />
-          </Form.Group>
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Pilih Tanggal Akhir
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              type="date"
-              min={startDate}
-              max={new Date().toISOString().split("T")[0]}
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              ref={endDateRef}
-            />
-          </Form.Group>
-        </PrintModal>
 
         <AddEditModal
           show={showAddEditModal}

@@ -1,10 +1,18 @@
 import OutlerHeader from "@/component/Admin/OutlerHeader";
 import { pdf } from "@react-pdf/renderer";
-import { Button, Card, Col, Form, Row, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import LaporanPenggunaanBahanBaku from "./Laporan/LaporanPenggunaanBahanBaku";
 import { FaDownload } from "react-icons/fa";
 import APILaporan from "@/api/APILaporan";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Formatter from "@/assets/Formatter";
 import FileSaver from "file-saver";
 import PDFPreview from "@/page/Main/HistoryCustomer/PDFPreview";
@@ -16,6 +24,7 @@ export default function Home() {
   const isMOorOwner =
     sessionStorage.getItem("role") === "OWN" ||
     sessionStorage.getItem("role") === "MO";
+  const refProduk = useRef(null);
 
   const [bulanTahunProduk, setBulanTahunProduk] = useState({
     bulan: "",
@@ -120,141 +129,135 @@ export default function Home() {
                 <h6 className="mt-2 mb-0">Loading...</h6>
               </div>
             ) : (
-              <>
-                <Card>
-                  <Card.Body>
-                    <Form
-                      onSubmit={(e) => {
-                        e.preventDefault();
+              <Container fluid className="content-row">
+                <Row>
+                  <Col md={12} lg={6} xl={6}>
+                    <Card>
+                      <Card.Body>
+                        <Row>
+                          <Col md={12} lg={12} xl={12} className="mb-1">
+                            <h3 className="text-bold">
+                              Laporan Penjualan Bulanan Per Produk
+                            </h3>
+                          </Col>
 
-                        if (bulanTahunProduk.tahun > new Date().getFullYear())
-                          return toast.error(
-                            "Tahun tidak boleh lebih dari tahun sekarang"
-                          );
-
-                        if (bulanTahunProduk.tahun < 2021)
-                          return toast.error(
-                            "Tahun tidak boleh kurang dari tahun 2021"
-                          );
-
-                        if (bulanTahunProduk.bulan > new Date().getMonth() + 1)
-                          return toast.error(
-                            "Bulan tidak boleh lebih dari bulan sekarang"
-                          );
-
-                        if (bulanTahunProduk.bulan && bulanTahunProduk.tahun)
-                          fetchProdukPerBulan(
-                            parseInt(bulanTahunProduk.bulan),
-                            parseInt(bulanTahunProduk.tahun)
-                          );
-                        else {
-                          toast.error("Pilih bulan dan tahun terlebih dahulu");
-                        }
-                      }}
-                    >
-                      <Row>
-                        <Col
-                          md={12}
-                          lg={6}
-                          xl={6}
-                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-                        >
-                          <h3 className="text-bold">
-                            Laporan Penjualan Bulanan Per Produk
-                          </h3>
-                        </Col>
-
-                        <Col
-                          md={12}
-                          lg={2}
-                          xl={2}
-                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-                        >
-                          <Form.Select
-                            onChange={(e) => {
-                              setBulanTahunProduk({
-                                ...bulanTahunProduk,
-                                bulan: e.target.value,
-                              });
-                            }}
-                            required
-                          >
-                            <option selected disabled hidden>
-                              Pilih Bulan
-                            </option>
-                            <option value="1">Januari</option>
-                            <option value="2">Februari</option>
-                            <option value="3">Maret</option>
-                            <option value="4">April</option>
-                            <option value="5">Mei</option>
-                            <option value="6">Juni</option>
-                            <option value="7">Juli</option>
-                            <option value="8">Agustus</option>
-                            <option value="9">September</option>
-                            <option value="10">Oktober</option>
-                            <option value="11">November</option>
-                            <option value="12">Desember</option>
-                          </Form.Select>
-                        </Col>
-                        <Col
-                          md={12}
-                          lg={2}
-                          xl={2}
-                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1"
-                        >
-                          <Form.Control
-                            placeholder="Masukan Tahun"
-                            defaultValue={new Date().getFullYear()}
-                            id="tahunProduk"
-                            min={2021}
-                            onChange={(e) => {
-                              setBulanTahunProduk({
-                                ...bulanTahunProduk,
-                                tahun: e.target.value,
-                              });
-                            }}
-                            type="number"
-                          ></Form.Control>
-                        </Col>
-                        <Col
-                          md={12}
-                          lg={2}
-                          xl={2}
-                          className="m-0 mb-lg-0 mb-md-0 mb-sm-0 mb-1 text-end"
-                        >
-                          <Button variant="primary" type="submit">
-                            <FaDownload className="me-2" />
-                            Cetak
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Card.Body>
-                </Card>
-
-                <Card>
-                  <Card.Body>
-                    <Row>
-                      <Col md={12} lg={6} xl={6}>
-                        <h3 className="text-bold">
-                          Laporan Penggunaan Bahan Baku
-                        </h3>
-                      </Col>
-                      <Col md={12} lg={6} xl={6} className="text-end">
+                          <Col md={12} lg={12} xl={12}>
+                            <Form.Group className="text-start">
+                              <Form.Label
+                                style={{
+                                  fontWeight: "bold",
+                                  fontSize: "1em",
+                                }}
+                              >
+                                Pilih Bulan dan Tahun
+                              </Form.Label>
+                              <Form.Control
+                                style={{ border: "1px solid #808080" }}
+                                ref={refProduk}
+                                type="text"
+                                onFocus={() =>
+                                  (refProduk.current.type = "month")
+                                }
+                                onBlur={() =>
+                                  (refProduk.current.type = "month")
+                                }
+                                placeholder="Month YYYY"
+                                onChange={(e) => {
+                                  const date = new Date(e.target.value);
+                                  setBulanTahunProduk({
+                                    ...bulanTahunProduk,
+                                    bulan: date.getMonth() + 1,
+                                    tahun: date.getFullYear(),
+                                  });
+                                }}
+                                min={"2021-01"}
+                                max={
+                                  new Date().getFullYear() +
+                                  "-" +
+                                  (new Date().getMonth() + 1)
+                                    .toString()
+                                    .padStart(2, "0")
+                                }
+                              />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                      <Card.Footer className="bg-white border-top">
                         <Button
                           variant="primary"
-                          onClick={async () => {
-                            await fetchBahanBaku();
+                          onClick={(e) => {
+                            e.preventDefault();
+
+                            if (
+                              bulanTahunProduk.tahun > new Date().getFullYear()
+                            )
+                              return toast.error(
+                                "Tahun tidak boleh lebih dari tahun sekarang"
+                              );
+
+                            if (bulanTahunProduk.tahun < 2021)
+                              return toast.error(
+                                "Tahun tidak boleh kurang dari tahun 2021"
+                              );
+
+                            if (
+                              bulanTahunProduk.bulan >
+                              new Date().getMonth() + 1
+                            )
+                              return toast.error(
+                                "Bulan tidak boleh lebih dari bulan sekarang"
+                              );
+
+                            if (
+                              bulanTahunProduk.bulan &&
+                              bulanTahunProduk.tahun
+                            )
+                              fetchProdukPerBulan(
+                                parseInt(bulanTahunProduk.bulan),
+                                parseInt(bulanTahunProduk.tahun)
+                              );
+                            else {
+                              toast.error(
+                                "Pilih bulan dan tahun terlebih dahulu"
+                              );
+                            }
                           }}
                         >
                           <FaDownload className="me-2" />
                           Cetak
                         </Button>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              </>
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+
+                  <Col md={12} lg={6} xl={6}>
+                    <Card>
+                      <Card.Body>
+                        <Row>
+                          <Col md={12} lg={12} xl={12}>
+                            <h3 className="text-bold">
+                              Laporan Penggunaan Bahan Baku
+                            </h3>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                      <Card.Footer className="bg-white border-top">
+                        <Button
+                          variant="primary"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            fetchBahanBaku();
+                          }}
+                        >
+                          <FaDownload className="me-2" />
+                          Cetak
+                        </Button>
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+                </Row>
+              </Container>
             )}
           </>
         )}

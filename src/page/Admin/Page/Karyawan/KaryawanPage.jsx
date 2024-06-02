@@ -28,7 +28,6 @@ import APIKaryawan from "@/api/APIKaryawan";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
-import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import Formatter from "@/assets/Formatter";
@@ -36,7 +35,6 @@ import Formatter from "@/assets/Formatter";
 export default function KaryawanPage() {
   const [userRole, setUserRole] = useState("");
   const [showDelModal, setShowDelModal] = useState(false);
-  const [showPrintModal, setshowPrintModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,9 +48,6 @@ export default function KaryawanPage() {
 
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
-
-  const handleClosePrintModal = () => setshowPrintModal(false);
-  // const handleShowPrintModal = () => setshowPrintModal(true);
 
   const handleCloseRestoreModal = () => setShowRestoreModal(false);
   const handleShowRestoreModal = () => setShowRestoreModal(true);
@@ -551,13 +546,6 @@ export default function KaryawanPage() {
   
             add / edit / del .isPending itu ketika query sedang berjalan, mirip dengan isLoading tapi bawaan react querynya
           */}
-        <PrintModal
-          show={showPrintModal}
-          onHide={handleClosePrintModal}
-          title="Print Data Karyawan"
-          text="Pastikan data karyawan yang Anda print benar"
-          onSubmit={onSubmit}
-        ></PrintModal>
 
         <AddEditModal
           show={showAddEditModal}

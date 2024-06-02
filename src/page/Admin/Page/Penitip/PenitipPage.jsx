@@ -7,7 +7,7 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -17,7 +17,6 @@ import {
   BsPlusSquare,
   BsPencilSquare,
   BsFillTrash3Fill,
-  BsPrinterFill,
 } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
@@ -27,13 +26,11 @@ import APIPenitip from "@/api/APIPenitip";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
-import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import { FaArrowCircleLeft } from "react-icons/fa";
 
 export default function PenitipPage() {
   const [showDelModal, setShowDelModal] = useState(false);
-  const [showPrintModal, setshowPrintModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,13 +44,8 @@ export default function PenitipPage() {
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
 
-  const handleClosePrintModal = () => setshowPrintModal(false);
-  const handleShowPrintModal = () => setshowPrintModal(true);
-
   const handleCloseRestoreModal = () => setShowRestoreModal(false);
   const handleShowRestoreModal = () => setShowRestoreModal(true);
-
-  const ref = useRef();
 
   // Mode untuk CRD
   // create -> "add"
@@ -332,15 +324,6 @@ export default function PenitipPage() {
               <FaArrowCircleLeft className="mb-1 me-2" />
               Restore Data
             </Button>
-            <Button
-              variant="secondary"
-              onClick={handleShowPrintModal}
-              disabled={isLoading}
-              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
-            >
-              <BsPrinterFill className="mb-1 me-2" />
-              Print Laporan
-            </Button>
           </Col>
           <Col
             xs={12}
@@ -483,28 +466,6 @@ export default function PenitipPage() {
 
           add / edit / del .isPending itu ketika query sedang berjalan, mirip dengan isLoading tapi bawaan react querynya
         */}
-        <PrintModal
-          show={showPrintModal}
-          onHide={handleClosePrintModal}
-          title="Print Laporan Bulanan Penitip"
-          text="Pilih bulan dan cetak laporan bulanan penitip"
-          onSubmit={() => {}} // Nanti diisi
-        >
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Pilih Bulan
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              ref={ref}
-              type="text"
-              onFocus={() => (ref.current.type = "month")}
-              onBlur={() => (ref.current.type = "month")}
-              placeholder="Month YYYY"
-            />
-          </Form.Group>
-        </PrintModal>
-
         <AddEditModal
           show={showAddEditModal}
           onHide={() => {

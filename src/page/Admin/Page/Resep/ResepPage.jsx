@@ -18,7 +18,6 @@ import {
   BsPlusSquare,
   BsPencilSquare,
   BsFillTrash3Fill,
-  // BsPrinterFill,
 } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
@@ -33,7 +32,6 @@ import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 
 export default function ResepPage() {
   const [showDelModal, setShowDelModal] = useState(false);
-  // const [showPrintModal, setshowPrintModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingModal, setIsLoadingModal] = useState(false);
@@ -42,9 +40,6 @@ export default function ResepPage() {
   // const handleShowDelModal = () => setShowDelModal(true);
 
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
-  // const handleShowAddEditModal = () => setShowAddEditModal(true);
-
-  // const handleClosePrintModal = () => setshowPrintModal(false);
 
   const [mode, setMode] = useState("add");
 

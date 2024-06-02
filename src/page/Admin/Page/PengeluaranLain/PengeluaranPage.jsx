@@ -7,7 +7,7 @@ import {
   InputGroup,
   Spinner,
 } from "react-bootstrap";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -17,7 +17,6 @@ import {
   BsPlusSquare,
   BsPencilSquare,
   BsFillTrash3Fill,
-  BsPrinterFill,
 } from "react-icons/bs";
 
 import "@/page/Admin/Page/css/Admin.css";
@@ -27,7 +26,6 @@ import APIPengeluaran from "@/api/APIPengeluaranLain";
 import NotFound from "@/component/Admin/NotFound";
 import CustomPagination from "@/component/Admin/Pagination/CustomPagination";
 import ConfirmationModal from "@/component/Admin/Modal/ConfirmationModal";
-import PrintModal from "@/component/Admin/Modal/PrintModal";
 import AddEditModal from "@/component/Admin/Modal/AddEditModal";
 import Formatter from "@/assets/Formatter";
 import Checker from "@/assets/Checker";
@@ -35,7 +33,6 @@ import Checker from "@/assets/Checker";
 export default function PengeluaranLainPage() {
   const [showDelModal, setShowDelModal] = useState(false);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
-  const [showPrintModal, setshowPrintModal] = useState(false);
   const [selectedPengeluaran, setSelectedPengeluaran] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,9 +42,6 @@ export default function PengeluaranLainPage() {
   const handleCloseAddEditModal = () => setShowAddEditModal(false);
   const handleShowAddEditModal = () => setShowAddEditModal(true);
 
-  const handleClosePrintModal = () => setshowPrintModal(false);
-  const handleShowPrintModal = () => setshowPrintModal(true);
-
   const [mode, setMode] = useState("add");
 
   // Fetch pengeluaran lain with pagination
@@ -55,12 +49,6 @@ export default function PengeluaranLainPage() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState("");
-
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-
-  const startDateRef = useRef();
-  const endDateRef = useRef();
 
   const fetchPengeluaran = useCallback(
     async (signal) => {
@@ -284,15 +272,6 @@ export default function PengeluaranLainPage() {
               <BsPlusSquare className="mb-1 me-2" />
               Tambah Data
             </Button>
-            <Button
-              variant="secondary"
-              onClick={handleShowPrintModal}
-              disabled={isLoading}
-              className="me-2 me-lg-1 mb-2 mb-lg-1 mb-md-2 mb-sm-2"
-            >
-              <BsPrinterFill className="mb-1 me-2" />
-              Print Laporan
-            </Button>
           </Col>
           <Col
             xs={12}
@@ -461,47 +440,6 @@ export default function PengeluaranLainPage() {
           />
         )}
         {/* ini modal modalnya */}
-        <PrintModal
-          show={showPrintModal}
-          onHide={handleClosePrintModal}
-          title="Print Laporan Penggunaan Pengeluaran"
-          text="Pilih tanggal Penggunaan Pengeluaran"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleClosePrintModal();
-          }}
-        >
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Pilih Tanggal Awal
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              type="date"
-              max={new Date().toISOString().split("T")[0]}
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              ref={startDateRef}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="text-start mt-3">
-            <Form.Label style={{ fontWeight: "bold", fontSize: "1em" }}>
-              Pilih Tanggal Akhir
-            </Form.Label>
-            <Form.Control
-              style={{ border: "1px solid #808080" }}
-              type="date"
-              min={startDate}
-              max={new Date().toISOString().split("T")[0]}
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              ref={endDateRef}
-              required
-            />
-          </Form.Group>
-        </PrintModal>
-
         <AddEditModal
           show={showAddEditModal}
           onHide={() => {
