@@ -12,7 +12,7 @@ import {
 import LaporanPenggunaanBahanBaku from "./Laporan/LaporanPenggunaanBahanBaku";
 import { FaDownload } from "react-icons/fa";
 import APILaporan from "@/api/APILaporan";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Formatter from "@/assets/Formatter";
 import FileSaver from "file-saver";
 import PDFPreview from "@/page/Main/HistoryCustomer/PDFPreview";
@@ -24,7 +24,6 @@ export default function Home() {
   const isMOorOwner =
     sessionStorage.getItem("role") === "OWN" ||
     sessionStorage.getItem("role") === "MO";
-  const refProduk = useRef(null);
 
   const [bulanTahunProduk, setBulanTahunProduk] = useState({
     bulan: "",
@@ -153,15 +152,7 @@ export default function Home() {
                               </Form.Label>
                               <Form.Control
                                 style={{ border: "1px solid #808080" }}
-                                ref={refProduk}
-                                type="text"
-                                onFocus={() =>
-                                  (refProduk.current.type = "month")
-                                }
-                                onBlur={() =>
-                                  (refProduk.current.type = "month")
-                                }
-                                placeholder="Month YYYY"
+                                type="month"
                                 onChange={(e) => {
                                   const date = new Date(e.target.value);
                                   setBulanTahunProduk({
@@ -178,6 +169,7 @@ export default function Home() {
                                     .toString()
                                     .padStart(2, "0")
                                 }
+                                onKeyDown={(e) => e.preventDefault()}
                               />
                             </Form.Group>
                           </Col>
