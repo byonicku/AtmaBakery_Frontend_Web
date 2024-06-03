@@ -19,6 +19,7 @@ import PDFPreview from "@/page/Main/HistoryCustomer/PDFPreview";
 import LaporanPenjualanProdukPerBulan from "./Laporan/LaporanPenjualanProdukPerBulan";
 import { toast } from "sonner";
 import LaporanPresensidanGajiKaryawan from "./Laporan/LaporanPresensidanGaji";
+import LaporanPemasukanPengeluaran from "./Laporan/LaporanPemasukanPengeluaran";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -43,6 +44,31 @@ export default function Home() {
         response.tanggal_cetak
       );
       generatePDFPresensidanGaji(response,bulan,tahun);
+      // setBahanBaku(response);
+      setBulanTahunProduk({
+        bulan: "",
+        tahun: new Date().getFullYear(),
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+  const fetchPemasukandanPengeluaran = async (bulan, tahun) => {
+    const data = {
+      bulan: bulan,
+      tahun: tahun,
+    };
+    try {
+      setLoading(true);
+      const response = await APILaporan.getLaporanPemasukanDanPengeluaran(data);
+      response.tanggal_cetak = Formatter.formatDateToIndonesian(
+        response.tanggal_cetak
+      );
+      console.log(response);
+      generatePDFPemasukandanPengeluaran(response,bulan,tahun);
       // setBahanBaku(response);
       setBulanTahunProduk({
         bulan: "",
@@ -107,6 +133,19 @@ export default function Home() {
     ).toBlob();
     const filename =
       "Laporan Presensi dan Gaji Karyawan-" + new Date().getTime() + ".pdf";
+    FileSaver.saveAs(blob, filename);
+  };
+
+  const generatePDFPemasukandanPengeluaran = async (data, bulan, tahun) => {
+    const blob = await pdf(
+      <LaporanPemasukanPengeluaran
+        result={data}
+        bulan={bulan}
+        tahun={tahun}
+      />
+    ).toBlob();
+    const filename =
+      "Laporan Pemasukan dan Pengeluaran-" + new Date().getTime() + ".pdf";
     FileSaver.saveAs(blob, filename);
   };
 
@@ -363,6 +402,99 @@ export default function Home() {
                               bulanTahunProduk.tahun
                             )
                               fetchPresensidanGajiKaryawan(
+                                parseInt(bulanTahunProduk.bulan),
+                                parseInt(bulanTahunProduk.tahun)
+                              );
+                            else {
+                              toast.error(
+                                "Pilih bulan dan tahun terlebih dahulu"
+                              );
+                            }
+                          }}
+                        >
+                          <FaDownload className="me-2" />
+                          Cetak
+                        </Button>
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+
+                  <Col md={12} lg={6} xl={6}>
+                    <Card>
+                      <Card.Body>
+                        <Row>
+                          <Col md={12} lg={12} xl={12} className="mb-1">
+                            <h3 className="text-bold">
+                              Laporan Pemasukan dan Pengeluaran
+                            </h3>
+                          </Col>
+
+                          <Col md={12} lg={12} xl={12}>
+                            <Form.Group className="text-start">
+                              <Form.Label
+                                style={{
+                                  fontWeight: "bold",
+                                  fontSize: "1em",
+                                }}
+                              >
+                                Pilih Bulan dan Tahun
+                              </Form.Label>
+                              <Form.Control
+                                style={{ border: "1px solid #808080" }}
+                                type="month"
+                                onChange={(e) => {
+                                  const date = new Date(e.target.value);
+                                  setBulanTahunProduk({
+                                    ...bulanTahunProduk,
+                                    bulan: date.getMonth() + 1,
+                                    tahun: date.getFullYear(),
+                                  });
+                                }}
+                                min={"2021-01"}
+                                max={
+                                  new Date().getFullYear() +
+                                  "-" +
+                                  (new Date().getMonth() + 1)
+                                    .toString()
+                                    .padStart(2, "0")
+                                }
+                                onKeyDown={(e) => e.preventDefault()}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                      <Card.Footer className="bg-white border-top">
+                        <Button
+                          variant="primary"
+                          onClick={(e) => {
+                            e.preventDefault();
+
+                            if (
+                              bulanTahunProduk.tahun > new Date().getFullYear()
+                            )
+                              return toast.error(
+                                "Tahun tidak boleh lebih dari tahun sekarang"
+                              );
+
+                            if (bulanTahunProduk.tahun < 2021)
+                              return toast.error(
+                                "Tahun tidak boleh kurang dari tahun 2021"
+                              );
+
+                            if (
+                              bulanTahunProduk.bulan >
+                              new Date().getMonth() + 1
+                            )
+                              return toast.error(
+                                "Bulan tidak boleh lebih dari bulan sekarang"
+                              );
+
+                            if (
+                              bulanTahunProduk.bulan &&
+                              bulanTahunProduk.tahun
+                            )
+                              fetchPemasukandanPengeluaran(
                                 parseInt(bulanTahunProduk.bulan),
                                 parseInt(bulanTahunProduk.tahun)
                               );
