@@ -169,7 +169,7 @@ const TableBody = ({ produk }) => {
         <View style={styles.tbody}>
           <Text>{Formatter.moneyFormatter(detail.harga)}</Text>
         </View>
-        <View style={styles.tbody}>
+        <View style={styles.tbodyinvis}>
           <Text>{Formatter.moneyFormatter(detail.total_harga)}</Text>
         </View>
       </View>

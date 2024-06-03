@@ -122,9 +122,9 @@ const TanggalCetak = ({ result, bulan, tahun }) => (
       Bulan: {bulanList[bulan - 1]}{" "}
     </Text>
     <Text style={{ fontSize: 14, marginTop: 5 }}>Tahun: {tahun} </Text>
-    <View style={{ flexDirection: "row", marginTop: 4 }}>
-      <Text style={{ fontSize: 14, marginTop: 10 }}>Tanggal Cetak: </Text>
-      <Text style={{ fontSize: 14, marginTop: 10 }}>
+    <View style={{ flexDirection: "row" }}>
+      <Text style={{ fontSize: 14, marginTop: 5 }}>Tanggal Cetak: </Text>
+      <Text style={{ fontSize: 14, marginTop: 5 }}>
         {result?.tanggal_cetak}
       </Text>
     </View>
@@ -172,13 +172,13 @@ const TableBody = ({ result }) => {
           <Text>{detail.jumlah_bolos}</Text>
         </View>
         <View style={styles.tbody}>
-          <Text>{detail.honor_harian}</Text>
+          <Text>{Formatter.moneyFormatter(detail.honor_harian)}</Text>
         </View>
         <View style={styles.tbody}>
-          <Text>{detail.bonus}</Text>
+          <Text>{Formatter.moneyFormatter(detail.bonus)}</Text>
         </View>
-        <View style={styles.tbody}>
-          <Text>{detail.total}</Text>
+        <View style={styles.tbodyinvis}>
+          <Text>{Formatter.moneyFormatter(detail.total)}</Text>
         </View>
       </View>
     </Fragment>
@@ -190,6 +190,8 @@ const TableTotal = ({ result }) => (
     <View style={styles.tbodyinvis}>
       <Text>Total:</Text>
     </View>
+    <View style={styles.tbodyinvis} />
+    <View style={styles.tbodyinvis} />
     <View style={styles.tbodyinvis} />
     <View style={styles.tbody} />
     <View style={styles.tbodyinvis}>
@@ -206,7 +208,7 @@ const LaporanPresensidanGajiKaryawan = ({ result, bulan, tahun }) => (
       <TanggalCetak result={result} bulan={bulan} tahun={tahun} />
       <TableHead />
       <TableBody result={result} />
-      <TableTotal result={result}/>
+      <TableTotal result={result} />
     </Page>
   </Document>
 );

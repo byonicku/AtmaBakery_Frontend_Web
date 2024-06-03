@@ -153,7 +153,7 @@ const TableBody = ({ bahan_baku }) => {
         <View style={styles.tbody}>
           <Text>{detail.satuan}</Text>
         </View>
-        <View style={styles.tbody}>
+        <View style={styles.tbodyinvis}>
           <Text>{detail.stok}</Text>
         </View>
       </View>
