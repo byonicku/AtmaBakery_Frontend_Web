@@ -44,7 +44,7 @@ export default function Home() {
       response.tanggal_cetak = Formatter.formatDateToIndonesian(
         response.tanggal_cetak
       );
-      generatePDFPresensidanGaji(response,bulan,tahun);
+      generatePDFPresensidanGaji(response, bulan, tahun);
       // setBahanBaku(response);
       setBulanTahunProduk({
         bulan: "",
@@ -69,7 +69,7 @@ export default function Home() {
         response.tanggal_cetak
       );
       console.log(response);
-      generatePDFPemasukandanPengeluaran(response,bulan,tahun);
+      generatePDFPemasukandanPengeluaran(response, bulan, tahun);
       // setBahanBaku(response);
       setBulanTahunProduk({
         bulan: "",
@@ -87,18 +87,43 @@ export default function Home() {
       bulan: bulan,
       tahun: tahun,
     };
+
+    const queue = [];
+    async function processQueue() {
+      while (queue.length > 0) {
+        const task = queue.shift();
+        try {
+          await task();
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (error) {
+          console.error("Error generating PDF:", error);
+        }
+      }
+    }
+
     try {
       setLoading(true);
       const response = await APILaporan.getLaporanTransaksiPenitip(data);
       response.tanggal_cetak = Formatter.formatDateToIndonesian(
         response.tanggal_cetak
       );
-      console.log(response);
+
       const dataPenitip = response.data;
-      dataPenitip.map((detail,idx) => {
-        console.log(detail);
-        generatePDFTransaksiPenitip(detail,bulan,tahun);
-      })
+
+      // Enqueue all PDF generation tasks
+      dataPenitip.forEach((detail) => {
+        queue.push(() =>
+          generatePDFTransaksiPenitip(
+            detail,
+            bulan,
+            tahun,
+            response.tanggal_cetak
+          )
+        );
+      });
+
+      await processQueue();
+
       // setBahanBaku(response);
       setBulanTahunProduk({
         bulan: "",
@@ -168,27 +193,33 @@ export default function Home() {
 
   const generatePDFPemasukandanPengeluaran = async (data, bulan, tahun) => {
     const blob = await pdf(
-      <LaporanPemasukanPengeluaran
-        result={data}
-        bulan={bulan}
-        tahun={tahun}
-      />
+      <LaporanPemasukanPengeluaran result={data} bulan={bulan} tahun={tahun} />
     ).toBlob();
     const filename =
       "Laporan Pemasukan dan Pengeluaran-" + new Date().getTime() + ".pdf";
     FileSaver.saveAs(blob, filename);
   };
 
-  const generatePDFTransaksiPenitip = async (data, bulan, tahun) => {
+  const generatePDFTransaksiPenitip = async (
+    data,
+    bulan,
+    tahun,
+    tanggal_cetak
+  ) => {
     const blob = await pdf(
       <LaporanTransaksiPenitip
         result={data}
         bulan={bulan}
         tahun={tahun}
+        tanggal_cetak={tanggal_cetak}
       />
     ).toBlob();
     const filename =
-      "Laporan Transaksi Penitip "+ data.nama + "-" + new Date().getTime() + ".pdf";
+      "Laporan Transaksi Penitip " +
+      data.nama +
+      "-" +
+      new Date().getTime() +
+      ".pdf";
     FileSaver.saveAs(blob, filename);
   };
 
@@ -250,7 +281,7 @@ export default function Home() {
             ) : (
               <Container fluid>
                 <Row>
-                  <Col md={12} lg={6} xl={6}>
+                  <Col md={12} lg={12} xl={12}>
                     <Card>
                       <Card.Body>
                         <Row>
@@ -343,7 +374,7 @@ export default function Home() {
                     </Card>
                   </Col>
 
-                  <Col md={12} lg={6} xl={6}>
+                  <Col md={12} lg={12} xl={12}>
                     <Card>
                       <Card.Body>
                         <Row>
@@ -369,7 +400,7 @@ export default function Home() {
                     </Card>
                   </Col>
 
-                  <Col md={12} lg={6} xl={6}>
+                  <Col md={12} lg={12} xl={12}>
                     <Card>
                       <Card.Body>
                         <Row>
@@ -462,7 +493,7 @@ export default function Home() {
                     </Card>
                   </Col>
 
-                  <Col md={12} lg={6} xl={6}>
+                  <Col md={12} lg={12} xl={12}>
                     <Card>
                       <Card.Body>
                         <Row>
@@ -554,7 +585,7 @@ export default function Home() {
                       </Card.Footer>
                     </Card>
                   </Col>
-                  <Col md={12} lg={6} xl={6}>
+                  <Col md={12} lg={12} xl={12}>
                     <Card>
                       <Card.Body>
                         <Row>

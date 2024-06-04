@@ -104,7 +104,7 @@ const Address = () => (
   </View>
 );
 
-const TanggalCetak = ({ result, bulan, tahun }) => (
+const TanggalCetak = ({ result, bulan, tahun, tanggal_cetak }) => (
   <>
     <View style={styles.titleContainer}>
       <Text
@@ -118,7 +118,7 @@ const TanggalCetak = ({ result, bulan, tahun }) => (
         LAPORAN Transaki Penitip
       </Text>
     </View>
-    
+
     <Text style={{ fontSize: 14, marginTop: 5 }}>
       ID Penitip: {result.id_penitip}
     </Text>
@@ -131,9 +131,7 @@ const TanggalCetak = ({ result, bulan, tahun }) => (
     <Text style={{ fontSize: 14, marginTop: 5 }}>Tahun: {tahun} </Text>
     <View style={{ flexDirection: "row" }}>
       <Text style={{ fontSize: 14, marginTop: 5 }}>Tanggal Cetak: </Text>
-      <Text style={{ fontSize: 14, marginTop: 5 }}>
-        {result?.tanggal_cetak}
-      </Text>
+      <Text style={{ fontSize: 14, marginTop: 5 }}>{tanggal_cetak}</Text>
     </View>
   </>
 );
@@ -165,7 +163,6 @@ const TableBody = ({ result }) => {
   if (!result?.data) return null;
 
   const data = result?.data;
-  console.log(data);
   return data.map((detail, idx) => (
     <Fragment key={idx}>
       <View style={{ width: "100%", flexDirection: "row" }}>
@@ -198,7 +195,7 @@ const TableTotal = ({ result }) => (
     <View style={styles.tbodyinvis} />
     <View style={styles.tbodyinvis} />
     <View style={styles.tbodyinvis} />
-    <View style={styles.tbodyinvis}>
+    <View style={styles.tbody}>
       <Text>Total:</Text>
     </View>
     <View style={styles.tbodyinvis}>
@@ -207,12 +204,17 @@ const TableTotal = ({ result }) => (
   </View>
 );
 
-const LaporanTransaksiPenitip = ({ result, bulan, tahun }) => (
+const LaporanTransaksiPenitip = ({ result, bulan, tahun, tanggal_cetak }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <InvoiceTitle />
       <Address />
-      <TanggalCetak result={result} bulan={bulan} tahun={tahun} />
+      <TanggalCetak
+        result={result}
+        bulan={bulan}
+        tahun={tahun}
+        tanggal_cetak={tanggal_cetak}
+      />
       <TableHead />
       <TableBody result={result} />
       <TableTotal result={result} />
