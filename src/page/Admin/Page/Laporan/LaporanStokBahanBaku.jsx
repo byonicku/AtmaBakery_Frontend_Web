@@ -161,7 +161,7 @@ const TableBody = ({ bahan_baku }) => {
   ));
 };
 
-const LaporanPenggunaanBahanBaku = ({ bahan_baku }) => (
+const LaporanStokBahanBaku = ({ bahan_baku }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <InvoiceTitle />
@@ -173,4 +173,4 @@ const LaporanPenggunaanBahanBaku = ({ bahan_baku }) => (
   </Document>
 );
 
-export default LaporanPenggunaanBahanBaku;
+export default LaporanStokBahanBaku;

@@ -9,7 +9,7 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
-import LaporanPenggunaanBahanBaku from "./Laporan/LaporanPenggunaanBahanBaku";
+import LaporanStokBahanBaku from "./Laporan/LaporanStokBahanBaku";
 import { FaDownload } from "react-icons/fa";
 import APILaporan from "@/api/APILaporan";
 import { useEffect, useState } from "react";
@@ -18,11 +18,18 @@ import FileSaver from "file-saver";
 import PDFPreview from "@/page/Main/HistoryCustomer/PDFPreview";
 import LaporanPenjualanProdukPerBulan from "./Laporan/LaporanPenjualanProdukPerBulan";
 import { toast } from "sonner";
+import { useRef } from "react";
 import LaporanPresensidanGajiKaryawan from "./Laporan/LaporanPresensidanGaji";
 import LaporanPemasukanPengeluaran from "./Laporan/LaporanPemasukanPengeluaran";
 import LaporanTransaksiPenitip from "./Laporan/LaporanTransaksiPenitip";
+import LaporanPenggunaanBahanBakuPeriod from "./Laporan/LaporanPenggunaanBahanBakuPeriod";
 
 export default function Home() {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const startDateRef = useRef();
+  const endDateRef = useRef();
+
   const [loading, setLoading] = useState(false);
   const isMOorOwner =
     sessionStorage.getItem("role") === "OWN" ||
@@ -178,6 +185,26 @@ export default function Home() {
     }
   };
 
+  const fetchLaporanPenggunaanBahanBaku = async (startDate, endDate) => {
+    const data = {
+      tanggal_awal: startDate,
+      tanggal_akhir: endDate,
+    };
+
+    try {
+      setLoading(true);
+      const response = await APILaporan.getLaporanStokBahanBakuPeriode(data);
+      response.tanggal_cetak = Formatter.formatDateToIndonesian(
+        response.tanggal_cetak
+      ); console.log(response);
+      generatePDFPenggunaanBahanBaku(response, Formatter.formatDateToIndonesian(startDate), Formatter.formatDateToIndonesian(endDate));
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
   const generatePDFPresensidanGaji = async (data, bulan, tahun) => {
     const blob = await pdf(
       <LaporanPresensidanGajiKaryawan
@@ -225,10 +252,10 @@ export default function Home() {
 
   const generatePDFBahanBaku = async (data) => {
     const blob = await pdf(
-      <LaporanPenggunaanBahanBaku bahan_baku={data} />
+      <LaporanStokBahanBaku bahan_baku={data} />
     ).toBlob();
     const filename =
-      "Laporan Penggunaan Bahan Baku-" + new Date().getTime() + ".pdf";
+      "Laporan Stok Bahan Baku-" + new Date().getTime() + ".pdf";
     FileSaver.saveAs(blob, filename);
   };
 
@@ -242,6 +269,15 @@ export default function Home() {
     ).toBlob();
     const filename =
       "Laporan Penjualan Bulanan Per Produk-" + new Date().getTime() + ".pdf";
+    FileSaver.saveAs(blob, filename);
+  };
+
+  const generatePDFPenggunaanBahanBaku = async (data, startDate, endDate) => {
+    const blob = await pdf(
+      <LaporanPenggunaanBahanBakuPeriod penggunaan_bahan_baku={data} startDate={startDate} endDate={endDate} />
+    ).toBlob();
+    const filename =
+      "Laporan Penggunaan Bahan Baku-" + new Date().getTime() + ".pdf";
     FileSaver.saveAs(blob, filename);
   };
 
@@ -380,7 +416,7 @@ export default function Home() {
                         <Row>
                           <Col md={12} lg={12} xl={12}>
                             <h3 className="text-bold">
-                              Laporan Penggunaan Bahan Baku
+                              Laporan Stok Bahan Baku
                             </h3>
                           </Col>
                         </Row>
@@ -391,6 +427,79 @@ export default function Home() {
                           onClick={(e) => {
                             e.preventDefault();
                             fetchBahanBaku();
+                          }}
+                        >
+                          <FaDownload className="me-2" />
+                          Cetak
+                        </Button>
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+
+                  <Col md={12} lg={12} xl={12}>
+                    <Card>
+                      <Card.Body>
+                        <Row>
+                          <Col md={12} lg={12} xl={12} className="mb-1">
+                            <h5 className="text-bold">
+                              Laporan Penggunaan Bahan Baku
+                            </h5>
+                          </Col>
+                          <Col md={12} lg={12} xl={12}>
+                            <Form.Group className="text-start">
+                              <Form.Label
+                                style={{
+                                  fontWeight: "bold",
+                                  fontSize: "0.9em",
+                                }}
+                              >
+                                Pilih Tanggal Awal dan Tanggal Akhir
+                              </Form.Label>
+                              <Form.Control
+                                style={{ border: "1px solid #808080" }}
+                                type="date"
+                                ref={startDateRef}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                max={new Date().toISOString().split("T")[0]}
+                                onKeyDown={(e) => e.preventDefault()}
+                              />
+                              <Form.Control
+                                style={{
+                                  border: "1px solid #808080",
+                                  marginTop: "0.5em",
+                                }}
+                                type="date"
+                                ref={endDateRef}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                max={new Date().toISOString().split("T")[0]}
+                                onKeyDown={(e) => e.preventDefault()}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                      <Card.Footer className="bg-white border-top">
+                        <Button
+                          variant="primary"
+                          onClick={(e) => {
+                            e.preventDefault();
+
+                            if (startDate && endDate) {
+                              if (startDate > endDate) {
+                                toast.error(
+                                  "Tanggal awal tidak boleh lebih besar dari tanggal akhir"
+                                );
+                              } else {
+                                fetchLaporanPenggunaanBahanBaku(
+                                  startDate,
+                                  endDate
+                                );
+                              }
+                            } else {
+                              toast.error(
+                                "Pilih tanggal awal dan tanggal akhir terlebih dahulu"
+                              );
+                            }
                           }}
                         >
                           <FaDownload className="me-2" />
