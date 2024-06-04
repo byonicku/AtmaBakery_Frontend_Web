@@ -6,6 +6,7 @@ import Profile from "@/page/Admin/Page/Profile";
 import HistoryCustomerPageSelf from "@/page/Main/HistoryCustomer/HistoryCustomerPage";
 import NotFound404 from "@/page/Admin/Page/NotFound404";
 import AlamatPemesananPage from "@/page/Main/AlamatPemesanan/AlamatPemesananPage";
+import Notifikasi from "../Main/Notifikasi/Notifikasi";
 
 export default function getCustomerRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function getCustomerRoutes() {
     >
       <Route path="alamat" element={<AlamatPemesananPage />} />
       <Route path="pemesanan" element={<HistoryCustomerPageSelf />} />
+      <Route path="notifikasi" element={<Notifikasi />} />
       <Route index element={<Profile />} />
       <Route path="*" element={<NotFound404 />} />
     </Route>
