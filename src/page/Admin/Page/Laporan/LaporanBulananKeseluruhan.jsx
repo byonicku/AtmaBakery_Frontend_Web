@@ -6,11 +6,16 @@ import {
     View,
     StyleSheet,
     Image,
+    render,
   } from "@react-pdf/renderer";
   import { Fragment } from "react";
   import Logo from "@/assets/atma-bakery.png";
   import Formatter from "@/assets/Formatter";
   import { bulanList } from "./ConstantLaporan";
+  import ReactPDFChart from "react-pdf-charts";
+  import { BarChart } from "recharts";
+  import { ComposedChart, XAxis, YAxis, CartesianGrid, Area, Bar, Line, Legend } from 'recharts';
+
   
   // Create styles
 const styles = StyleSheet.create({
@@ -119,9 +124,6 @@ const TanggalCetak = ({ keseluruhan, bulan, tahun }) => (
           LAPORAN PENJUALAN BULANAN KESELURUHAN
         </Text>
       </View>
-      <Text style={{ fontSize: 14, marginTop: 5 }}>
-        Bulan: {bulanList[bulan - 1]}{" "}
-      </Text>
       <Text style={{ fontSize: 14, marginTop: 5 }}>Tahun: {tahun} </Text>
       <View style={{ flexDirection: "row" }}>
         <Text style={{ fontSize: 14, marginTop: 5 }}>Tanggal Cetak: </Text>
@@ -184,18 +186,32 @@ const TableTotal = ({ keseluruhan }) => (
   </View>
 );
 
-const LaporanBulananKeseluruhan = ({ keseluruhan, bulan, tahun }) => (
+
+
+const LaporanBulananKeseluruhan = ({ keseluruhan, dataBar, tahun }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <InvoiceTitle />
       <Address />
-      <TanggalCetak keseluruhan={keseluruhan} bulan={bulan} tahun={tahun} />
+      <TanggalCetak keseluruhan={keseluruhan} tahun={tahun} />
       <TableHead />
       <TableBody keseluruhan={keseluruhan} />
       <TableTotal keseluruhan={keseluruhan} />
+      <ReactPDFChart height={400} width={400}>
+      <ComposedChart data={dataBar} height={250} width={500}>
+            <XAxis dataKey="bulan" />
+            <YAxis />
+            <CartesianGrid stroke="#f5f5f5" />
+            <Area type="monotone" dataKey="total_pendapatan" fill="#8884d8" stroke="#8884d8" />
+            <Bar dataKey="total_transaksi" fill="#413ea0" label={{ position: 'top' }} />
+            <Line type="monotone" dataKey="total_pendapatan" stroke="#ff7300" />
+            <Legend />
+          </ComposedChart>
+        </ReactPDFChart>
     </Page>
   </Document>
 );
+
 
 export default LaporanBulananKeseluruhan;
   

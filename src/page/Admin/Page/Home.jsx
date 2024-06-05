@@ -26,6 +26,7 @@ import LaporanPenjualanProdukPerBulan from "./Laporan/LaporanPenjualanProdukPerB
 import LaporanBulananKeseluruhan from "./Laporan/LaporanBulananKeseluruhan";
 
 export default function Home() {
+  const [tahunProduk, setTahunProduk] = useState(new Date().getFullYear());
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const startDateRef = useRef();
@@ -160,15 +161,16 @@ export default function Home() {
     }
   };
 
-  const fetchLaporanBulananKeseluruhan = async (bulan, tahun) => {
+  const fetchLaporanBulananKeseluruhan = async (tahun) => {
     const data = {  
-      bulan: bulan,
       tahun: tahun, };
     try {
       setLoading(true);
       const response = await APILaporan.getLaporanBulananKeseluruhan(data);
       response.tanggal_cetak = Formatter.formatDateToIndonesian(response.tanggal_cetak);
-      generatePDFBulananKeseluruhan(response, bulan, tahun);
+      console.log(response);
+      const dataBar = response.data;
+      generatePDFBulananKeseluruhan(response, dataBar, tahun);
       setBulanTahunProduk({
         bulan: "",
         tahun: new Date().getFullYear(),
@@ -303,10 +305,11 @@ export default function Home() {
     FileSaver.saveAs(blob, filename);
   };
 
-  const generatePDFBulananKeseluruhan = async (data, bulan, tahun) => {
+  const generatePDFBulananKeseluruhan = async (data, dataBar, tahun) => {
+    console.log(dataBar);
     try {
       const pdfBlob = await pdf(
-        <LaporanBulananKeseluruhan keseluruhan={data} bulan={bulan} tahun={tahun} />
+        <LaporanBulananKeseluruhan keseluruhan={data} dataBar={dataBar} tahun={tahun} />
       ).toBlob();
       const filename = `Laporan Bulanan Keseluruhan-${tahun}.pdf`;
   
@@ -315,6 +318,15 @@ export default function Home() {
     } catch (error) {
       console.error('Error generating PDF:', error);
     }
+  };
+
+  const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let year = 2010; year <= currentYear; year++) {
+      years.push(year);
+    }
+    return years;
   };
   
 
@@ -364,76 +376,38 @@ export default function Home() {
                         </h3>
                       </Col>
                       <Col md={12} lg={12} xl={12}>
-                        <Form.Group className="text-start">
-                          <Form.Label
-                            style={{
-                              fontWeight: "bold",
-                              fontSize: "1em",
-                            }}
-                          >
-                            Pilih Bulan dan Tahun
-                          </Form.Label>
-                          <Form.Control
-                            style={{ border: "1px solid #808080" }}
-                            type="month"
-                            onChange={(e) => {
-                              const date = new Date(e.target.value);
-                              setBulanTahunProduk({
-                                ...bulanTahunProduk,
-                                bulan: date.getMonth() + 1,
-                                tahun: date.getFullYear(),
-                              });
-                            }}
-                            min={"2021-01"}
-                            max={
-                              new Date().getFullYear() +
-                              "-" +
-                              (new Date().getMonth() + 1)
-                                .toString()
-                                .padStart(2, "0")
-                            }
-                            onKeyDown={(e) => e.preventDefault()}
-                          />
-                        </Form.Group>
-                      </Col>
+                      <Form.Select
+                        style={{ border: "1px solid #808080" }}
+                        value={tahunProduk}
+                        onChange={(e) => setTahunProduk(e.target.value)}
+                      >
+                        {generateYearOptions().map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Col>
                     </Row>
                   </Card.Body>
                   <Card.Footer className="bg-white border-top">
                   <Button
-                      variant="primary"
-                      onClick={(e) => {
-                        e.preventDefault();
+                    variant="primary"
+                    onClick={(e) => {
+                      e.preventDefault();
 
-                        if (bulanTahunProduk.tahun > new Date().getFullYear())
-                          return toast.error(
-                            "Tahun tidak boleh lebih dari tahun sekarang"
-                          );
+                      if (tahunProduk > new Date().getFullYear())
+                        return toast.error("Tahun tidak boleh lebih dari tahun sekarang");
 
-                        if (bulanTahunProduk.tahun < 2021)
-                          return toast.error(
-                            "Tahun tidak boleh kurang dari tahun 2021"
-                          );
+                      if (tahunProduk < 2021)
+                        return toast.error("Tahun tidak boleh kurang dari tahun 2021");
 
-                        if (bulanTahunProduk.bulan > new Date().getMonth() + 1)
-                          return toast.error(
-                            "Bulan tidak boleh lebih dari bulan sekarang"
-                          );
-
-                        if (bulanTahunProduk.bulan && bulanTahunProduk.tahun)
-                          fetchLaporanBulananKeseluruhan(
-                            bulanTahunProduk.bulan,
-                            bulanTahunProduk.tahun
-                          );
-                        else {
-                          toast.error(
-                            "Pilih bulan dan tahun terlebih dahulu"
-                          );
-                        }
-                      }}
-                    >
-                      <FaDownload className="me-2" />
-                      Cetak
-                    </Button>
+                      fetchLaporanBulananKeseluruhan(tahunProduk);
+                    }}
+                  >
+                    <FaDownload className="me-2" />
+                    Cetak
+                  </Button>
                   </Card.Footer>
                 </Card>
               </Col>
