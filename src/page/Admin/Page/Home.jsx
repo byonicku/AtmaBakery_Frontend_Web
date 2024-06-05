@@ -10,10 +10,9 @@ import {
   Spinner,
 } from "react-bootstrap";
 import APILaporan from "@/api/APILaporan";
-import PDFPreview from "@/page/Main/HistoryCustomer/PDFPreview";
 import Formatter from "@/assets/Formatter";
 import FileSaver from "file-saver";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useRef } from "react";
 import { FaDownload } from "react-icons/fa";
@@ -162,15 +161,17 @@ export default function Home() {
   };
 
   const fetchLaporanBulananKeseluruhan = async (tahun) => {
-    const data = {  
-      tahun: tahun, };
+    const data = {
+      tahun: tahun,
+    };
     try {
       setLoading(true);
       const response = await APILaporan.getLaporanBulananKeseluruhan(data);
-      response.tanggal_cetak = Formatter.formatDateToIndonesian(response.tanggal_cetak);
+      response.tanggal_cetak = Formatter.formatDateToIndonesian(
+        response.tanggal_cetak
+      );
       console.log(response);
-      const dataBar = response.data;
-      generatePDFBulananKeseluruhan(response, dataBar, tahun);
+      generatePDFBulananKeseluruhan(response, tahun);
       setBulanTahunProduk({
         bulan: "",
         tahun: new Date().getFullYear(),
@@ -180,8 +181,7 @@ export default function Home() {
       console.error(error);
       setLoading(false);
     }
-  };  
-  
+  };
 
   const fetchProdukPerBulan = async (bulan, tahun) => {
     const data = {
@@ -220,8 +220,13 @@ export default function Home() {
       const response = await APILaporan.getLaporanStokBahanBakuPeriode(data);
       response.tanggal_cetak = Formatter.formatDateToIndonesian(
         response.tanggal_cetak
-      ); console.log(response);
-      generatePDFPenggunaanBahanBaku(response, Formatter.formatDateToIndonesian(startDate), Formatter.formatDateToIndonesian(endDate));
+      );
+      console.log(response);
+      generatePDFPenggunaanBahanBaku(
+        response,
+        Formatter.formatDateToIndonesian(startDate),
+        Formatter.formatDateToIndonesian(endDate)
+      );
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -275,11 +280,8 @@ export default function Home() {
   };
 
   const generatePDFBahanBaku = async (data) => {
-    const blob = await pdf(
-      <LaporanStokBahanBaku bahan_baku={data} />
-    ).toBlob();
-    const filename =
-      "Laporan Stok Bahan Baku-" + new Date().getTime() + ".pdf";
+    const blob = await pdf(<LaporanStokBahanBaku bahan_baku={data} />).toBlob();
+    const filename = "Laporan Stok Bahan Baku-" + new Date().getTime() + ".pdf";
     FileSaver.saveAs(blob, filename);
   };
 
@@ -298,57 +300,44 @@ export default function Home() {
 
   const generatePDFPenggunaanBahanBaku = async (data, startDate, endDate) => {
     const blob = await pdf(
-      <LaporanPenggunaanBahanBakuPeriod penggunaan_bahan_baku={data} startDate={startDate} endDate={endDate} />
+      <LaporanPenggunaanBahanBakuPeriod
+        penggunaan_bahan_baku={data}
+        startDate={startDate}
+        endDate={endDate}
+      />
     ).toBlob();
     const filename =
       "Laporan Penggunaan Bahan Baku-" + new Date().getTime() + ".pdf";
     FileSaver.saveAs(blob, filename);
   };
 
-  const generatePDFBulananKeseluruhan = async (data, dataBar, tahun) => {
-    console.log(dataBar);
+  const generatePDFBulananKeseluruhan = async (data, tahun) => {
     try {
       const pdfBlob = await pdf(
-        <LaporanBulananKeseluruhan keseluruhan={data} dataBar={dataBar} tahun={tahun} />
+        <LaporanBulananKeseluruhan keseluruhan={data} tahun={tahun} />
       ).toBlob();
-      const filename = `Laporan Bulanan Keseluruhan-${tahun}.pdf`;
-  
+      const filename = `Laporan Bulanan Keseluruhan-${tahun}-${new Date().getTime()}.pdf`;
+
       // Save the PDF using FileSaver
       FileSaver.saveAs(pdfBlob, filename);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error("Error generating PDF:", error);
     }
   };
 
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
     const years = [];
-    for (let year = 2010; year <= currentYear; year++) {
+    for (let year = 2021; year <= currentYear; year++) {
       years.push(year);
     }
     return years;
   };
-  
-
-  // const [produk, setProduk] = useState([]);
-
-  // useEffect(() => {
-  //   if (isMOorOwner) {
-  //     fetchProdukPerBulan(5, 2024);
-  //   }
-  // }, [isMOorOwner]);
 
   return (
     <>
       <OutlerHeader title="Dashboard" breadcrumb="Dashboard" />
       <section className="content">
-        {/* <PDFPreview>
-          <LaporanPenjualanProdukPerBulan
-            produk={produk}
-            bulan={"5"}
-            tahun={"2024"}
-          />
-        </PDFPreview> */}
         {isMOorOwner && (
           <>
             {loading ? (
@@ -366,51 +355,55 @@ export default function Home() {
             ) : (
               <Container fluid>
                 <Row>
-                <Col md={12} lg={12} xl={12}>
-                <Card>
-                  <Card.Body>
-                    <Row>
-                      <Col md={12} lg={12} xl={12} className="mb-1">
-                        <h3 className="text-bold">
-                          Laporan Bulanan Keseluruhan
-                        </h3>
-                      </Col>
-                      <Col md={12} lg={12} xl={12}>
-                      <Form.Select
-                        style={{ border: "1px solid #808080" }}
-                        value={tahunProduk}
-                        onChange={(e) => setTahunProduk(e.target.value)}
-                      >
-                        {generateYearOptions().map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Col>
-                    </Row>
-                  </Card.Body>
-                  <Card.Footer className="bg-white border-top">
-                  <Button
-                    variant="primary"
-                    onClick={(e) => {
-                      e.preventDefault();
+                  <Col md={12} lg={12} xl={12}>
+                    <Card>
+                      <Card.Body>
+                        <Row>
+                          <Col md={12} lg={12} xl={12} className="mb-1">
+                            <h3 className="text-bold">
+                              Laporan Bulanan Keseluruhan
+                            </h3>
+                          </Col>
+                          <Col md={12} lg={12} xl={12}>
+                            <Form.Select
+                              style={{ border: "1px solid #808080" }}
+                              value={tahunProduk}
+                              onChange={(e) => setTahunProduk(e.target.value)}
+                            >
+                              {generateYearOptions().map((year) => (
+                                <option key={year} value={year}>
+                                  {year}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                      <Card.Footer className="bg-white border-top">
+                        <Button
+                          variant="primary"
+                          onClick={(e) => {
+                            e.preventDefault();
 
-                      if (tahunProduk > new Date().getFullYear())
-                        return toast.error("Tahun tidak boleh lebih dari tahun sekarang");
+                            if (tahunProduk > new Date().getFullYear())
+                              return toast.error(
+                                "Tahun tidak boleh lebih dari tahun sekarang"
+                              );
 
-                      if (tahunProduk < 2021)
-                        return toast.error("Tahun tidak boleh kurang dari tahun 2021");
+                            if (tahunProduk < 2021)
+                              return toast.error(
+                                "Tahun tidak boleh kurang dari tahun 2021"
+                              );
 
-                      fetchLaporanBulananKeseluruhan(tahunProduk);
-                    }}
-                  >
-                    <FaDownload className="me-2" />
-                    Cetak
-                  </Button>
-                  </Card.Footer>
-                </Card>
-              </Col>
+                            fetchLaporanBulananKeseluruhan(tahunProduk);
+                          }}
+                        >
+                          <FaDownload className="me-2" />
+                          Cetak
+                        </Button>
+                      </Card.Footer>
+                    </Card>
+                  </Col>
 
                   <Col md={12} lg={12} xl={12}>
                     <Card>
